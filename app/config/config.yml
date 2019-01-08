@@ -32,6 +32,8 @@ framework:
         log: true
     templating:
         engines: ['twig', 'php']
+    serializer:
+        enabled: true
 
 # Twig Configuration
 twig:
