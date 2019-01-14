@@ -14,7 +14,7 @@ use AppBundle\Entity\User;
 class UserController extends Controller
 {
     /**
-     * @Rest\Route("/users/")
+     * @Rest\Get("/users/")
      *
      * @param Request $request
      * @return JsonResponse
@@ -37,7 +37,7 @@ class UserController extends Controller
     }
 
     /**
-     * @Rest\Route("/user/{id}")
+     * @Rest\Get("/user/{id}")
      *
      * @param Request $request
      * @param User $user
