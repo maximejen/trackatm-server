@@ -35,6 +35,13 @@ class Cleaner
      */
     protected $planning;
 
+    /**
+     * @var OperationHistory[]
+     *
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\OperationHistory", mappedBy="cleaner")
+     */
+    protected $history;
+
 
     /**
      * Get id.
@@ -111,5 +118,41 @@ class Cleaner
     public function getPlanning()
     {
         return $this->planning;
+    }
+
+    /**
+     * Add history.
+     *
+     * @param \AppBundle\Entity\OperationHistory $history
+     *
+     * @return Cleaner
+     */
+    public function addHistory(\AppBundle\Entity\OperationHistory $history)
+    {
+        $this->history[] = $history;
+
+        return $this;
+    }
+
+    /**
+     * Remove history.
+     *
+     * @param \AppBundle\Entity\OperationHistory $history
+     *
+     * @return boolean TRUE if this collection contained the specified element, FALSE otherwise.
+     */
+    public function removeHistory(\AppBundle\Entity\OperationHistory $history)
+    {
+        return $this->history->removeElement($history);
+    }
+
+    /**
+     * Get history.
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getHistory()
+    {
+        return $this->history;
     }
 }
