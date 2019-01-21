@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -34,6 +35,13 @@ class Customer
      * @ORM\Column(name="email", type="string")
      */
     protected $email;
+
+    /**
+     * @var Place[]
+     *
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Place", mappedBy="customer")
+     */
+    protected $places;
 
 
     /**
@@ -92,5 +100,48 @@ class Customer
     public function getEmail()
     {
         return $this->email;
+    }
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->places = new ArrayCollection();
+    }
+
+    /**
+     * Add place.
+     *
+     * @param Place $place
+     *
+     * @return Customer
+     */
+    public function addPlace(Place $place)
+    {
+        $this->places[] = $place;
+
+        return $this;
+    }
+
+    /**
+     * Remove place.
+     *
+     * @param Place $place
+     *
+     * @return boolean TRUE if this collection contained the specified element, FALSE otherwise.
+     */
+    public function removePlace(Place $place)
+    {
+        return $this->places->removeElement($place);
+    }
+
+    /**
+     * Get places.
+     *
+     * @return ArrayCollection|Place[]
+     */
+    public function getPlaces()
+    {
+        return $this->places;
     }
 }
