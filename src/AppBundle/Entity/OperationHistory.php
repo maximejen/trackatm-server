@@ -43,6 +43,13 @@ class OperationHistory
     protected $endingDate;
 
     /**
+     * @var Place
+     *
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Place", inversedBy="operationsHistory")
+     */
+    protected $place;
+
+    /**
      * @var GeoCoords
      *
      * @ORM\OneToOne(targetEntity="AppBundle\Entity\GeoCoords")

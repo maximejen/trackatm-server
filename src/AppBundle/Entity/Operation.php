@@ -22,6 +22,13 @@ class Operation
     protected $id;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="comment", type="string")
+     */
+    protected $comment;
+
+    /**
      * @var Place
      *
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Place", inversedBy="operations")
@@ -34,6 +41,13 @@ class Operation
      * @ORM\ManyToMany(targetEntity="AppBundle\Entity\CleanerPlanningDay", inversedBy="operations")
      */
     protected $days;
+
+    /**
+     * @var OperationTask[]
+     *
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\OperationTask", mappedBy="operation")
+     */
+    protected $tasks;
 
 
     /**
@@ -111,5 +125,65 @@ class Operation
     public function getDays()
     {
         return $this->days;
+    }
+
+    /**
+     * Set comment.
+     *
+     * @param string $comment
+     *
+     * @return Operation
+     */
+    public function setComment($comment)
+    {
+        $this->comment = $comment;
+
+        return $this;
+    }
+
+    /**
+     * Get comment.
+     *
+     * @return string
+     */
+    public function getComment()
+    {
+        return $this->comment;
+    }
+
+    /**
+     * Add task.
+     *
+     * @param \AppBundle\Entity\OperationTask $task
+     *
+     * @return Operation
+     */
+    public function addTask(\AppBundle\Entity\OperationTask $task)
+    {
+        $this->tasks[] = $task;
+
+        return $this;
+    }
+
+    /**
+     * Remove task.
+     *
+     * @param \AppBundle\Entity\OperationTask $task
+     *
+     * @return boolean TRUE if this collection contained the specified element, FALSE otherwise.
+     */
+    public function removeTask(\AppBundle\Entity\OperationTask $task)
+    {
+        return $this->tasks->removeElement($task);
+    }
+
+    /**
+     * Get tasks.
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getTasks()
+    {
+        return $this->tasks;
     }
 }

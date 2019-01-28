@@ -31,7 +31,7 @@ class CleanerPlanningDay
     /**
      * @var Operation[]
      *
-     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Operation", mappedBy="")
+     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Operation", mappedBy="days")
      */
     protected $operations;
 

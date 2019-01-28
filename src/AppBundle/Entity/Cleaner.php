@@ -22,11 +22,11 @@ class Cleaner
     protected $id;
 
     /**
-     * @var User
+     * @var OperationHistory[]
      *
-     * @ORM\OneToOne(targetEntity="AppBundle\Entity\Cleaner")
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\OperationHistory", mappedBy="cleaner")
      */
-    protected $user;
+    protected $history;
 
     /**
      * @var CleanerPlanningDay[]
@@ -36,11 +36,11 @@ class Cleaner
     protected $planning;
 
     /**
-     * @var OperationHistory[]
+     * @var User
      *
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\OperationHistory", mappedBy="cleaner")
+     * @ORM\OneToOne(targetEntity="AppBundle\Entity\Cleaner")
      */
-    protected $history;
+    protected $user;
 
 
     /**

@@ -22,6 +22,13 @@ class Place
     protected $id;
 
     /**
+     * @var Operation[]
+     *
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Operation", mappedBy="place")
+     */
+    protected $operations;
+
+    /**
      * @var string
      *
      * @ORM\Column(name="name", type="string")
@@ -50,18 +57,18 @@ class Place
     protected $geoCoords;
 
     /**
-     * @var Operation[]
-     *
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Operation", mappedBy="place")
-     */
-    protected $operations;
-
-    /**
      * @var Customer
      *
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Customer", inversedBy="places")
      */
     protected $customer;
+
+    /**
+     * @var OperationHistory[]
+     *
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\OperationHistory", mappedBy="place")
+     */
+    protected $operationsHistory;
 
 
     /**
@@ -235,5 +242,41 @@ class Place
     public function getCustomer()
     {
         return $this->customer;
+    }
+
+    /**
+     * Add operationsHistory.
+     *
+     * @param \AppBundle\Entity\OperationHistory $operationsHistory
+     *
+     * @return Place
+     */
+    public function addOperationsHistory(\AppBundle\Entity\OperationHistory $operationsHistory)
+    {
+        $this->operationsHistory[] = $operationsHistory;
+
+        return $this;
+    }
+
+    /**
+     * Remove operationsHistory.
+     *
+     * @param \AppBundle\Entity\OperationHistory $operationsHistory
+     *
+     * @return boolean TRUE if this collection contained the specified element, FALSE otherwise.
+     */
+    public function removeOperationsHistory(\AppBundle\Entity\OperationHistory $operationsHistory)
+    {
+        return $this->operationsHistory->removeElement($operationsHistory);
+    }
+
+    /**
+     * Get operationsHistory.
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getOperationsHistory()
+    {
+        return $this->operationsHistory;
     }
 }
