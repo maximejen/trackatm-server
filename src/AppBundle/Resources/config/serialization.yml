@@ -1,0 +1,24 @@
+AppBundle\Entity\Place:
+  attributes:
+    id:
+      groups: ['place']
+    name:
+      groups: ['place']
+    address:
+      groups: ['place']
+
+AppBundle\Entity\Operation:
+  attributes:
+    id:
+      groups: ['operation', 'place']
+    comment:
+      groups: ['operation', 'place']
+    place:
+      groups: ['operation']
+
+AppBundle\Entity\User:
+  attributes:
+    id:
+      groups: ['user']
+    email:
+      groups: ['user']
