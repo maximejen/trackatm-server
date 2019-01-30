@@ -1,24 +1,69 @@
 AppBundle\Entity\Place:
   attributes:
     id:
-      groups: ['place']
+      groups: ['place', 'operation', 'day']
     name:
-      groups: ['place']
+      groups: ['place', 'operation', 'day']
     address:
-      groups: ['place']
+      groups: ['place', 'operation', 'day']
+    operations:
+      groups: ['place', 'day']
+    description:
+      groups: ['place', 'operation', 'day']
+    geoCoords:
+      groups: ['place', 'operation', 'day']
+    customer:
+      groups: ['place', 'operation', 'day']
+    operationsHistory:
+      groups: ['place', 'operation', 'day']
+
+AppBundle\Entity\GeoCoords:
+  attributes:
+    id:
+      groups: ['geocoords', 'place', 'operation', 'day']
+    lat:
+      groups: ['geocoords', 'place', 'operation', 'day']
+    lon:
+      groups: ['geocoords', 'place', 'operation', 'day']
+
+AppBundle\Entity\CleanerPlanningDay:
+  attributes:
+    id:
+      groups: ['day', 'place', 'operation']
+    day:
+      groups: ['day', 'place', 'operation']
+    operations:
+      groups: ['day', 'place']
+    cleaner:
+      groups: ['day', 'place', 'operation']
+
+AppBundle\Entity\Cleaner:
+  attributes:
+    id:
+      groups: ['cleaner', 'place', 'operation', 'day']
+    history:
+      groups: ['cleaner', 'place', 'operation', 'day']
+    planning:
+      groups: ['cleaner', 'place', 'operation']
+    user:
+      groups: ['cleaner', 'place', 'operation', 'day']
 
 AppBundle\Entity\Operation:
   attributes:
     id:
-      groups: ['operation', 'place']
+      groups: ['operation', 'place', 'day']
     comment:
-      groups: ['operation', 'place']
+      groups: ['operation', 'place', 'day']
     place:
-      groups: ['operation']
+      groups: ['operation', 'day']
+    days:
+      groups: ['operation', 'place', 'day']
+    tasks:
+      groups: ['operation', 'place', 'day']
 
 AppBundle\Entity\User:
   attributes:
     id:
-      groups: ['user']
+      groups: ['user', 'place', 'operation', 'day', 'cleaner']
     email:
-      groups: ['user']
+      groups: ['user', 'place', 'operation', 'day', 'cleaner']
