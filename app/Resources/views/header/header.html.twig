@@ -1,0 +1,29 @@
+{% block header %}
+    <nav class="navbar is-primary" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand">
+            <p class="navbar-item" href="https://bulma.io">
+                Track-ATM
+            </p>
+            <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false"
+               data-target="navbarBasicExample">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+
+        <div id="navbarBasicExample" class="navbar-menu">
+            <div class="navbar-start">
+
+            </div>
+
+            <div class="navbar-end">
+
+            </div>
+        </div>
+    </nav>
+{% endblock %}
+
+{% block javascripts %}
+    <script src="{{ asset('js/header.js') }}"></script>
+{% endblock %}
