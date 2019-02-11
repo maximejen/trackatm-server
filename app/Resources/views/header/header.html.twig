@@ -1,8 +1,12 @@
 {% block header %}
-    <nav class="navbar is-primary" role="navigation" aria-label="main navigation">
+    {% if menuMode is defined and menuMode == "parameters" %}
+        <nav class="navbar is-warning" role="navigation" aria-label="main navigation">
+    {% else %}
+        <nav class="navbar is-primary" role="navigation" aria-label="main navigation">
+    {% endif %}
         <div class="navbar-brand">
             <p class="navbar-item" href="https://bulma.io">
-                Track-ATM
+                <b>Track-ATM</b>
             </p>
             <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false"
                data-target="navbarBasicExample">
@@ -14,11 +18,42 @@
 
         <div id="navbarBasicExample" class="navbar-menu">
             <div class="navbar-start">
-
+                {% if menuElements is defined %}
+                    {% for element in menuElements %}
+                        <a class="navbar-item" href="{{ path(element.path) }}">
+                            {{ element.text }}
+                        </a>
+                    {% endfor %}
+                {% endif %}
             </div>
 
             <div class="navbar-end">
-
+                {% if isConnected is defined and isConnected == true %}
+                    <div class="navbar-item">
+                        <a class="button is-danger is-medium" href="{{ path('fos_user_security_logout') }}">
+                            <span class="icon is-large">
+                                <i class="fas fa-lock"></i>
+                            </span>
+                        </a>
+                    </div>
+                    {% if menuMode == "parameters" %}
+                        <div class="navbar-item">
+                            <a class="button is-primary is-medium" href="{{ path('homepage') }}">
+                                <span class="icon is-large">
+                                    <i class="fas fa-home"></i>
+                                </span>
+                            </a>
+                        </div>
+                    {% else %}
+                        <div class="navbar-item">
+                            <a class="button is-warning is-medium" href="{{ path('parameters_page') }}">
+                                <span class="icon is-large">
+                                    <i class="fas fa-cog"></i>
+                                </span>
+                            </a>
+                        </div>
+                    {% endif %}
+                {% endif %}
             </div>
         </div>
     </nav>

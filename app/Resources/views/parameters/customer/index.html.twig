@@ -1,0 +1,65 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div>
+        <section class="hero is-light">
+            <div class="hero-body">
+                <div class="container">
+                    <h1 class="title">
+                        Customers
+                    </h1>
+                    <h2 class="subtitle">
+                        Personalize your customers.
+                    </h2>
+                </div>
+            </div>
+        </section>
+        <section class="is-light">
+            <div class="customer-toolbar">
+                <a class="button is-link is-warning" href="{{ path('parameters_create_customer_page') }}">
+                    <i class="fa fa-plus"></i>
+                </a>
+            </div>
+        </section>
+        <section class="container">
+            <table class="table is-fullwidth is-hoverable">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                {% for customer in customers %}
+                    <tbody>
+                    <tr>
+                        <th>{{ customer.id }}</th>
+                        <td>{{ customer.name }}</td>
+                        <td>{{ customer.email }}</td>
+                        <td>
+                            <a class="button is-link is-warning" href="
+                            {{ path('parameters_edit_customer_page', {'id': customer.id}) }}">
+                                <i class="fa fa-pen"></i>
+                            </a>
+                            <a class="button is-link is-warning" href="
+                            {{ path('parameters_delete_customer_page', {'id': customer.id}) }}
+                            ">
+                                <i class="fa fa-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    </tbody>
+                {% endfor %}
+            </table>
+        </section>
+    </div>
+{% endblock %}
+
+{% block stylesheets %}
+    <style>
+        .customer-toolbar {
+            margin: 2em 3em;
+        }
+    </style>
+{% endblock %}

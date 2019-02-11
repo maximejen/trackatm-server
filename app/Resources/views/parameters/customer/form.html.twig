@@ -1,0 +1,30 @@
+<div class="form-element">
+    <div class="subtitle form-label">
+        {{ form_label(form.name) }}
+    </div>
+    <div>
+        {{
+        form_widget(form.name, {
+            'attr': {
+                'class': 'input',
+                'placeholder': 'Customer\'s name'
+            }
+        })
+        }}
+    </div>
+</div>
+<div class="form-element">
+    <div class="subtitle form-label">
+        {{ form_label(form.email) }}
+    </div>
+    <div>
+        {{
+        form_widget(form.email, {
+            'attr': {
+                'class': 'input',
+                'placeholder': 'Customer\'s email'
+            }
+        })
+        }}
+    </div>
+</div>

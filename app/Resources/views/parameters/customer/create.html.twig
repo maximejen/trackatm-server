@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div>
+        <section class="hero is-light">
+            <div class="hero-body">
+                <div class="container">
+                    <h1 class="title">
+                        Add
+                    </h1>
+                    <h2 class="subtitle">
+                        a new customer
+                    </h2>
+                </div>
+            </div>
+        </section>
+        <section class="container">
+            {{ form_start(form) }}
+                {% include(':parameters/customer:form.html.twig') %}
+                <div class="form-element">
+                    <button class="button is-warning is-medium" type="submit">Create customer</button>
+                </div>
+            {{ form_end(form) }}
+        </section>
+    </div>
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .form-element {
+            padding-top: 2.5em;
+        }
+
+        .form-element > button {
+            width: 100%;
+        }
+
+        div.form-label {
+            margin-bottom: 0.5em;
+        }
+    </style>
+{% endblock %}

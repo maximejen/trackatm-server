@@ -3,7 +3,7 @@ app:
     type: annotation
 
 fos_user:
-    resource: "@FOSUserBundle/Resources/config/routing/all.xml"
+    resource: "@FOSUserBundle/Resources/config/routing/security.xml"
 
 api_users:
     type:     rest
