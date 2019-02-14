@@ -1,0 +1,69 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div>
+        <section class="hero is-light">
+            <div class="hero-body">
+                <div class="container">
+                    <h1 class="title">
+                        Places
+                    </h1>
+                    <h2 class="subtitle">
+                        Personalize your places.
+                    </h2>
+                </div>
+            </div>
+        </section>
+        <section class="is-light">
+            <div class="place-toolbar">
+                <a class="button is-link is-warning" href="{{ path('parameters_create_place_page') }}">
+                    <i class="fa fa-plus"></i>
+                </a>
+            </div>
+        </section>
+        <section class="container">
+            <table class="table is-fullwidth is-hoverable">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Address</th>
+                    <th>Customer</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                {% for place in places %}
+                    <tbody>
+                    <tr>
+                        <th>{{ place.id }}</th>
+                        <td>{{ place.name }}</td>
+                        <td>{{ place.description }}</td>
+                        <td>{{ place.address }}</td>
+                        <td>{{ place.customer.name }}</td>
+                        <td>
+                            <a class="button is-link is-warning" href="
+                            {{ path('parameters_edit_place_page', {'id': place.id}) }}">
+                                <i class="fa fa-pen"></i>
+                            </a>
+                            <a class="button is-link is-warning" href="
+                            {{ path('parameters_delete_place_page', {'id': place.id}) }}
+                            ">
+                                <i class="fa fa-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    </tbody>
+                {% endfor %}
+            </table>
+        </section>
+    </div>
+{% endblock %}
+
+{% block stylesheets %}
+    <style>
+        .place-toolbar {
+            margin: 2em 3em;
+        }
+    </style>
+{% endblock %}

@@ -16,8 +16,10 @@
         {% block body %}{% endblock %}
         {% block javascripts %}{% endblock %}
         <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
-        <footer>
-            {% block footer %}{% endblock %}
+        <footer class="footer" style="background-color: white;">
+            {% block footer %}
+                {% include 'footer/footer.html.twig' %}
+            {% endblock %}
         </footer>
     </body>
 </html>

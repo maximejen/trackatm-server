@@ -6,19 +6,19 @@
             <div class="hero-body">
                 <div class="container">
                     <h1 class="title">
-                        Edit
+                        Add
                     </h1>
                     <h2 class="subtitle">
-                        your customer
+                        a new cleaner
                     </h2>
                 </div>
             </div>
         </section>
         <section class="container">
             {{ form_start(form) }}
-                {% include(':parameters/customer:form.html.twig') %}
+                {% include(':parameters/cleaner:form.html.twig') %}
                 <div class="form-element">
-                    <button class="button is-warning is-medium" type="submit">Update customer</button>
+                    <button class="button is-warning is-medium" type="submit">Create cleaner</button>
                 </div>
             {{ form_end(form) }}
         </section>

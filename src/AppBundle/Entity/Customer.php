@@ -144,4 +144,9 @@ class Customer
     {
         return $this->places;
     }
+
+    public function __toString()
+    {
+       return $this->getName();
+    }
 }

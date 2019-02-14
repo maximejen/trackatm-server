@@ -38,7 +38,7 @@ class Cleaner
     /**
      * @var User
      *
-     * @ORM\OneToOne(targetEntity="AppBundle\Entity\Cleaner")
+     * @ORM\OneToOne(targetEntity="AppBundle\Entity\User")
      */
     protected $user;
 

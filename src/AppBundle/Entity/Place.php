@@ -52,7 +52,7 @@ class Place
     /**
      * @var GeoCoords
      *
-     * @ORM\OneToOne(targetEntity="AppBundle\Entity\GeoCoords")
+     * @ORM\OneToOne(targetEntity="AppBundle\Entity\GeoCoords", cascade={"PERSIST"})
      */
     protected $geoCoords;
 

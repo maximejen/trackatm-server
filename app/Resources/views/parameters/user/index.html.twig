@@ -1,0 +1,65 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div>
+        <section class="hero is-light">
+            <div class="hero-body">
+                <div class="container">
+                    <h1 class="title">
+                        Users
+                    </h1>
+                    <h2 class="subtitle">
+                        Personalize your users.
+                    </h2>
+                </div>
+            </div>
+        </section>
+        <section class="is-light">
+            <div class="user-toolbar">
+                <a class="button is-link is-warning" href="{{ path('parameters_create_user_page') }}">
+                    <i class="fa fa-plus"></i>
+                </a>
+            </div>
+        </section>
+        <section class="container">
+            <table class="table is-fullwidth is-hoverable">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                {% for user in users %}
+                    <tbody>
+                    <tr>
+                        <th>{{ user.id }}</th>
+                        <td>{{ user.username }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>
+                            <a class="button is-link is-warning" href="
+                            {{ path('parameters_edit_user_page', {'id': user.id}) }}">
+                                <i class="fa fa-pen"></i>
+                            </a>
+                            <a class="button is-link is-warning" href="
+                            {{ path('parameters_delete_user_page', {'id': user.id}) }}
+                            ">
+                                <i class="fa fa-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    </tbody>
+                {% endfor %}
+            </table>
+        </section>
+    </div>
+{% endblock %}
+
+{% block stylesheets %}
+    <style>
+        .user-toolbar {
+            margin: 2em 3em;
+        }
+    </style>
+{% endblock %}

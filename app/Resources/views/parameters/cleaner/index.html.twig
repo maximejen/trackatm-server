@@ -1,0 +1,61 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div>
+        <section class="hero is-light">
+            <div class="hero-body">
+                <div class="container">
+                    <h1 class="title">
+                        Cleaners
+                    </h1>
+                    <h2 class="subtitle">
+                        Personalize your cleaners.
+                    </h2>
+                </div>
+            </div>
+        </section>
+        <section class="is-light">
+            <div class="cleaner-toolbar">
+                <a class="button is-link is-warning" href="{{ path('parameters_create_cleaner_page') }}">
+                    <i class="fa fa-plus"></i>
+                </a>
+            </div>
+        </section>
+        <section class="container">
+            <table class="table is-fullwidth is-hoverable">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                {% for cleaner in cleaners %}
+                    <tbody>
+                    <tr>
+                        <th>{{ "Cleaner #" ~cleaner.id }}</th>
+                        <td>{{ cleaner.user.username }}</td>
+                        <td>{{ cleaner.user.email }}</td>
+                        <td>
+                            <a class="button is-link is-warning" href="
+                            {{ path('parameters_delete_cleaner_page', {'id': cleaner.id}) }}
+                            ">
+                                <i class="fa fa-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    </tbody>
+                {% endfor %}
+            </table>
+        </section>
+    </div>
+{% endblock %}
+
+{% block stylesheets %}
+    <style>
+        .cleaner-toolbar {
+            margin: 2em 3em;
+        }
+    </style>
+{% endblock %}

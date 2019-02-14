@@ -29,15 +29,15 @@ class ParametersController extends Controller
                     ],
                     1 => [
                         "text" => "Places",
-                        "path" => "parameters_page"
+                        "path" => "parameters_places_page"
                     ],
                     2 => [
                         "text" => "Cleaners",
-                        "path" => "parameters_page"
+                        "path" => "parameters_cleaners_page"
                     ],
                     3 => [
                         "text" => "Users",
-                        "path" => "parameters_page"
+                        "path" => "parameters_users_page"
                     ]
                 ],
                 'menuMode' => "parameters",
