@@ -5,12 +5,12 @@ namespace AppBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * OperationTask
+ * OperationTaskTemplate
  *
- * @ORM\Table(name="operation_task")
- * @ORM\Entity(repositoryClass="AppBundle\Repository\OperationTaskRepository")
+ * @ORM\Table(name="operation_task_template")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\OperationTaskTemplateRepository")
  */
-class OperationTask
+class OperationTaskTemplate
 {
     /**
      * @var int
@@ -43,9 +43,9 @@ class OperationTask
     protected $imagesForced;
 
     /**
-     * @var Operation
+     * @var OperationTemplate
      *
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Operation", inversedBy="tasks")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\OperationTemplate", inversedBy="tasks")
      */
     protected $operation;
 
@@ -65,7 +65,7 @@ class OperationTask
      *
      * @param string $name
      *
-     * @return OperationTask
+     * @return OperationTaskTemplate
      */
     public function setName($name)
     {
@@ -89,7 +89,7 @@ class OperationTask
      *
      * @param string $comment
      *
-     * @return OperationTask
+     * @return OperationTaskTemplate
      */
     public function setComment($comment)
     {
@@ -113,7 +113,7 @@ class OperationTask
      *
      * @param bool $imagesForced
      *
-     * @return OperationTask
+     * @return OperationTaskTemplate
      */
     public function setImagesForced($imagesForced)
     {
@@ -135,11 +135,11 @@ class OperationTask
     /**
      * Set operation.
      *
-     * @param \AppBundle\Entity\Operation|null $operation
+     * @param \AppBundle\Entity\OperationTemplate|null $operation
      *
-     * @return OperationTask
+     * @return OperationTaskTemplate
      */
-    public function setOperation(\AppBundle\Entity\Operation $operation = null)
+    public function setOperation(\AppBundle\Entity\OperationTemplate $operation = null)
     {
         $this->operation = $operation;
 
@@ -149,7 +149,7 @@ class OperationTask
     /**
      * Get operation.
      *
-     * @return \AppBundle\Entity\Operation|null
+     * @return \AppBundle\Entity\OperationTemplate|null
      */
     public function getOperation()
     {

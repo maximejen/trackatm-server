@@ -1,0 +1,56 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div>
+        <section class="hero is-light">
+            <div class="hero-body">
+                <div class="container">
+                    <h1 class="title">
+                        Edit
+                    </h1>
+                    <h2 class="subtitle">
+                        your operationTemplate
+                    </h2>
+                </div>
+            </div>
+        </section>
+        <section class="container">
+            {% form_theme form 'jquery.collection.html.twig' %}
+            {{ form_start(form) }}
+                {% include(':parameters/operationTemplate:form.html.twig') %}
+                <div class="form-element">
+                    <button class="button is-warning is-medium" type="submit">Update operationTemplate</button>
+                </div>
+            {{ form_end(form) }}
+        </section>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script type="text/javascript">
+        $('.operation_template_tasks').collection({
+            add: '<a class="button is-link is-warning" href="#"><i class="fa fa-plus"></i></a>',
+            remove: '<a class="button is-link is-warning" href="#"><i class="fa fa-minus"></i></a>',
+            allow_up: false,
+            allow_down: false
+        });
+    </script>
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .form-element {
+            padding-top: 2.5em;
+        }
+
+        .form-element > button {
+            width: 100%;
+        }
+
+        div.form-label {
+            margin-bottom: 0.5em;
+        }
+    </style>
+{% endblock %}

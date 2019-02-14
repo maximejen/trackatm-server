@@ -25,11 +25,17 @@ class PlaceController extends ParametersController
     {
         $em = $this->get('doctrine.orm.entity_manager');
 
-        $places = $em->getRepository("AppBundle:Place")->findAll();
+        $search = $request->get("search");
+        if ($search != NULL && $search != "") {
+            $places = $em->getRepository("AppBundle:Place")->findPlaceByName($search);
+        }
+        else {
+            $places = $em->getRepository("AppBundle:Place")->findAll();
+        }
 
-        $places = ["places" => $places];
+        $params = ["places" => $places, 'search' => $search];
         return $this->render('parameters/place/index.html.twig',
-            array_merge($places, $this->getCommonParametersForParameters()));
+            array_merge($params, $this->getCommonParametersForParameters()));
     }
 
     /**

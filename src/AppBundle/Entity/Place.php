@@ -279,4 +279,12 @@ class Place
     {
         return $this->operationsHistory;
     }
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->getCustomer()->getName() . " - " . $this->getName();
+    }
 }

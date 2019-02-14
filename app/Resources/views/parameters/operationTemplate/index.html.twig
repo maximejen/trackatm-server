@@ -6,25 +6,25 @@
             <div class="hero-body">
                 <div class="container">
                     <h1 class="title">
-                        Places
+                        OperationTemplates
                     </h1>
                     <h2 class="subtitle">
-                        Personalize your places.
+                        Personalize your operationTemplates.
                     </h2>
                 </div>
             </div>
         </section>
-        <section class="is-light place-toolbar">
+        <section class="is-light operationTemplate-toolbar">
             <div class="columns">
                 <div class="column">
-                    <a class="button is-link is-warning" href="{{ path('parameters_create_place_page') }}">
+                    <a class="button is-link is-warning" href="{{ path('parameters_create_operationTemplate_page') }}">
                         <i class="fa fa-plus"></i>
                     </a>
                 </div>
                 <form class="column columns is-6" action="" method="get">
                     <div class="column is-6">
                         <p class="control has-icons-left">
-                            <input class="input" placeholder="Search" name="search" value="{{ search }}">
+                            <input class="input" operationTemplateholder="Search" name="search" value="{{ search }}">
                             <span class="icon is-small is-left">
                               <i class="fas fa-search"></i>
                             </span>
@@ -43,28 +43,24 @@
                 <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Name</th>
-                    <th>Description</th>
-                    <th>Address</th>
-                    <th>Customer</th>
+                    <th>Place</th>
+                    <th>Comment</th>
                     <th>Actions</th>
                 </tr>
                 </thead>
-                {% for place in places %}
+                {% for operationTemplate in operationTemplates %}
                     <tbody>
                     <tr>
-                        <th>{{ place.id }}</th>
-                        <td>{{ place.name }}</td>
-                        <td>{{ place.description }}</td>
-                        <td>{{ place.address }}</td>
-                        <td>{{ place.customer.name }}</td>
+                        <th>{{ operationTemplate.id }}</th>
+                        <td>{{ operationTemplate.place }}</td>
+                        <td>{{ operationTemplate.comment }}</td>
                         <td>
                             <a class="button is-link is-warning" href="
-                            {{ path('parameters_edit_place_page', {'id': place.id}) }}">
+                            {{ path('parameters_edit_operationTemplate_page', {'id': operationTemplate.id}) }}">
                                 <i class="fa fa-pen"></i>
                             </a>
                             <a class="button is-link is-warning" href="
-                            {{ path('parameters_delete_place_page', {'id': place.id}) }}
+                            {{ path('parameters_delete_operationTemplate_page', {'id': operationTemplate.id}) }}
                             ">
                                 <i class="fa fa-trash"></i>
                             </a>
@@ -79,7 +75,7 @@
 
 {% block stylesheets %}
     <style>
-        .place-toolbar {
+        .operationTemplate-toolbar {
             margin: 2em 3em;
         }
     </style>

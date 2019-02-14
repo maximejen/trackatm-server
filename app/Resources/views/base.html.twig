@@ -14,8 +14,12 @@
             {% endblock %}
         </header>
         {% block body %}{% endblock %}
-        {% block javascripts %}{% endblock %}
-        <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+        {% block javascripts %}
+            <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+            <script src="{{ asset('js/jquery.min.js') }}"></script>
+            <script src="{{ asset('js/jquery.collection.js') }}"></script>
+        {% endblock %}
+
         <footer class="footer" style="background-color: white;">
             {% block footer %}
                 {% include 'footer/footer.html.twig' %}

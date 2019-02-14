@@ -10,4 +10,13 @@ namespace AppBundle\Repository;
  */
 class PlaceRepository extends \Doctrine\ORM\EntityRepository
 {
+    public function findPlaceByName($name)
+    {
+        $name = '%' . $name . '%';
+        return $this->_em->getRepository("AppBundle:Place")->createQueryBuilder('p')
+            ->where('p.name LIKE :name')
+            ->setParameter('name', $name)
+            ->getQuery()
+            ->getResult();
+    }
 }

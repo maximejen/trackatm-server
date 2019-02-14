@@ -38,6 +38,10 @@ class ParametersController extends Controller
                     3 => [
                         "text" => "Users",
                         "path" => "parameters_users_page"
+                    ],
+                    4 => [
+                        "text" => "Operation Templates",
+                        "path" => "parameters_operationTemplates_page"
                     ]
                 ],
                 'menuMode' => "parameters",
