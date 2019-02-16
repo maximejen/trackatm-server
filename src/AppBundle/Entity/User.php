@@ -22,6 +22,13 @@ class User extends BaseUser
      */
     protected $id;
 
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="token", type="string")
+     */
+    protected $token;
+
     public function __construct()
     {
         parent::__construct();
@@ -35,5 +42,29 @@ class User extends BaseUser
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * Set token.
+     *
+     * @param string $token
+     *
+     * @return User
+     */
+    public function setToken($token)
+    {
+        $this->token = $token;
+
+        return $this;
+    }
+
+    /**
+     * Get token.
+     *
+     * @return string
+     */
+    public function getToken()
+    {
+        return $this->token;
     }
 }
