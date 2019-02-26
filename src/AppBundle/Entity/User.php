@@ -18,6 +18,7 @@ class User extends BaseUser
      *
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
+     *
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     protected $id;
@@ -25,7 +26,7 @@ class User extends BaseUser
     /**
      * @var string
      *
-     * @ORM\Column(name="token", type="string")
+     * @ORM\Column(name="token", type="string", nullable=true)
      */
     protected $token;
 
