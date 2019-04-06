@@ -29,11 +29,11 @@ class Cleaner
     protected $history;
 
     /**
-     * @var CleanerPlanningDay[]
+     * @var Operation[]
      *
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\CleanerPlanningDay", mappedBy="cleaner")
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Operation", mappedBy="cleaner")
      */
-    protected $planning;
+    protected $operations;
 
     /**
      * @var User
@@ -154,5 +154,46 @@ class Cleaner
     public function getHistory()
     {
         return $this->history;
+    }
+
+    /**
+     * Add operation.
+     *
+     * @param \AppBundle\Entity\Operation $operation
+     *
+     * @return Cleaner
+     */
+    public function addOperation(\AppBundle\Entity\Operation $operation)
+    {
+        $this->operations[] = $operation;
+
+        return $this;
+    }
+
+    /**
+     * Remove operation.
+     *
+     * @param \AppBundle\Entity\Operation $operation
+     *
+     * @return boolean TRUE if this collection contained the specified element, FALSE otherwise.
+     */
+    public function removeOperation(\AppBundle\Entity\Operation $operation)
+    {
+        return $this->operations->removeElement($operation);
+    }
+
+    /**
+     * Get operations.
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getOperations()
+    {
+        return $this->operations;
+    }
+
+    public function __toString()
+    {
+        return "Cleaner #" . $this->getId();
     }
 }

@@ -20,9 +20,6 @@ class OperationTemplateType extends AbstractType
         $builder
             ->add('name')
             ->add('comment')
-            ->add('place', EntityType::class, [
-                'class' => 'AppBundle\Entity\Place'
-            ])
             ->add('tasks', CollectionType::class,
                 [
                     'entry_type' => OperationTaskTemplateType::class,

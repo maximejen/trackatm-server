@@ -22,13 +22,6 @@ class Operation
     protected $id;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="comment", type="string")
-     */
-    protected $comment;
-
-    /**
      * @var Place
      *
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Place", inversedBy="operations")
@@ -36,18 +29,25 @@ class Operation
     protected $place;
 
     /**
-     * @var CleanerPlanningDay[]
+     * @var string
      *
-     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\CleanerPlanningDay", inversedBy="operations")
+     * @ORM\Column(name="day", type="string")
      */
-    protected $days;
+    protected $day;
 
     /**
-     * @var OperationTask[]
+     * @var Cleaner
      *
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\OperationTask", mappedBy="operation")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Cleaner", inversedBy="operations")
      */
-    protected $tasks;
+    protected $cleaner;
+
+    /**
+     * @var OperationTemplate[]
+     *
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\OperationTemplate")
+     */
+    protected $template; // name, comment, tasks;
 
 
     /**
@@ -185,5 +185,77 @@ class Operation
     public function getTasks()
     {
         return $this->tasks;
+    }
+
+    /**
+     * Set day.
+     *
+     * @param string $day
+     *
+     * @return Operation
+     */
+    public function setDay($day)
+    {
+        $this->day = $day;
+
+        return $this;
+    }
+
+    /**
+     * Get day.
+     *
+     * @return string
+     */
+    public function getDay()
+    {
+        return $this->day;
+    }
+
+    /**
+     * Set cleaner.
+     *
+     * @param \AppBundle\Entity\Cleaner|null $cleaner
+     *
+     * @return Operation
+     */
+    public function setCleaner(\AppBundle\Entity\Cleaner $cleaner = null)
+    {
+        $this->cleaner = $cleaner;
+
+        return $this;
+    }
+
+    /**
+     * Get cleaner.
+     *
+     * @return \AppBundle\Entity\Cleaner|null
+     */
+    public function getCleaner()
+    {
+        return $this->cleaner;
+    }
+
+    /**
+     * Set template.
+     *
+     * @param \AppBundle\Entity\OperationTemplate|null $template
+     *
+     * @return Operation
+     */
+    public function setTemplate(\AppBundle\Entity\OperationTemplate $template = null)
+    {
+        $this->template = $template;
+
+        return $this;
+    }
+
+    /**
+     * Get template.
+     *
+     * @return \AppBundle\Entity\OperationTemplate|null
+     */
+    public function getTemplate()
+    {
+        return $this->template;
     }
 }

@@ -10,4 +10,13 @@ namespace AppBundle\Repository;
  */
 class OperationTemplateRepository extends \Doctrine\ORM\EntityRepository
 {
+    public function findOperationTemplateByName($name)
+    {
+        $name = '%' . $name . '%';
+        return $this->_em->getRepository("AppBundle:OperationTemplate")->createQueryBuilder('otre')
+            ->where('otre.name LIKE :name')
+            ->setParameter('name', $name)
+            ->getQuery()
+            ->getResult();
+    }
 }

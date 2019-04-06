@@ -43,11 +43,22 @@ class OperationHistory
     protected $endingDate;
 
     /**
-     * @var Place
+     * @var string
      *
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Place", inversedBy="operationsHistory")
+     * THE NAME OF THE PLACE FOR THE RECORD
+     *
+     * @ORM\Column(name="place", type="string")
      */
     protected $place;
+
+    /**
+     * @var string
+     *
+     * THE NAME OF THE CUSTOMER
+     *
+     * @ORM\Column(name="customer", type="string")
+     */
+    protected $customer;
 
     /**
      * @var GeoCoords
@@ -242,5 +253,53 @@ class OperationHistory
     public function getCleaner()
     {
         return $this->cleaner;
+    }
+
+    /**
+     * Set place.
+     *
+     * @param string $place
+     *
+     * @return OperationHistory
+     */
+    public function setPlace($place)
+    {
+        $this->place = $place;
+
+        return $this;
+    }
+
+    /**
+     * Get place.
+     *
+     * @return string
+     */
+    public function getPlace()
+    {
+        return $this->place;
+    }
+
+    /**
+     * Set customer.
+     *
+     * @param string $customer
+     *
+     * @return OperationHistory
+     */
+    public function setCustomer($customer)
+    {
+        $this->customer = $customer;
+
+        return $this;
+    }
+
+    /**
+     * Get customer.
+     *
+     * @return string
+     */
+    public function getCustomer()
+    {
+        return $this->customer;
     }
 }

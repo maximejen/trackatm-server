@@ -2,6 +2,9 @@
 
 namespace AppBundle\Repository;
 
+use AppBundle\Entity\Cleaner;
+use AppBundle\Entity\User;
+
 /**
  * UserRepository
  *
@@ -10,4 +13,22 @@ namespace AppBundle\Repository;
  */
 class UserRepository extends \Doctrine\ORM\EntityRepository
 {
+    public function getUsersNotCleaners()
+    {
+        $users = $this->_em->getRepository('AppBundle:User')->findAll();
+        $cleaners = $this->_em->getRepository('AppBundle:Cleaner')->findAll();
+        $usersCleaners = [];
+        foreach ($cleaners as $cleaner)
+            array_push($usersCleaners, $cleaner->getUser());
+        $result = [];
+
+        /** @var User $user*/
+        foreach ($users as $user) {
+            $ret = array_search($user, $usersCleaners);
+            if ($ret == false) {
+                array_push($result, $user);
+            }
+        }
+        return $result;
+    }
 }

@@ -63,13 +63,6 @@ class Place
      */
     protected $customer;
 
-    /**
-     * @var OperationHistory[]
-     *
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\OperationHistory", mappedBy="place")
-     */
-    protected $operationsHistory;
-
 
     /**
      * Get id.

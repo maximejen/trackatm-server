@@ -22,13 +22,6 @@ class OperationTemplate
     protected $id;
 
     /**
-     * @var Place
-     *
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Place")
-     */
-    protected $place;
-
-    /**
      * @var string
      *
      * @ORM\Column(name="name", type="string")
@@ -171,6 +164,11 @@ class OperationTemplate
      * @return string
      */
     public function getName()
+    {
+        return $this->name;
+    }
+
+    public function __toString()
     {
         return $this->name;
     }
