@@ -45,17 +45,16 @@ class CleanerController extends ParametersController
     {
         $cleaner = new Cleaner();
         $form = $this->createForm(CleanerType::class, $cleaner);
+        $form->get('user')->setData($this->getDoctrine()->getRepository('AppBundle:User')->getUsersNotCleaners());
 
         $form->handleRequest($request);
 
         if ($form->isValid() && $form->isSubmitted()) {
+            var_dump($request->request);
+            die();
             $em = $this->get('doctrine.orm.entity_manager');
-
-            echo "<pre>";
-            var_dump($cleaner);
-            echo "</pre>";
             $em->persist($cleaner);
-            $em->flush();
+//            $em->flush();
 
             return $this->redirect($this->generateUrl('parameters_cleaners_page'));
         }
@@ -66,38 +65,6 @@ class CleanerController extends ParametersController
 
         return $this->render('parameters/cleaner/create.html.twig', array_merge($params, $this->getCommonParametersForParameters()));
     }
-
-//    /**
-//     * @Route("/cleaners/{id}/edit", name="parameters_edit_cleaner_page")
-//     *
-//     * @param Request $request
-//     * @param Cleaner $cleaner
-//     *
-//     * @return \Symfony\Component\HttpFoundation\Response
-//     * @throws \Doctrine\ORM\ORMException
-//     * @throws \Doctrine\ORM\OptimisticLockException
-//     */
-//    public function editAction(Request $request, Cleaner $cleaner)
-//    {
-//        $form = $this->createForm(CleanerType::class, $cleaner);
-//
-//        $form->handleRequest($request);
-//
-//        if ($form->isValid() && $form->isSubmitted()) {
-//            $em = $this->get('doctrine.orm.entity_manager');
-//
-//            $em->persist($cleaner);
-//            $em->flush();
-//
-//            return $this->redirect($this->generateUrl('parameters_cleaners_page'));
-//        }
-//
-//        $params = [
-//            'form' => $form->createView()
-//        ];
-//
-//        return $this->render('parameters/cleaner/edit.html.twig', array_merge($params, $this->getCommonParametersForParameters()));
-//    }
 
     /**
      * @Route("/cleaner/{id}/delete", name="parameters_delete_cleaner_page")

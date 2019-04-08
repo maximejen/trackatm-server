@@ -43,7 +43,7 @@ class Operation
     protected $cleaner;
 
     /**
-     * @var OperationTemplate[]
+     * @var OperationTemplate
      *
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\OperationTemplate")
      */

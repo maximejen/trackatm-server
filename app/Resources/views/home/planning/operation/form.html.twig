@@ -1,0 +1,40 @@
+<div class="form-element">
+    <div class="subtitle form-label">
+        {{ form_label(form.place) }}
+    </div>
+    <div class="container is-light">
+        <div class="select is-primary">
+            {{ form_widget(form.place, {'attr': {'class': 'js-modal-place-input',}}) }}
+        </div>
+    </div>
+</div>
+<div class="form-element">
+    <div class="subtitle form-label">
+        {{ form_label(form.cleaner) }}
+    </div>
+    <div class="container is-light">
+        <div class="select is-primary">
+            {{ form_widget(form.cleaner, {'attr': {'class': 'js-modal-cleaner-input',}}) }}
+        </div>
+    </div>
+</div>
+<div class="form-element">
+    <div class="subtitle form-label">
+        {{ form_label(form.day) }}
+    </div>
+    <div class="container is-light">
+        <div class="select is-primary">
+            {{ form_widget(form.day, {'attr': {'class': 'js-modal-day-input'}}) }}
+        </div>
+    </div>
+</div>
+<div class="form-element">
+    <div class="subtitle form-label">
+        {{ form_label(form.template) }}
+    </div>
+    <div class="container is-light">
+        <div class="select is-primary">
+            {{ form_widget(form.template, {'attr': {'class': 'js-modal-template-input'}}) }}
+        </div>
+    </div>
+</div>

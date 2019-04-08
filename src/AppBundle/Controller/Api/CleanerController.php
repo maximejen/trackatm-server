@@ -17,7 +17,7 @@ class CleanerController extends Controller
 {
     /**
      * @Rest\View(serializerGroups={"cleaner"})
-     * @Rest\Get("/cleaners")
+     * @Rest\Get("/api/cleaners")
      *
      * @param Request $request
      * @param SerializerInterface $serializer
@@ -35,7 +35,7 @@ class CleanerController extends Controller
 
     /**
      * @Rest\View(serializerGroups={"cleaner"})
-     * @Rest\Get("/cleaner/{id}")
+     * @Rest\Get("/api/cleaner/{id}")
      *
      * @param Request $request
      * @param Cleaner $cleaner
@@ -49,7 +49,7 @@ class CleanerController extends Controller
 
     /**
      * @Rest\View(serializerGroups={"cleaner"})
-     * @Rest\Get("/cleaner/{id}/days")
+     * @Rest\Get("/api/cleaner/{id}/days")
      *
      * @param Request $request
      * @param Cleaner $cleaner
@@ -64,7 +64,7 @@ class CleanerController extends Controller
 
     /**
      * @Rest\View(serializerGroups={"cleaner"})
-     * @Rest\Get("/cleaner/{id}/day/{day}")
+     * @Rest\Get("/api/cleaner/{id}/day/{day}")
      *
      * @param Request $request
      * @param Cleaner $cleaner
@@ -89,7 +89,7 @@ class CleanerController extends Controller
 
     /**
      * @Rest\View(serializerGroups={"cleaner"})
-     * @Rest\Get("/cleaner/{id}/today")
+     * @Rest\Get("/api/cleaner/{id}/today")
      *
      * @param Request $request
      * @param Cleaner $cleaner

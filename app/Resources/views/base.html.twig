@@ -7,23 +7,25 @@
         <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css">
     </head>
+    <header>
+        {% block header %}
+            {% include 'header/header.html.twig' %}
+        {% endblock %}
+    </header>
     <body>
-        <header>
-            {% block header %}
-                {% include 'header/header.html.twig' %}
-            {% endblock %}
-        </header>
         {% block body %}{% endblock %}
         {% block javascripts %}
             <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
             <script src="{{ asset('js/jquery.min.js') }}"></script>
             <script src="{{ asset('js/jquery.collection.js') }}"></script>
+            <script>
+                console.log('LOL');
+            </script>
         {% endblock %}
-
-        <footer class="footer" style="background-color: white;">
-            {% block footer %}
-                {% include 'footer/footer.html.twig' %}
-            {% endblock %}
-        </footer>
     </body>
+    <footer class="footer" style="background-color: white;">
+        {% block footer %}
+            {% include 'footer/footer.html.twig' %}
+        {% endblock %}
+    </footer>
 </html>

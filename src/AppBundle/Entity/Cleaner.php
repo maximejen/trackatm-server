@@ -81,43 +81,6 @@ class Cleaner
      */
     public function __construct()
     {
-        $this->planning = new \Doctrine\Common\Collections\ArrayCollection();
-    }
-
-    /**
-     * Add planning.
-     *
-     * @param \AppBundle\Entity\CleanerPlanningDay $planning
-     *
-     * @return Cleaner
-     */
-    public function addPlanning(\AppBundle\Entity\CleanerPlanningDay $planning)
-    {
-        $this->planning[] = $planning;
-
-        return $this;
-    }
-
-    /**
-     * Remove planning.
-     *
-     * @param \AppBundle\Entity\CleanerPlanningDay $planning
-     *
-     * @return boolean TRUE if this collection contained the specified element, FALSE otherwise.
-     */
-    public function removePlanning(\AppBundle\Entity\CleanerPlanningDay $planning)
-    {
-        return $this->planning->removeElement($planning);
-    }
-
-    /**
-     * Get planning.
-     *
-     * @return \Doctrine\Common\Collections\Collection
-     */
-    public function getPlanning()
-    {
-        return $this->planning;
     }
 
     /**

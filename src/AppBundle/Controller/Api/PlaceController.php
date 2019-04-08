@@ -16,7 +16,7 @@ class PlaceController extends Controller
 {
     /**
      * @Rest\View(serializerGroups={"place"})
-     * @Rest\Get("/places/")
+     * @Rest\Get("/api/places/")
      *
      * @param Request $request
      * @param SerializerInterface $serializer
@@ -33,7 +33,7 @@ class PlaceController extends Controller
 
     /**
      * @Rest\View(serializerGroups={"place"})
-     * @Rest\Get("/place/{id}")
+     * @Rest\Get("/api/place/{id}")
      *
      * @param Request $request
      * @param Place $place

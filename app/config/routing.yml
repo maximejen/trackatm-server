@@ -8,3 +8,15 @@ fos_user:
 api_users:
     type:     rest
     resource: AppBundle\Controller\Api\UserController
+
+api_operations:
+    type:     rest
+    resource: AppBundle\Controller\Api\OperationController
+
+api_cleaners:
+    type:     rest
+    resource: AppBundle\Controller\Api\CleanerController
+
+api_places:
+    type:     rest
+    resource: AppBundle\Controller\Api\PlaceController

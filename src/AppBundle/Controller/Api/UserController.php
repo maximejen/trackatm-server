@@ -16,7 +16,7 @@ class UserController extends Controller
 {
     /**
      * @Rest\View(serializerGroups={"user"})
-     * @Rest\Get("/users")
+     * @Rest\Get("/api/users")
      *
      * @param Request $request
      * @param SerializerInterface $serializer
@@ -34,7 +34,7 @@ class UserController extends Controller
 
     /**
      * @Rest\View(serializerGroups={"user"})
-     * @Rest\Get("/user/{id}")
+     * @Rest\Get("/api/user/{id}")
      *
      * @param Request $request
      * @param User $user

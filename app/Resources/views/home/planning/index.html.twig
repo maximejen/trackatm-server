@@ -1,0 +1,156 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div>
+        <section class="hero is-light">
+            <div class="hero-body">
+                <div class="container">
+                    <h1 class="title">
+                        Planning
+                    </h1>
+                    <h2 class="subtitle">
+                        cleaner plannings
+                    </h2>
+                </div>
+            </div>
+        </section>
+        {#<section class="is-light operationTemplate-toolbar">#}
+        {#<div class="columns">#}
+        {#<div class="column">#}
+        {#<a class="button is-primary">#}
+        {#<i class="fa fa-plus"></i>#}
+        {#</a>#}
+        {#</div>#}
+        {#<form class="column columns is-6" action="" method="get">#}
+        {#<div class="column is-6">#}
+        {#<p class="control has-icons-left">#}
+        {#<input class="input" operationTemplateholder="Search" name="search" value="{{ "SEARCH" }}">#}
+        {#<span class="icon is-small is-left">#}
+        {#<i class="fas fa-search"></i>#}
+        {#</span>#}
+        {#</p>#}
+        {#</div>#}
+        {#<div class="column is-3">#}
+        {#<button class="button is-primary" type="submit">Search</button>#}
+        {#</div>#}
+        {#</form>#}
+        {#<div class="column is-full">#}
+        {#</div>#}
+        {#</div>#}
+        {#</section>#}
+        <section class="container container-planning">
+            <div class="columns">
+                <div class="column is-4">
+                    <nav class="panel">
+                        <p class="panel-heading">
+                            Places
+                        </p>
+                        <div class="panel-block">
+                            <p class="control has-icons-left">
+                                <input class="input is-small" type="text" placeholder="search">
+                                <span class="icon is-small is-left">
+                                    <i class="fas fa-search" aria-hidden="true"></i>
+                                </span>
+                            </p>
+                        </div>
+                        <p class="panel-tabs" style="padding-bottom: 1em">
+                            <a class="is-active">all</a>
+                            {% for customer in customers %}
+                                <a>{{ customer.name }}</a>
+                            {% endfor %}
+                        </p>
+                        {% for place in places %}
+                            <a class="panel-block js-place-choice" data-id="{{ place.id }}" data-name="{{ place.name }}"
+                               data-customer-name="{{ place.customer.name }}">
+                                <span class="panel-icon"><i class="fas fa-map-marker" aria-hidden="true"></i></span>
+                                {{ place }}
+                            </a>
+                        {% endfor %}
+                        <div class="panel-block">
+                            <button class="button is-link is-outlined is-fullwidth">
+                                reset all filters
+                            </button>
+                        </div>
+                    </nav>
+                </div>
+                <div class="cleaner-planning column is-9">
+                    <div class="select is-primary is-rounded is-medium">
+                        <select id="js-cleaner-choice">
+                            <option value="">Select a cleaner</option>
+                            {% for cleaner in cleaners %}
+                                <option id="{{ 'js-cleaner' ~ cleaner.id }}"
+                                        value="{{ cleaner.id }}">{{ "Cleaner #" ~cleaner.id }}</option>s
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <table class="table is-fullwidth is-hoverable">
+                        <thead>
+                        <tr class="is-primary is-selected">
+                            <th>Monday</th>
+                            <th>Tuesday</th>
+                            <th>Wednesday</th>
+                            <th>Thursday</th>
+                            <th>Friday</th>
+                            <th>Saturday</th>
+                            <th>Sunday</th>
+                        </tr>
+                        </thead>
+                        <tbody class="js-cleaner-planning-table-body">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+        <div class="modal">
+            <div class="js-modal-close modal-background"></div>
+            <div class="modal-card">
+                {{ form_start(form, {
+                    'attr': {
+                        'id': 'js-operation-form'
+                    }
+                }) }}
+                <header class="modal-card-head">
+                    <p class="modal-card-title">Add a new Operation to a cleaner</p>
+                    <button class="delete js-modal-close" aria-label="close"></button>
+                </header>
+                <section class="modal-card-body js-modal-card-body">
+                    {% include(':home/planning/operation:form.html.twig') %}
+                </section>
+                <footer class="modal-card-foot">
+                    <button class="button is-success js-modal-add-operation">Add operation</button>
+                    <button class="button js-modal-close">Cancel</button>
+                </footer>
+                {{ form_end(form) }}
+            </div>
+            <button class="modal-close js-modal-close is-large" type="submit" aria-label="close"></button>
+        </div>
+    </div>
+{% endblock %}
+
+{% block stylesheets %}
+    <style>
+        .cleaner-planning {
+            background: #EEEEEE;
+            -webkit-border-radius: 1em;
+            -moz-border-radius: 1em;
+            border-radius: 1em;
+        }
+
+        .select {
+            margin-bottom: 0.5em;
+        }
+
+        .container-planning {
+            padding-top: 2em
+        }
+
+        .modal-element {
+            margin-top: 0.5em
+        }
+    </style>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('js/planning/index.js') }}"></script>
+{% endblock %}

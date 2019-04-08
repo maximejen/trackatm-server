@@ -13,27 +13,21 @@ class HomeController extends Controller
      */
     public function indexAction(Request $request)
     {
-        // replace this example code with whatever you need
-        $isConnected = !$this->getUser() == NULL;
-        return $this->render('home/index.html.twig', [
-            'menuElements' => $this->getMenuParameters(),
-            'menuMode' => "home",
-            "isConnected" => $isConnected
-        ]);
+        return $this->redirect($this->generateUrl('planningpage'));
     }
 
-    private function getMenuParameters()
+    protected function getMenuParameters()
     {
         return
             [
                 0 => [
-                    "text" => "Operations",
-                    "path" => "homepage"
+                    "text" => "Planning",
+                    "path" => "planningpage"
                 ],
                 1 => [
-                    "text" => "Test",
-                    "path" => "homepage"
-                ]
+                    "text" => "Operation History",
+                    "path" => "operationhistorypage"
+                ],
             ];
     }
 }

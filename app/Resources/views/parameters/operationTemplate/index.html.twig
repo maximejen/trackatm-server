@@ -43,7 +43,7 @@
                 <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Place</th>
+                    <th>Name</th>
                     <th>Comment</th>
                     <th>Actions</th>
                 </tr>
@@ -51,8 +51,8 @@
                 {% for operationTemplate in operationTemplates %}
                     <tbody>
                     <tr>
-                        <th>{{ operationTemplate.id }}</th>
-                        <td>{{ operationTemplate.place }}</td>
+                        <td>{{ operationTemplate.id }}</td>
+                        <td>{{ operationTemplate.name }}</td>
                         <td>{{ operationTemplate.comment }}</td>
                         <td>
                             <a class="button is-link is-warning" href="

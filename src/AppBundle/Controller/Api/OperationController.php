@@ -5,10 +5,9 @@ use AppBundle\Entity\Operation;
 use AppBundle\Form\OperationType;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Serializer\SerializerInterface;
 
 /**
@@ -19,7 +18,7 @@ class OperationController extends Controller
 {
     /**
      * @Rest\View(serializerGroups={"operation"})
-     * @Rest\Get("/operations/")
+     * @Rest\Get("/api/operations/")
      *
      * @param Request $request
      * @param SerializerInterface $serializer
@@ -36,7 +35,7 @@ class OperationController extends Controller
 
     /**
      * @Rest\View(serializerGroups={"operation"})
-     * @Rest\Get("/operation/{id}")
+     * @Rest\Get("/api/operation/{id}")
      *
      * @param Request $request
      * @param Operation $operation
@@ -50,37 +49,40 @@ class OperationController extends Controller
 
     /**
      * @Rest\View(statusCode=Response::HTTP_CREATED)
-     * @Rest\Post("/operations")
+     * @Rest\Post("/api/operations")
      *
      * @param Request $request
      *
-     * @return Operation|\Symfony\Component\Form\FormInterface
+     * @param SerializerInterface $serializer
+     * @return Response
      *
      * @throws \Doctrine\ORM\ORMException
      * @throws \Doctrine\ORM\OptimisticLockException
      */
-    public function postOperationsAction(Request $request)
+    public function postOperationsAction(Request $request, SerializerInterface $serializer)
     {
         $operation = new Operation();
         $form = $this->createForm(OperationType::class, $operation);
 
-        $form->submit($request->request->all());
+        $form->handleRequest($request);
 
-        if ($form->isValid()) {
+        if ($form->isSubmitted() &&$form->isValid()) {
             $em = $this->get('doctrine.orm.entity_manager');
 
             $em->persist($operation);
             $em->flush();
 
-            return $operation;
+            return new Response($serializer->serialize($operation, 'json', ['groups' => ['operation']]));
         } else {
-            return $form;
+            return new JsonResponse([
+                'message' => 'could not create the operation',
+            ]);
         }
     }
 
     /**
      * @Rest\View(statusCode=Response::HTTP_NO_CONTENT)
-     * @Rest\Delete("/operations/{id}")
+     * @Rest\Delete("/api/operations/{id}")
      *
      * @param Request $request
      *

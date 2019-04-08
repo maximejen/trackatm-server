@@ -3,6 +3,7 @@
 namespace AppBundle\Controller\Parameters;
 
 use AppBundle\Controller\ParametersController;
+use AppBundle\Entity\OperationTaskTemplate;
 use AppBundle\Entity\OperationTemplate;
 use AppBundle\Form\OperationTemplateType;
 use Symfony\Component\HttpFoundation\Request;
@@ -55,8 +56,11 @@ class OperationTemplateController extends ParametersController
         $form->handleRequest($request);
 
         if ($form->isValid() && $form->isSubmitted()) {
+            /** @var OperationTaskTemplate $elem */
+            foreach ($operationTemplate->getTasks() as $elem) {
+                $elem->setOperation($operationTemplate);
+            }
             $em = $this->get('doctrine.orm.entity_manager');
-
             $em->persist($operationTemplate);
             $em->flush();
 

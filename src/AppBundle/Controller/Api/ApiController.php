@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Serializer\SerializerInterface;
 
 /**
- * Class CleanerController
+ * Class ApiController
  * @package AppBundle\Controller\Api
  */
 class ApiController extends Controller

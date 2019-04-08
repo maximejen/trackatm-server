@@ -1,21 +1,19 @@
 AppBundle\Entity\Place:
   attributes:
     id:
-      groups: ['place', 'operation', 'day']
+      groups: ['place', 'operation', 'day', 'cleaner']
     name:
-      groups: ['place', 'operation', 'day']
+      groups: ['place', 'operation', 'day', 'cleaner']
     address:
-      groups: ['place', 'operation', 'day']
+      groups: ['place', 'operation', 'day', 'cleaner']
     operations:
       groups: ['place', 'day']
     description:
-      groups: ['place', 'operation', 'day']
+      groups: ['place', 'operation', 'day', 'cleaner']
     geoCoords:
-      groups: ['place', 'operation', 'day']
+      groups: ['place', 'operation', 'day', 'cleaner']
     customer:
-      groups: ['place', 'operation', 'day']
-    operationsHistory:
-      groups: ['place', 'operation', 'day']
+      groups: ['place', 'operation', 'day', 'cleaner']
 
 AppBundle\Entity\GeoCoords:
   attributes:
@@ -26,44 +24,42 @@ AppBundle\Entity\GeoCoords:
     lon:
       groups: ['geocoords', 'place', 'operation', 'day']
 
-AppBundle\Entity\CleanerPlanningDay:
-  attributes:
-    id:
-      groups: ['day', 'place', 'operation']
-    day:
-      groups: ['day', 'place', 'operation']
-    operations:
-      groups: ['day', 'place']
-    cleaner:
-      groups: ['day', 'place', 'operation']
-
 AppBundle\Entity\Cleaner:
   attributes:
     id:
       groups: ['cleaner', 'place', 'operation', 'day']
     history:
       groups: ['cleaner', 'place', 'operation', 'day']
-    planning:
-      groups: ['cleaner', 'place', 'operation']
+    operations:
+      groups: ['cleaner', 'place']
     user:
       groups: ['cleaner', 'place', 'operation', 'day']
 
 AppBundle\Entity\Operation:
   attributes:
     id:
-      groups: ['operation', 'place', 'day']
-    comment:
-      groups: ['operation', 'place', 'day']
+      groups: ['operation', 'place', 'cleaner']
     place:
-      groups: ['operation', 'day']
-    days:
-      groups: ['operation', 'place', 'day']
-    tasks:
-      groups: ['operation', 'place', 'day']
+      groups: ['operation', 'cleaner']
+    day:
+      groups: ['operation', 'place', 'cleaner']
+    cleaner:
+      groups: ['operation', 'place']
+    template:
+      groups: ['operation', 'place', 'cleaner']
 
 AppBundle\Entity\User:
   attributes:
     id:
-      groups: ['user', 'place', 'operation', 'day', 'cleaner']
+      groups: ['user', 'place', 'operation', 'cleaner']
     email:
-      groups: ['user', 'place', 'operation', 'day', 'cleaner']
+      groups: ['user', 'place', 'operation', 'cleaner']
+
+AppBundle\Entity\Customer:
+  attributes:
+    id:
+      groups: ['cleaner', 'customer', 'user', 'operation', 'place']
+    name:
+      groups: ['cleaner', 'customer', 'user', 'operation', 'place']
+    email:
+      groups: ['cleaner', 'customer', 'user', 'operation', 'place']
