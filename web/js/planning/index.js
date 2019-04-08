@@ -83,9 +83,9 @@ function getCleaner(url, id, token) {
                 planning += "<tr>";
                 Object.values(ops).map((elem) => {
                     planning +=
-                        elem[i] ? "<th data-id=" + elem[i].id + ">" +
+                        elem[i] ? "<th data-id=" + elem[i].id + "><a href='#' data-hover='Delete'>" +
                         elem[i].place.customer.name + " - " + elem[i].place.name +
-                        "</th>" : '<th></th>';
+                        "</a></th>" : '<th></th>';
                 });
                 planning += "</tr>";
             }

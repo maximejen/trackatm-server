@@ -123,6 +123,10 @@ class ApiController extends Controller
             'success' => true)));
     }
 
+    /**
+     * @param Request $request
+     * @return \AppBundle\Entity\User[]|array|bool|object[]
+     */
     protected function checkUserIsConnected(Request $request)
     {
         $token = $request->headers->get('token');

@@ -14,30 +14,6 @@
                 </div>
             </div>
         </section>
-        {#<section class="is-light operationTemplate-toolbar">#}
-        {#<div class="columns">#}
-        {#<div class="column">#}
-        {#<a class="button is-primary">#}
-        {#<i class="fa fa-plus"></i>#}
-        {#</a>#}
-        {#</div>#}
-        {#<form class="column columns is-6" action="" method="get">#}
-        {#<div class="column is-6">#}
-        {#<p class="control has-icons-left">#}
-        {#<input class="input" operationTemplateholder="Search" name="search" value="{{ "SEARCH" }}">#}
-        {#<span class="icon is-small is-left">#}
-        {#<i class="fas fa-search"></i>#}
-        {#</span>#}
-        {#</p>#}
-        {#</div>#}
-        {#<div class="column is-3">#}
-        {#<button class="button is-primary" type="submit">Search</button>#}
-        {#</div>#}
-        {#</form>#}
-        {#<div class="column is-full">#}
-        {#</div>#}
-        {#</div>#}
-        {#</section>#}
         <section class="container container-planning">
             <div class="columns">
                 <div class="column is-4">
@@ -95,7 +71,7 @@
                             <th>Sunday</th>
                         </tr>
                         </thead>
-                        <tbody class="js-cleaner-planning-table-body">
+                        <tbody class="js-cleaner-planning-table-body snip1226">
                         </tbody>
                     </table>
                 </div>
@@ -113,7 +89,7 @@
                 }) }}
                 <header class="modal-card-head">
                     <p class="modal-card-title">Add a new Operation to a cleaner</p>
-                    <button class="delete js-modal-close" aria-label="close"></button>
+                    <span class="delete js-modal-close" aria-label="close"></span>
                 </header>
                 <section class="modal-card-body js-modal-card-body">
                     {% include(':home/planning/operation:form.html.twig') %}
@@ -146,8 +122,46 @@
             padding-top: 2em
         }
 
-        .modal-element {
-            margin-top: 0.5em
+        .snip1226 {
+            text-align: center;
+        }
+        .snip1226 * {
+            box-sizing: border-box;
+            -webkit-transition: all 0.35s ease;
+            transition: all 0.35s ease;
+        }
+        .snip1226 th {
+            list-style: outside none none;
+            margin: 0 1.5em;
+            overflow: hidden;
+        }
+        .snip1226 a {
+            padding: 0.3em 0;
+            color: rgba(0, 0, 0, 0.8);
+            position: relative;
+            display: inline-block;
+            letter-spacing: 1px;
+            margin: 0;
+            text-decoration: none;
+        }
+        .snip1226 a:before,
+        .snip1226 a:after {
+            position: absolute;
+            -webkit-transition: all 0.35s ease;
+            transition: all 0.35s ease;
+        }
+        .snip1226 a:after {
+            padding: 0.3em 0;
+            position: absolute;
+            bottom: 100%;
+            left: 0;
+            content: attr(data-hover);
+            color: red;
+            white-space: nowrap;
+        }
+        .snip1226 th:hover a,
+        .snip1226 .current a {
+            transform: translateY(100%);
         }
     </style>
 {% endblock %}
