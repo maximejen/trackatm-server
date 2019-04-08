@@ -50,6 +50,21 @@ $(document).ready(async () => {
             },
             error: (error) => console.log(error)
         });
+    });
+
+    $('.table').on( 'click', '.js-planning-element', (e) => {
+        const id = $(e.target).attr('data-id');
+        $.ajax({
+            type: "DELETE",
+            url: "/api/operations/" + id,
+            headers: {
+                'token': userToken
+            },
+            success: () => {
+                document.location.reload(true);
+            },
+            error: (error) => console.log(error)
+        });
     })
 });
 
@@ -83,9 +98,9 @@ function getCleaner(url, id, token) {
                 planning += "<tr>";
                 Object.values(ops).map((elem) => {
                     planning +=
-                        elem[i] ? "<th data-id=" + elem[i].id + "><a href='#' data-hover='Delete'>" +
+                        elem[i] ? "<td class='js-planning-element-parent'><a data-hover='Delete' class='js-planning-element' data-id=" + elem[i].id + ">" +
                         elem[i].place.customer.name + " - " + elem[i].place.name +
-                        "</a></th>" : '<th></th>';
+                        "</a></td>" : '<td></td>';
                 });
                 planning += "</tr>";
             }
