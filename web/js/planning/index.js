@@ -3,18 +3,19 @@ const url = "http://127.0.0.1:8000"; // TODO : get the url of the server from dy
 
 const cleanerSelected = localStorage.getItem('cleanerId');
 if (cleanerSelected !== undefined) {
-    getCleaner(url, cleanerSelected);
+    getCleaner(url, cleanerSelected, $('#js-operation-form').attr('data-api-token'));
     $('#js-cleaner-choice').find('#js-cleaner' + cleanerSelected).attr('selected', true);
 }
 
 $(document).ready(async () => {
-
+    const form = $('#js-operation-form');
+    const userToken = form.attr('data-api-token');
     document.getElementById("js-cleaner-choice").addEventListener("change", async (e) => {
         const id = e.target.value;
         if (id === undefined || id === '')
             return;
 
-        getCleaner(url, id);
+        getCleaner(url, id, userToken);
     });
 
 
@@ -33,19 +34,18 @@ $(document).ready(async () => {
         $('.modal').removeClass('is-active');
     })
 
-    $('#js-operation-form').submit(async (e) => {
+    form.submit(async (e) => {
         e.preventDefault();
 
-        // let form = document.getElementById("js-operation-form");
-        // let data = new FormData(form);
-
-        const url = "http://127.0.0.1:8000" + "/api/operations";
+        console.log(cleaner.user);
         $.ajax({
             type: "POST",
             url: "",
-            data: $('#js-operation-form').serialize(),
-            success: (response) => {
-                console.log(response);
+            headers: {
+                'token': userToken
+            },
+            data: form.serialize(),
+            success: () => {
                 document.location.reload(true);
             },
             error: (error) => console.log(error)
@@ -53,9 +53,12 @@ $(document).ready(async () => {
     })
 });
 
-function getCleaner(url, id) {
+function getCleaner(url, id, token) {
     fetch(url + "/api/cleaner/" + id, {
-        method: 'get'
+        method: 'get',
+        headers: {
+            'token': token
+        }
     })
         .then((response) => {
             return response.json()
@@ -88,10 +91,5 @@ function getCleaner(url, id) {
             }
 
             $('.js-cleaner-planning-table-body').html(planning);
-            // TODO : get the table of operations and generate the HTML for all the lines.
         })
 }
-
-// TODO : filters the places with the selected customer
-
-// TODO : filter the places with the name

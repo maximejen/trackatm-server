@@ -4,7 +4,6 @@ namespace AppBundle\Controller\Api;
 use AppBundle\Entity\Operation;
 use AppBundle\Form\OperationType;
 use FOS\RestBundle\Controller\Annotations as Rest;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -14,7 +13,7 @@ use Symfony\Component\Serializer\SerializerInterface;
  * Class OperationController
  * @package AppBundle\Controller\Api
  */
-class OperationController extends Controller
+class OperationController extends ApiController
 {
     /**
      * @Rest\View(serializerGroups={"operation"})
@@ -26,6 +25,8 @@ class OperationController extends Controller
      */
     public function getOperationsAction(Request $request, SerializerInterface $serializer)
     {
+        if (!$this->checkUserIsConnected($request))
+            return new JsonResponse(['message' => "you need to be connected"], 403);
         $operations = $this->get('doctrine.orm.entity_manager')
             ->getRepository('AppBundle:Operation')
             ->findAll();
@@ -44,6 +45,8 @@ class OperationController extends Controller
      */
     public function getOperationAction(Request $request, Operation $operation, SerializerInterface $serializer)
     {
+        if (!$this->checkUserIsConnected($request))
+            return new JsonResponse(['message' => "you need to be connected"], 403);
         return new Response($serializer->serialize($operation, 'json', ['groups' => ['operation']]));
     }
 
@@ -60,6 +63,8 @@ class OperationController extends Controller
      */
     public function postOperationsAction(Request $request, SerializerInterface $serializer)
     {
+        if (!$this->checkUserIsConnected($request))
+            return new JsonResponse(['message' => "you need to be connected"], 403);
         $operation = new Operation();
         $form = $this->createForm(OperationType::class, $operation);
 
@@ -92,11 +97,15 @@ class OperationController extends Controller
      *
      * @param Request $request
      *
+     * @param SerializerInterface $serializer
+     * @return JsonResponse
      * @throws \Doctrine\ORM\ORMException
      * @throws \Doctrine\ORM\OptimisticLockException
      */
-    public function removeOperationAction(Request $request)
+    public function removeOperationAction(Request $request, SerializerInterface $serializer)
     {
+        if (!$this->checkUserIsConnected($request))
+            return new JsonResponse(['message' => "you need to be connected"], 403);
         $em = $this->get('doctrine.orm.entity_manager');
         /* @var $operation Operation */
         $operation = $em
@@ -105,24 +114,6 @@ class OperationController extends Controller
 
         $em->remove($operation);
         $em->flush();
-    }
-
-    /**
-     * @Rest\View(statusCode=Response::HTTP_NO_CONTENT)
-     * @Rest\Delete("/api/operations")
-     *
-     * @throws \Doctrine\ORM\ORMException
-     * @throws \Doctrine\ORM\OptimisticLockException
-     */
-    public function removeOperationsAction()
-    {
-        $em = $this->get('doctrine.orm.entity_manager');
-        $operations = $em->getRepository('AppBundle:Operation')->findAll();
-
-        foreach ($operations as $operation) {
-            $em->remove($operation);
-        }
-        $em->flush();
-        return new JsonResponse(['message' => "done"]);
+        return new JsonResponse($serializer->serialize($operation, 'json', ['groups' => ['operation']]));
     }
 }

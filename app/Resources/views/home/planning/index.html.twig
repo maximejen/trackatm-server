@@ -107,7 +107,8 @@
                 {{ form_start(form, {
                     'attr': {
                         'id': 'js-operation-form',
-                        'action': "/api/operations"
+                        'action': "/api/operations",
+                        'data-api-token': userToken
                     }
                 }) }}
                 <header class="modal-card-head">
@@ -119,7 +120,7 @@
                 </section>
                 <footer class="modal-card-foot">
                     <button class="button is-success js-modal-add-operation">Add operation</button>
-                    <button class="button js-modal-close">Cancel</button>
+                    <span class="button js-modal-close">Cancel</span>
                 </footer>
                 {{ form_end(form) }}
             </div>

@@ -123,4 +123,15 @@ class ApiController extends Controller
             'success' => true)));
     }
 
+    protected function checkUserIsConnected(Request $request)
+    {
+        $token = $request->headers->get('token');
+        if (!$token || $token == null)
+            return false;
+        $em = $this->getDoctrine()->getManager();
+        $user = $em->getRepository("AppBundle:User")->findBy(['token' => $token]);
+        if (!$user || $user == null)
+            return false;
+        return $user;
+    }
 }

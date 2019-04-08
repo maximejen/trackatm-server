@@ -64,6 +64,7 @@ class PlanningController extends HomeController {
             "places" => $places,
             "customers" => $customers,
             "form" => $form->createView(),
+            "userToken" => $this->getUser()->getToken()
         ]);
     }
 }

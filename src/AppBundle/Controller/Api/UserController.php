@@ -3,6 +3,7 @@ namespace AppBundle\Controller\Api;
 
 use FOS\RestBundle\Controller\Annotations as Rest;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use AppBundle\Entity\User;
 use Symfony\Component\HttpFoundation\Response;
@@ -12,7 +13,7 @@ use Symfony\Component\Serializer\SerializerInterface;
  * Class UserController
  * @package AppBundle\Controller\Api
  */
-class UserController extends Controller
+class UserController extends ApiController
 {
     /**
      * @Rest\View(serializerGroups={"user"})
@@ -20,11 +21,12 @@ class UserController extends Controller
      *
      * @param Request $request
      * @param SerializerInterface $serializer
-     * @return Response
+     * @return JsonResponse|Response
      */
     public function getUsersAction(Request $request, SerializerInterface $serializer)
     {
-        // check connection
+        if (!$this->checkUserIsConnected($request))
+            return new JsonResponse(['message' => "you need to be connected"], 403);
         $users = $this->get('doctrine.orm.entity_manager')
             ->getRepository('AppBundle:User')
             ->findAll();
@@ -43,6 +45,8 @@ class UserController extends Controller
      */
     public function getUserAction(Request $request, User $user, SerializerInterface $serializer)
     {
+        if (!$this->checkUserIsConnected($request))
+            return new JsonResponse(['message' => "you need to be connected"], 403);
         return new Response($serializer->serialize($user, 'json', ['groups' => ['user']]));
     }
 }

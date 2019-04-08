@@ -5,6 +5,7 @@ use AppBundle\Entity\Cleaner;
 use AppBundle\Entity\CleanerPlanningDay;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -13,7 +14,7 @@ use Symfony\Component\Serializer\SerializerInterface;
  * Class CleanerController
  * @package AppBundle\Controller\Api
  */
-class CleanerController extends Controller
+class CleanerController extends ApiController
 {
     /**
      * @Rest\View(serializerGroups={"cleaner"})
@@ -22,10 +23,12 @@ class CleanerController extends Controller
      * @param Request $request
      * @param SerializerInterface $serializer
      *
-     * @return Response
+     * @return JsonResponse|Response
      */
     public function getCleanersAction(Request $request, SerializerInterface $serializer)
     {
+        if (!$this->checkUserIsConnected($request))
+            return new JsonResponse(['message' => "you need to be connected"], 403);
         $cleaners = $this->get('doctrine.orm.entity_manager')
             ->getRepository('AppBundle:Cleaner')
             ->findAll();
@@ -40,10 +43,12 @@ class CleanerController extends Controller
      * @param Request $request
      * @param Cleaner $cleaner
      * @param SerializerInterface $serializer
-     * @return Response
+     * @return JsonResponse|Response
      */
     public function getCleanerAction(Request $request, Cleaner $cleaner, SerializerInterface $serializer)
     {
+        if (!$this->checkUserIsConnected($request))
+            return new JsonResponse(['message' => "you need to be connected"], 403);
         return new Response($serializer->serialize($cleaner, 'json', ['groups' => ['cleaner']]));
     }
 
@@ -55,10 +60,12 @@ class CleanerController extends Controller
      * @param Cleaner $cleaner
      * @param SerializerInterface $serializer
      *
-     * @return Response
+     * @return JsonResponse|Response
      */
     public function getCleanerPlanningDaysAction(Request $request, Cleaner $cleaner, SerializerInterface $serializer)
     {
+        if (!$this->checkUserIsConnected($request))
+            return new JsonResponse(['message' => "you need to be connected"], 403);
         return new Response($serializer->serialize($cleaner->getPlanning(), 'json', ['groups' => ['day']]));
     }
 
@@ -74,6 +81,8 @@ class CleanerController extends Controller
      */
     public function getCleanerPlanningDayAction(Request $request, Cleaner $cleaner, SerializerInterface $serializer)
     {
+        if (!$this->checkUserIsConnected($request))
+            return new JsonResponse(['message' => "you need to be connected"], 403);
         $reqDay = $request->request->get('day');
         $planning = $cleaner->getPlanning();
         $requestedDay = null;
@@ -100,6 +109,8 @@ class CleanerController extends Controller
      */
     public function getCleanerPlanningTodayAction(Request $request, Cleaner $cleaner, SerializerInterface $serializer)
     {
+        if (!$this->checkUserIsConnected($request))
+            return new JsonResponse(['message' => "you need to be connected"], 403);
         $date = new \DateTime();
         $planning = $cleaner->getPlanning();
         $requestedDay = null;

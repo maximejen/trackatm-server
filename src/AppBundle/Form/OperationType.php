@@ -54,6 +54,4 @@ class OperationType extends AbstractType
     {
         return 'appbundle_operation';
     }
-
-
 }
