@@ -57,7 +57,6 @@ class OperationController extends Controller
      * @return Response
      *
      * @throws \Doctrine\ORM\ORMException
-     * @throws \Doctrine\ORM\OptimisticLockException
      */
     public function postOperationsAction(Request $request, SerializerInterface $serializer)
     {
@@ -65,8 +64,7 @@ class OperationController extends Controller
         $form = $this->createForm(OperationType::class, $operation);
 
         $form->handleRequest($request);
-
-        if ($form->isSubmitted() &&$form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->get('doctrine.orm.entity_manager');
 
             $em->persist($operation);
@@ -75,8 +73,16 @@ class OperationController extends Controller
             return new Response($serializer->serialize($operation, 'json', ['groups' => ['operation']]));
         } else {
             return new JsonResponse([
-                'message' => 'could not create the operation',
-            ]);
+                'message' => 'too bad',
+                'submitted' => $form->isSubmitted(),
+                'valid' => $form->isValid(),
+                'errors' => $form->getErrors(),
+                'day' => $form->getData()->getDay(),
+                'place' => $form->getData()->getPlace(),
+                'template' => $form->getData()->getTemplate(),
+                'cleaner' => $form->getData()->getCleaner(),
+                'request' => $request->request,
+            ], 400);
         }
     }
 
@@ -99,5 +105,24 @@ class OperationController extends Controller
 
         $em->remove($operation);
         $em->flush();
+    }
+
+    /**
+     * @Rest\View(statusCode=Response::HTTP_NO_CONTENT)
+     * @Rest\Delete("/api/operations")
+     *
+     * @throws \Doctrine\ORM\ORMException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     */
+    public function removeOperationsAction()
+    {
+        $em = $this->get('doctrine.orm.entity_manager');
+        $operations = $em->getRepository('AppBundle:Operation')->findAll();
+
+        foreach ($operations as $operation) {
+            $em->remove($operation);
+        }
+        $em->flush();
+        return new JsonResponse(['message' => "done"]);
     }
 }

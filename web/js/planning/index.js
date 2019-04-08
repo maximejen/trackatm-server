@@ -42,11 +42,13 @@ $(document).ready(async () => {
         const url = "http://127.0.0.1:8000" + "/api/operations";
         $.ajax({
             type: "POST",
-            url: url,
+            url: "",
             data: $('#js-operation-form').serialize(),
             success: (response) => {
+                console.log(response);
                 document.location.reload(true);
             },
+            error: (error) => console.log(error)
         });
     })
 });
@@ -85,9 +87,7 @@ function getCleaner(url, id) {
                 planning += "</tr>";
             }
 
-            console.log(planning);
             $('.js-cleaner-planning-table-body').html(planning);
-            console.log(ops)
             // TODO : get the table of operations and generate the HTML for all the lines.
         })
 }

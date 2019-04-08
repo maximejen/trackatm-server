@@ -23,17 +23,17 @@ AppBundle\Entity\GeoCoords:
       groups: ['geocoords', 'place', 'operation', 'cleaner']
     lon:
       groups: ['geocoords', 'place', 'operation', 'cleaner']
-      
+#
 AppBundle\Entity\OperationTemplate:
   attributes:
     id:
-      groups: ['geocoords', 'place', 'operation', 'cleaner']
+      groups: ['place', 'operation', 'cleaner']
     comment:
-      groups: ['geocoords', 'place', 'operation', 'cleaner']
+      groups: ['place', 'operation', 'cleaner']
     name:
-      groups: ['geocoords', 'place', 'operation', 'cleaner']
+      groups: ['place', 'operation', 'cleaner']
     tasks:
-      groups: ['geocoords', 'place', 'operation', 'cleaner']
+      groups: ['place', 'operation', 'cleaner']
 
 AppBundle\Entity\OperationTaskTemplate:
   attributes:
@@ -45,8 +45,6 @@ AppBundle\Entity\OperationTaskTemplate:
       groups: ['geocoords', 'place', 'operation', 'cleaner']
     imagesForced:
       groups: ['geocoords', 'place', 'operation', 'cleaner']
-    place:
-      groups: ['geocoords', 'operation', 'cleaner']
 
 AppBundle\Entity\Cleaner:
   attributes:

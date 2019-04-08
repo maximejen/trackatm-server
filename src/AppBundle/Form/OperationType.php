@@ -34,6 +34,7 @@ class OperationType extends AbstractType
                 "required" => true
             ])
             ->add('template', null, [
+                "required" => true
             ])
         ;
     }/**
