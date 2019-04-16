@@ -51,10 +51,10 @@ class CleanerController extends ParametersController
 
         if ($form->isValid() && $form->isSubmitted()) {
             var_dump($request->request);
-            die();
+            //die();
             $em = $this->get('doctrine.orm.entity_manager');
             $em->persist($cleaner);
-//            $em->flush();
+            $em->flush();
 
             return $this->redirect($this->generateUrl('parameters_cleaners_page'));
         }

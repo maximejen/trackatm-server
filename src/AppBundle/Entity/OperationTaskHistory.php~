@@ -193,28 +193,4 @@ class OperationTaskHistory
     {
         return $this->operation;
     }
-
-    /**
-     * Set textInput.
-     *
-     * @param string $textInput
-     *
-     * @return OperationTaskHistory
-     */
-    public function setTextInput($textInput)
-    {
-        $this->textInput = $textInput;
-
-        return $this;
-    }
-
-    /**
-     * Get textInput.
-     *
-     * @return string
-     */
-    public function getTextInput()
-    {
-        return $this->textInput;
-    }
 }

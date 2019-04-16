@@ -70,7 +70,7 @@ class OperationHistory
     /**
      * @var OperationTaskHistory[]
      *
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\OperationTaskHistory", mappedBy="operation")
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\OperationTaskHistory", cascade={"persist", "remove"}, mappedBy="operation")
      */
     protected $tasks;
 
@@ -204,7 +204,9 @@ class OperationHistory
      */
     public function addTask(\AppBundle\Entity\OperationTaskHistory $task)
     {
-        $this->tasks[] = $task;
+        //$this->tasks[] = $task;
+        $this->tasks->add($task);
+        $task->setOperation($this);
 
         return $this;
     }

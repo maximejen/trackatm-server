@@ -4,6 +4,7 @@ namespace AppBundle\Controller\Api;
 use AppBundle\AppBundle;
 use AppBundle\Entity\Cleaner;
 use AppBundle\Entity\CleanerPlanningDay;
+use AppBundle\Entity\User;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -39,7 +40,8 @@ class ApiController extends Controller
             return $response;
         }
         return new Response(json_encode(array(
-            'success' => true)));
+            'success' => true,
+            'user' => $this->getCleanerId($user))));
     }
 
     /**
@@ -121,6 +123,23 @@ class ApiController extends Controller
         $entityManager->flush();
         return new Response(json_encode(array(
             'success' => true)));
+    }
+
+
+    /**
+     * @param User $user
+     * @return int
+     */
+    protected function getCleanerId(User $user)
+    {
+        $entityManager =  $this->get('doctrine.orm.entity_manager');
+        $cleaner = $entityManager
+            ->getRepository('AppBundle:Cleaner')
+            ->findOneByUser($user->getId());
+            //->findBy(["user" => $user->getId()]);
+        if (!$cleaner)
+            return (-1);
+        return $cleaner->getId();
     }
 
     /**

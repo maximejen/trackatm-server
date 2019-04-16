@@ -111,3 +111,15 @@ nelmio_cors:
             allow_methods: ['POST', 'PUT', 'GET', 'DELETE']
             max_age: 0
             hosts: ['^api\.']
+
+vich_uploader:
+    db_driver: orm
+
+    mappings:
+        product_image:
+            uri_prefix: /images
+            upload_destination: '%kernel.project_dir%/public/images'
+
+            inject_on_load: false
+            delete_on_update: true
+            delete_on_remove: true
