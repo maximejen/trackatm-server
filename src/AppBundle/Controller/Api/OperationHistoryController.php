@@ -136,7 +136,7 @@ class OperationHistoryController extends ApiController
         $entityManager =  $this->get('doctrine.orm.entity_manager');
         $image = new Image();
         $image->setImageFile($request->files->get("image"));
-        $image->setOperationTaskHistory($operationTaskHistory);
+        $image->setTask($operationTaskHistory);
         $operationTaskHistory->addImage($image);
         $entityManager->persist($operationTaskHistory);
         $entityManager->flush();

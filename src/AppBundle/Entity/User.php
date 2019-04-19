@@ -33,7 +33,7 @@ class User extends BaseUser
     /**
      * @var boolean
      *
-     * @ORM\Column(name="admin", type="boolean")
+     * @ORM\Column(name="admin", type="boolean", nullable=true)
      */
     protected $admin;
 
