@@ -54,7 +54,7 @@ class Image
     /**
      * @var OperationTaskHistory
      *
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\OperationTaskHistory", inversedBy="image")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\OperationTaskHistory", inversedBy="images")
      */
     protected $task;
 

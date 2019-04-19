@@ -117,10 +117,10 @@ class OperationHistoryController extends HomeController
 
 
         $numberDone = 0;
-        $numberNotDone = 0;
+        $numberOverdue = 0;
         /** @var OperationHistory $history */
         foreach ($histories as $history) {
-            $history->getDone() ? $numberDone++ : $numberNotDone++;
+            $history->getDone() ? $numberDone++ : $numberOverdue++;
         }
 
         // Get all the dates between firstDate and secondDate
@@ -128,6 +128,10 @@ class OperationHistoryController extends HomeController
         /** @var OperationHistory $history */
         foreach ($histories as $key => $history)
             $planning[$history->getBeginningDate()->format("Y-m-d")][] = $history;
+
+        $count = 0;
+        foreach ($planning as $item)
+            $count += count($item);
 
         uksort($planning, function ($a, $b) {
             $date1 = new \DateTime($a);
@@ -147,9 +151,26 @@ class OperationHistoryController extends HomeController
             "secondDate" => $dates[1],
             "operationHistories" => $histories,
             "operationsPlanned" => $planning,
-            "numberOfOperations" => 10,
+            "numberOfOperations" => $count,
             "numberOfDone" => $numberDone,
-            "numberOfNotDone" => $numberNotDone,
+            "numberOfNotDone" => $numberOverdue,
+        ]);
+    }
+
+    /**
+     * @Route("/{id}", name="operationhistory_view")
+     *
+     * @param OperationHistory $history
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function viewOperationHistory(OperationHistory $history)
+    {
+        return $this->render('home/operationHistory/view.html.twig', [
+            'menuElements' => $this->getMenuParameters(),
+            'menuMode' => "home",
+            "isConnected" => !$this->getUser() == NULL,
+            "history" => $history
         ]);
     }
 }

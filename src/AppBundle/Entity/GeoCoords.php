@@ -99,4 +99,47 @@ class GeoCoords
     {
         return $this->lat;
     }
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->history = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
+     * Add history.
+     *
+     * @param \AppBundle\Entity\OperationHistory $history
+     *
+     * @return GeoCoords
+     */
+    public function addHistory(\AppBundle\Entity\OperationHistory $history)
+    {
+        $this->history[] = $history;
+
+        return $this;
+    }
+
+    /**
+     * Remove history.
+     *
+     * @param \AppBundle\Entity\OperationHistory $history
+     *
+     * @return boolean TRUE if this collection contained the specified element, FALSE otherwise.
+     */
+    public function removeHistory(\AppBundle\Entity\OperationHistory $history)
+    {
+        return $this->history->removeElement($history);
+    }
+
+    /**
+     * Get history.
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getHistory()
+    {
+        return $this->history;
+    }
 }

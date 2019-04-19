@@ -117,7 +117,7 @@ vich_uploader:
 
     mappings:
         product_image:
-            uri_prefix: /images
+            uri_prefix: /web/images/oh
             upload_destination: '%kernel.project_dir%/images'
 
             inject_on_load: false

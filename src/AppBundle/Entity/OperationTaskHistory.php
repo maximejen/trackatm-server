@@ -69,7 +69,7 @@ class OperationTaskHistory
      *
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\Image", cascade={"persist", "remove"}, mappedBy="task")
      */
-    protected $image;
+    protected $images;
 
     /**
      * Get id.
@@ -267,5 +267,15 @@ class OperationTaskHistory
     public function getImage()
     {
         return $this->image;
+    }
+
+    /**
+     * Get images.
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getImages()
+    {
+        return $this->images;
     }
 }
