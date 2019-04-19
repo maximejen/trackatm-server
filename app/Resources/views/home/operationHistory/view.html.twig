@@ -57,11 +57,9 @@
                                         {{ task.textInput }}
                                     </div>
                                     {% if task.image|length > 0 %}
-                                        <div class="columns is-centered">
+                                        <div>
                                             {% for image in task.image %}
-                                                <img class="column is-one-third" width="32%" src="{{ app.request.getSchemeAndHttpHost() ~ "/images/oh/" ~ image.imageName }}" alt="image"/>
-                                                <img class="column is-one-third" width="32%" height="32%" src="{{ app.request.getSchemeAndHttpHost() ~ "/images/oh/" ~ image.imageName }}" alt="image"/>
-                                                <img class="column is-one-third" width="32%" src="{{ app.request.getSchemeAndHttpHost() ~ "/images/oh/" ~ image.imageName }}" alt="image"/>
+                                                <img width="32%" src="{{ app.request.getSchemeAndHttpHost() ~ "/images/oh/" ~ image.imageName }}" alt="image"/>
                                             {% endfor %}
                                         </div>
                                     {% endif %}
