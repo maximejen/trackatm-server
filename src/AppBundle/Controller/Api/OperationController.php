@@ -37,17 +37,19 @@ class OperationController extends ApiController
 
     /**
      * @Rest\View(serializerGroups={"operation"})
-     * @Rest\Get("/api/operations/cleaner/{id}")
+     * @Rest\Get("/api/cleaner/operations/")
      *
      * @param Request $request
      * @param SerializerInterface $serializer
-     * @param Cleaner $cleaner
+     *
      * @return JsonResponse|Response
      */
-    public function getOperationsOfCleaner(Request $request, SerializerInterface $serializer, Cleaner $cleaner)
+    public function getOperationsOfCleaner(Request $request, SerializerInterface $serializer)
     {
-        if (!$this->checkUserIsConnected($request))
+        $user = $this->checkUserIsConnected($request);
+        if (!$user)
             return new JsonResponse(['message' => "you need to be connected"], 403);
+        $cleaner = $this->getDoctrine()->getManager()->getRepository('AppBundle:Cleaner')->findOneBy(['user' => $user]);
         $operations = $this->get('doctrine.orm.entity_manager')
             ->getRepository('AppBundle:Operation')
             ->findBy(['cleaner' => $cleaner]);
