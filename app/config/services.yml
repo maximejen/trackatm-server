@@ -33,3 +33,7 @@ services:
     # AppBundle\Service\ExampleService:
     #     arguments:
     #         $someArgument: 'some_value'
+    mail.send:
+        class: AppBundle\Service\MailerService
+        arguments: ['@mailer', '@twig']
+        public: true
