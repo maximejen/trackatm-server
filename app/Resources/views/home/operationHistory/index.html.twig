@@ -33,7 +33,7 @@
                             <select id="js-customer-choice" name="customer">
                                 <option value="">Select a customer</option>
                                 {% for customer in customers %}
-                                    <option id="{{ 'js-cleaner' ~ customer.id }}" value="{{ customer.id }}">
+                                    <option id="{{ 'js-cleaner' ~ customer.id }}" value="{{ customer.id }}" {% if selectedCustomer is not null and selectedCustomer.id == customer.id %}selected{% endif %}>
                                         {{ customer.name }}
                                     </option>
                                 {% endfor %}
@@ -93,17 +93,17 @@
                 <h1 class="column has-text-centered title is-full is-info">PLANNED OPERATIONS</h1>
                 <span class="column is-half has-text-centered center-chart">
                     {% include ":home/operationHistory:chart.html.twig" with {
-                        'percentage': 78.9,
+                        'percentage': (numberOfDone * 100 / numberOfOperations)|number_format(0, '.', ','),
                         'title': "Completed operations",
-                        'subtitle': "170/213",
+                        'subtitle': numberOfDone ~ "/" ~ numberOfOperations,
                         'color': 'green'
                     } %}
                 </span>
                 <div class="column is-half has-text-centered center-chart">
                     {% include ":home/operationHistory:chart.html.twig" with {
-                        'percentage': 3,
+                        'percentage': (numberOfNotDone * 100 / numberOfOperations)|number_format(0, '.', ','),
                         'title': "Operations overdue",
-                        'subtitle': "6/213",
+                        'subtitle': numberOfNotDone ~ "/" ~ numberOfOperations,
                         "color": 'red'
                     } %}
                 </div>
@@ -130,7 +130,13 @@
                                                 <p class="subtitle is-6"><b>{{ operation.name }}</b></p>
                                             </div>
                                             <div class="media-right">
-                                                <span class="notdone title">PLANNED</span>
+                                                {% if operation.done is defined and operation.done == true %}
+                                                    <span class="done title">COMPLETED</span>
+                                                {% elseif operation.done is defined and operation.done == false %}
+                                                    <span class="notdone title">NOT DONE</span>
+                                                {% else %}
+                                                    <span class="planned title">PLANNED</span>
+                                                {% endif %}
                                             </div>
                                         </div>
                                         <div class="content">
@@ -177,11 +183,11 @@
             margin-left: 3em;
         }
 
-        .notdone {
+        .planned {
             color: deepskyblue !important;
         }
 
-        .overdue {
+        .notdone {
             color: red !important;
         }
 

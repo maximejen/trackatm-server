@@ -20,6 +20,7 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class OperationHistoryController extends HomeController
 {
+
     /**
      * @Route("/", name="operationhistorypage")
      * @param Request $request
@@ -40,6 +41,7 @@ class OperationHistoryController extends HomeController
         $secondDate = $request->get("secondDate");
         $firstDate = new \DateTime($firstDate != null ? $firstDate : $today->format("Y-m-01"));
         $secondDate = $secondDate != null ? new \DateTime($secondDate) : $today->modify("last day of this month");
+        $today = new \DateTime();
 
         if ($customer != null)
             $places = $em->getRepository('AppBundle:Place')->findBy(['customer' => $customer]);
@@ -48,14 +50,23 @@ class OperationHistoryController extends HomeController
 
         // Map all the operations into a "week"
         $week = ["Monday" => [], "Tuesday" => [], "Wednesday" => [], "Thursday" => [], "Friday" => [], "Saturday" => [], "Sunday" => []];
-        $operations = $em->getRepository('AppBundle:Operation')->findAll();
+        if ($customer == null)
+            $operations = $em->getRepository('AppBundle:Operation')->findALl();
+        else
+            $operations = $em->getRepository('AppBundle:Operation')->getOperationsByCustomer($customer->getId());
         foreach ($operations as $key => $operation)
             $week[ucfirst(strtolower($operation->getDay()))][] = $operation;
         // get all OperationHistories between the two dates.
-        $histories = $em->getRepository('AppBundle:OperationHistory')->findOperationHistoriesBetweenToDates($firstDate, $secondDate);
+        if ($customer == null)
+            $histories = $em->getRepository('AppBundle:OperationHistory')->findOperationHistoriesBetweenTwoDates($firstDate, $secondDate);
+        else
+            $histories = $em->getRepository('AppBundle:OperationHistory')->findOperationHistoriesByCustomerNameAndBetweenTwoDates($customer->getName(), $firstDate, $secondDate);
+        $numberDone = 0;
+        $numberNotDone = 0;
         /** @var OperationHistory $history */
-        foreach ($histories as $key => $history)
-            $week[ucfirst(strtolower($history->getBeginningDate()->format("l")))][] = $history;
+        foreach ($histories as $history) {
+            $history->getDone() ? $numberDone++ : $numberNotDone++;
+        }
 
         // Get all the dates between firstDate and secondDate
         $period = new DatePeriod(
@@ -64,10 +75,25 @@ class OperationHistoryController extends HomeController
             $secondDate
         );
         $dateArray = [];
+        $numberOperations = 1;
         foreach ($period as $key => $value) {
-            if ($week[$value->format("l")] != [])
-                $dateArray[$value->format('Y-m-d')] = $week[$value->format("l")];
+            $interval = $value->diff($today);
+            if ($week[$value->format("l")] != []) {
+                $numberOperations += count($week[$value->format("l")]);
+                if (intval($interval->format("%R%a")) <= 0) {
+                    $dateArray[$value->format('Y-m-d')] = $week[$value->format("l")];
+                }
+            }
         }
+        /** @var OperationHistory $history */
+        foreach ($histories as $key => $history)
+            $dateArray[ucfirst(strtolower($history->getBeginningDate()->format("Y-m-d")))][] = $history;
+
+        uksort($dateArray, function ($a, $b) {
+            $date1 = new \DateTime($a);
+            $date2 = new \DateTime($b);
+            return $date1 > $date2 ? 1 : -1;
+        });
 
         return $this->render('home/operationHistory/index.html.twig', [
             'menuElements' => $this->getMenuParameters(),
@@ -76,10 +102,14 @@ class OperationHistoryController extends HomeController
             "numberOfCleaners" => count($em->getRepository('AppBundle:Cleaner')->findAll()),
             "numberOfPlaces" => count($places),
             "customers" => $em->getRepository('AppBundle:Customer')->findAll(),
+            "selectedCustomer" => $customer,
             "firstDate" => $firstDate,
             "secondDate" => $secondDate,
             "operationHistories" => $histories,
-            "operationsPlanned" => $dateArray
+            "operationsPlanned" => $dateArray,
+            "numberOfOperations" => $numberOperations,
+            "numberOfDone" => $numberDone,
+            "numberOfNotDone" => $numberNotDone,
         ]);
     }
 }

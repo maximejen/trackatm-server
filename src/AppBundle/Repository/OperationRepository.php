@@ -10,4 +10,14 @@ namespace AppBundle\Repository;
  */
 class OperationRepository extends \Doctrine\ORM\EntityRepository
 {
+    public function getOperationsByCustomer($customerId)
+    {
+        return $this->_em->getRepository("AppBundle:Operation")->createQueryBuilder('o')
+            ->where('customer.id LIKE :customer')
+            ->join("o.place", "place")
+            ->join("place.customer", "customer")
+            ->setParameter('customer', $customerId)
+            ->getQuery()
+            ->getResult();
+    }
 }
