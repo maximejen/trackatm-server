@@ -81,6 +81,13 @@ class OperationHistory
      */
     protected $cleaner;
 
+    /**
+     * @var boolean
+     *
+     * @ORM\Column(name="done", type="boolean")
+     */
+    protected $done;
+
 
     /**
      * Get id.
@@ -303,5 +310,29 @@ class OperationHistory
     public function getCustomer()
     {
         return $this->customer;
+    }
+
+    /**
+     * Set done.
+     *
+     * @param bool $done
+     *
+     * @return OperationHistory
+     */
+    public function setDone($done)
+    {
+        $this->done = $done;
+
+        return $this;
+    }
+
+    /**
+     * Get done.
+     *
+     * @return bool
+     */
+    public function getDone()
+    {
+        return $this->done;
     }
 }

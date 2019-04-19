@@ -39,7 +39,7 @@
                             <a class="panel-block js-place-choice" data-id="{{ place.id }}" data-name="{{ place.name }}"
                                data-customer-name="{{ place.customer.name }}">
                                 <span class="panel-icon"><i class="fas fa-map-marker" aria-hidden="true"></i></span>
-                                {{ place }}
+                                {{ place.customer.name ~ " - " ~ place.name }}
                             </a>
                         {% endfor %}
                         <div class="panel-block">

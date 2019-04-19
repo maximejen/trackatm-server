@@ -59,7 +59,7 @@ class Place
     /**
      * @var Customer
      *
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Customer", inversedBy="places")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Customer", inversedBy="places", fetch="LAZY")
      */
     protected $customer;
 
@@ -278,6 +278,6 @@ class Place
      */
     public function __toString()
     {
-        return $this->getCustomer()->getName() . " - " . $this->getName();
+        return $this->getName();
     }
 }

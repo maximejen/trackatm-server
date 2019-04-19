@@ -2,6 +2,256 @@
 
 {% block body %}
     <div>
-        OperationHistory
+        <section class="hero is-light">
+            <div class="hero-body">
+                <div class="container">
+                    <h1 class="title">
+                        Operations History
+                    </h1>
+                    <h2 class="subtitle">
+                        cleaners operations
+                    </h2>
+                </div>
+            </div>
+        </section>
+        <section class="is-light operation-history-toolbar">
+            <form class="columns is-6" action="" method="get">
+                <div class="columns">
+                    <div class="column is-3">
+                        <label>From</label>
+                        <input class="is-medium input is-primary" name="firstDate" type="date"
+                               value="{{ firstDate.format("Y-m-d") }}"/>
+                    </div>
+                    <div class="column is-3">
+                        <label>To</label>
+                        <input class="is-medium input is-primary" name="secondDate" type="date"
+                               value="{{ secondDate.format("Y-m-d") }}"/>
+                    </div>
+                    <div class="column">
+                        <label>Customer</label>
+                        <div class="select is-primary is-medium">
+                            <select id="js-customer-choice" name="customer">
+                                <option value="">Select a customer</option>
+                                {% for customer in customers %}
+                                    <option id="{{ 'js-cleaner' ~ customer.id }}" value="{{ customer.id }}">
+                                        {{ customer.name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="column">
+                        <label>&nbsp;</label>
+                        <div>
+                            <button class="button is-medium is-primary" type="submit">
+                                <span>Search</span>
+                                <span class="icon is-small">
+                                  <i class="fas fa-search"></i>
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="column">
+                        <label>&nbsp;</label>
+                        <div>
+                            <a href="{{ path('operationhistorypage') }}" class="button is-medium is-danger is-outlined">
+                                <span>Reset filters</span>
+                                <span class="icon is-small">
+                                  <i class="fas fa-undo"></i>
+                                </span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="column is-full"></div>
+                </div>
+            </form>
+        </section>
+        <section class="container">
+            <nav class="level container-history">
+                <div class="level-item has-text-centered">
+                    <div>
+                        <p class="heading">Places</p>
+                        <p class="title">{{ numberOfPlaces }}</p>
+                    </div>
+                </div>
+                <div class="level-item has-text-centered">
+                    <div>
+                        <p class="heading">Cleaners</p>
+                        <p class="title">{{ numberOfCleaners }}</p>
+                    </div>
+                </div>
+                <div class="level-item has-text-centered">
+                    <div>
+                        <p class="heading">Operations missing</p>
+                        <p class="title">43</p>
+                    </div>
+                </div>
+            </nav>
+        </section>
+        <section class="container stats-container">
+            <div class="columns is-centered is-multiline is-mobile container-history">
+                <h1 class="column has-text-centered title is-full is-info">PLANNED OPERATIONS</h1>
+                <span class="column is-half has-text-centered center-chart">
+                    {% include ":home/operationHistory:chart.html.twig" with {
+                        'percentage': 78.9,
+                        'title': "Completed operations",
+                        'subtitle': "170/213",
+                        'color': 'green'
+                    } %}
+                </span>
+                <div class="column is-half has-text-centered center-chart">
+                    {% include ":home/operationHistory:chart.html.twig" with {
+                        'percentage': 3,
+                        'title': "Operations overdue",
+                        'subtitle': "6/213",
+                        "color": 'red'
+                    } %}
+                </div>
+            </div>
+        </section>
+        <section class="container operations-container">
+            <div class="columns is-multiline is-mobile is-centered">
+                {% for key, operations in operationsPlanned %}
+                    <div class="column is-12 operation-histories-container">
+                        <div class="columns">
+                            <div class="column title white">{{ key }}</div>
+                            <div class="column title white">{{ operations|length ~ "/" ~ operations|length }}</div>
+                        </div>
+                        {% for operation in operations %}
+                            {% if operation is not empty %}
+                                <div class="card">
+                                    <div class="card-content">
+                                        <div class="media">
+                                            <div class="media-content">
+                                                <p class="title is-4">
+                                                    {{ operation.customer ~ " - " ~ operation.place }}
+                                                    <span class="subtitle jobId">JOB - {{ operation.id }}</span>
+                                                </p>
+                                                <p class="subtitle is-6"><b>{{ operation.name }}</b></p>
+                                            </div>
+                                            <div class="media-right">
+                                                <span class="notdone title">PLANNED</span>
+                                            </div>
+                                        </div>
+                                        <div class="content">
+                                            <ul>
+                                                <li>Cleaner #{{ operation.cleaner.id }}</li>
+{#                                                <li>{{ operation.place.address }}</li>#}
+                                                <li>
+                                                    <time datetime="{{ key }}">Saturday 1st Jan 2016 11:09 AM</time>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+            </div>
+        </section>
     </div>
+{% endblock %}
+
+{% block stylesheets %}
+    <style>
+
+        .operation-history-toolbar {
+            margin: 2em 3em;
+        }
+
+        .white {
+            color: white !important;
+            margin: 0.3em 0.3em;
+            text-align: right;
+        }
+
+        .operation-histories-container {
+            margin-top: 1em;
+            border-radius: 10px;
+            background: #75d0b2;
+        }
+
+        .jobId {
+            color: grey !important;
+            margin-left: 3em;
+        }
+
+        .notdone {
+            color: deepskyblue !important;
+        }
+
+        .overdue {
+            color: red !important;
+        }
+
+        .done {
+            color: green !important;
+        }
+
+        .operations-container {
+            margin-top: 3em !important;
+        }
+
+        .stats-container {
+            margin-bottom: 1em;
+        }
+
+        .container-history {
+            margin: 3em;
+            -webkit-border-radius: 1em;
+            -moz-border-radius: 1em;
+            border-radius: 1em;
+        }
+
+        .center-chart {
+            margin: auto;
+            /*left: 0;*/
+            /*right: 0;*/
+        }
+
+        @import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro');
+
+        .circular-chart {
+            display: block;
+            max-width: 100%;
+            max-height: 100%;
+        }
+
+        .grey {
+            stroke: #363636;
+            fill: none;
+            stroke-width: 2.8;
+            stroke-linecap: round;
+        }
+
+        .circle {
+            fill: none;
+            stroke-width: 2.9;
+            stroke-linecap: round;
+            animation: progress 1s ease-out forwards;
+        }
+
+        .red {
+            stroke: #e92b33;
+        }
+
+        .green {
+            stroke: #75d0b2;
+        }
+
+        @keyframes progress {
+            0% {
+                stroke-dasharray: 0 100;
+            }
+        }
+
+        svg {
+            width: 200px;
+        }
+    </style>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
 {% endblock %}

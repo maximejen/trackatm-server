@@ -24,7 +24,7 @@ class Operation
     /**
      * @var Place
      *
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Place", inversedBy="operations")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Place", inversedBy="operations", fetch="LAZY")
      */
     protected $place;
 
@@ -45,7 +45,7 @@ class Operation
     /**
      * @var OperationTemplate
      *
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\OperationTemplate")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\OperationTemplate", fetch="LAZY")
      */
     protected $template; // name, comment, tasks;
 
@@ -257,5 +257,23 @@ class Operation
     public function getTemplate()
     {
         return $this->template;
+    }
+
+    /**
+     * Get template name.
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->template->getName();
+    }
+
+    /**
+     * @return Customer|null
+     */
+    public function getCustomer()
+    {
+        return $this->getPlace()->getCustomer();
     }
 }

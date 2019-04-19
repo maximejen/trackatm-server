@@ -10,4 +10,13 @@ namespace AppBundle\Repository;
  */
 class OperationHistoryRepository extends \Doctrine\ORM\EntityRepository
 {
+    public function findOperationHistoriesBetweenToDates($date1, $date2)
+    {
+        return $this->_em->getRepository("AppBundle:OperationHistory")->createQueryBuilder('ohre')
+            ->where('ohre.beginningDate BETWEEN :date1 AND :date2')
+            ->setParameter('date1', $date1->format("Y-m-d 00:00:00"))
+            ->setParameter('date2', $date2->format("Y-m-d 23:59:59"))
+            ->getQuery()
+            ->getResult();
+    }
 }
