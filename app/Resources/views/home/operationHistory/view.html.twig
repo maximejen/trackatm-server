@@ -56,9 +56,9 @@
                                     <div class="cleaner-comment">
                                         {{ task.textInput }}
                                     </div>
-                                    {% if task.images|length > 0 %}
+                                    {% if task.image|length > 0 %}
                                         <div class="columns is-centered">
-                                            {% for image in task.images %}
+                                            {% for image in task.image %}
                                                 <img class="column is-one-third" width="32%" src="{{ app.request.getSchemeAndHttpHost() ~ "/images/oh/" ~ image.imageName }}" alt="image"/>
                                                 <img class="column is-one-third" width="32%" height="32%" src="{{ app.request.getSchemeAndHttpHost() ~ "/images/oh/" ~ image.imageName }}" alt="image"/>
                                                 <img class="column is-one-third" width="32%" src="{{ app.request.getSchemeAndHttpHost() ~ "/images/oh/" ~ image.imageName }}" alt="image"/>

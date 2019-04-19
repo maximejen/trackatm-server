@@ -49,18 +49,14 @@ class OperationController extends ApiController
 
     private function getOperationsPlanning($date1, $date2, $week)
     {
-        $today = new \DateTime();
         $period = new DatePeriod(
             $date1,
             new DateInterval('P1D'),
-            $date2
+            $date2->modify('+1 days')
         );
         $planning = [];
         foreach ($period as $key => $value) {
-            $interval = $value->diff($today);
-            if ($week[$value->format("l")] != []) {
-                $planning[$value->format('Y-m-d')] = $week[$value->format("l")];
-            }
+            $planning[$value->format('Y-m-d')] = $week[$value->format("l")];
         }
 
         return $planning;
