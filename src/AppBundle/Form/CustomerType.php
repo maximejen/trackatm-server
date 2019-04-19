@@ -16,6 +16,7 @@ class CustomerType extends AbstractType
         $builder
             ->add('name')
             ->add('email')
+            ->add('color')
         ;
     }/**
      * {@inheritdoc}

@@ -63,7 +63,7 @@ class OperationHistory
     /**
      * @var GeoCoords
      *
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\GeoCoords")
+     * @ORM\OneToOne(targetEntity="AppBundle\Entity\GeoCoords")
      */
     protected $geoCoords;
 

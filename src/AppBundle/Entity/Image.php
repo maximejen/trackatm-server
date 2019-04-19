@@ -52,13 +52,6 @@ class Image
     private $updatedAt;
 
     /**
-     * @var OperationTaskHistory
-     *
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\OperationTaskHistory", inversedBy="image")
-     */
-    private $operationTaskHistory;
-
-    /**
      * Get id.
      *
      * @return int

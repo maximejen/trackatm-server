@@ -36,20 +36,6 @@ class Place
     protected $name;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="description", type="string")
-     */
-    protected $description;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="address", type="string")
-     */
-    protected $address;
-
-    /**
      * @var GeoCoords
      *
      * @ORM\OneToOne(targetEntity="AppBundle\Entity\GeoCoords", cascade={"PERSIST"})

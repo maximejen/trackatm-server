@@ -16,8 +16,6 @@ class PlaceType extends AbstractType
     {
         $builder
             ->add('name')
-            ->add('description')
-            ->add('address')
             ->add('geoCoords', GeoCoordsType::class)
             ->add('customer', EntityType::class, [
                 'class' => 'AppBundle\Entity\Customer'

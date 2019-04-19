@@ -43,6 +43,13 @@ class Customer
      */
     protected $places;
 
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="color", type="string")
+     */
+    protected $color;
+
 
     /**
      * Get id.
@@ -148,5 +155,29 @@ class Customer
     public function __toString()
     {
        return $this->getName();
+    }
+
+    /**
+     * Set color.
+     *
+     * @param string $color
+     *
+     * @return Customer
+     */
+    public function setColor($color)
+    {
+        $this->color = $color;
+
+        return $this;
+    }
+
+    /**
+     * Get color.
+     *
+     * @return string
+     */
+    public function getColor()
+    {
+        return $this->color;
     }
 }

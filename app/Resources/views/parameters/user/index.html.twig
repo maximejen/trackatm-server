@@ -28,6 +28,7 @@
                     <th>ID</th>
                     <th>Username</th>
                     <th>Email</th>
+                    <th>Admin</th>
                     <th>Actions</th>
                 </tr>
                 </thead>
@@ -37,6 +38,7 @@
                         <th>{{ user.id }}</th>
                         <td>{{ user.username }}</td>
                         <td>{{ user.email }}</td>
+                        <td>{% if user.admin == true %}yes{% else %}no{% endif %}</td>
                         <td>
                             <a class="button is-link is-warning" href="
                             {{ path('parameters_edit_user_page', {'id': user.id}) }}">

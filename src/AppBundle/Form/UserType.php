@@ -41,6 +41,7 @@ class UserType extends AbstractType
                 'second_options' => array('label' => 'Password confirmation', 'attr' => ['class' => 'input']),
                 'invalid_message' => 'fos_user.password.mismatch',
             ))
+            ->add('admin')
         ;
     }
 

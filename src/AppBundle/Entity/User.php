@@ -30,6 +30,13 @@ class User extends BaseUser
      */
     protected $token;
 
+    /**
+     * @var boolean
+     *
+     * @ORM\Column(name="admin", type="boolean")
+     */
+    protected $admin;
+
     public function __construct()
     {
         parent::__construct();
@@ -67,5 +74,29 @@ class User extends BaseUser
     public function getToken()
     {
         return $this->token;
+    }
+
+    /**
+     * Set admin.
+     *
+     * @param bool $admin
+     *
+     * @return User
+     */
+    public function setAdmin($admin)
+    {
+        $this->admin = $admin;
+
+        return $this;
+    }
+
+    /**
+     * Get admin.
+     *
+     * @return bool
+     */
+    public function getAdmin()
+    {
+        return $this->admin;
     }
 }
