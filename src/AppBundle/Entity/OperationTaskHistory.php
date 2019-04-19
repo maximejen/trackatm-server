@@ -65,6 +65,13 @@ class OperationTaskHistory
     protected $textInput;
 
     /**
+     * @var Image
+     *
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Image", cascade={"persist", "remove"}, mappedBy="operationTaskHistory")
+     */
+    protected $image;
+
+    /**
      * Get id.
      *
      * @return int
@@ -216,5 +223,49 @@ class OperationTaskHistory
     public function getTextInput()
     {
         return $this->textInput;
+    }
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->image = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
+     * Add image.
+     *
+     * @param \AppBundle\Entity\Image $image
+     *
+     * @return OperationTaskHistory
+     */
+    public function addImage(\AppBundle\Entity\Image $image)
+    {
+        $this->image[] = $image;
+
+        return $this;
+    }
+
+    /**
+     * Remove image.
+     *
+     * @param \AppBundle\Entity\Image $image
+     *
+     * @return boolean TRUE if this collection contained the specified element, FALSE otherwise.
+     */
+    public function removeImage(\AppBundle\Entity\Image $image)
+    {
+        return $this->image->removeElement($image);
+    }
+
+    /**
+     * Get image.
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getImage()
+    {
+        return $this->image;
     }
 }

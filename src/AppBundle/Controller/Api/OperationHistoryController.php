@@ -2,6 +2,7 @@
 namespace AppBundle\Controller\Api;
 
 use AppBundle\Entity\Cleaner;
+use AppBundle\Entity\Image;
 use AppBundle\Entity\Operation;
 use AppBundle\Entity\OperationHistory;
 use AppBundle\Entity\OperationTaskHistory;
@@ -98,17 +99,9 @@ class OperationHistoryController extends ApiController
             return new JsonResponse(['message' => "you need to be connected"], 403);
 
         $entityManager =  $this->get('doctrine.orm.entity_manager');
-        if (!$request->request->get('comment')
-            || !$request->request->get('textInput')
-            || !$request->request->get('name')) {
-            $response = new Response();
-            $response->setStatusCode('400');
-            $response->setContent(json_encode(array(
-                'success' => false,
-                'message' => 'Invalid request')));
-            return $response;
-        }
+
         $task = new OperationTaskHistory();
+
         $task->setName($request->request->get("name"));
         $task->setComment($request->request->get('comment'));
         $task->setStatus($request->request->get('checked'));
@@ -116,6 +109,34 @@ class OperationHistoryController extends ApiController
         $task->setTextInput($request->request->get('textInput'));
         $operationHistory->addTask($task);
         $entityManager->persist($operationHistory);
+        $entityManager->flush();
+        $id = $task->getId();
+
+        return new Response(json_encode(array(
+            'success' => 'true',
+            'taskId' => $id
+            )));
+    }
+
+    /**
+     * @Rest\View(serializerGroups={"operationtaskhistory"})
+     * @Rest\Post("/api/operation/image/{id}")
+     *
+     * @param Request $request
+     * @param OperationTaskHistory $operationTaskHistory
+     * @param SerializerInterface $serializer
+     * @return JsonResponse|Response
+     */
+    public function postImageAction(Request $request, OperationTaskHistory $operationTaskHistory, SerializerInterface $serializer)
+    {
+        if (!$this->checkUserIsConnected($request))
+            return new JsonResponse(['message' => "you need to be connected"], 403);
+        $entityManager =  $this->get('doctrine.orm.entity_manager');
+        $image = new Image();
+        $image->setImageFile($request->files->get("image"));
+        $image->setOperationTaskHistory($operationTaskHistory);
+        $operationTaskHistory->addImage($image);
+        $entityManager->persist($operationTaskHistory);
         $entityManager->flush();
         return new Response(json_encode(array(
             'success' => 'true')));
