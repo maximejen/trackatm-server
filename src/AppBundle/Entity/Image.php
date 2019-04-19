@@ -169,30 +169,6 @@ class Image
 
 
     /**
-     * Set operationTaskHistory.
-     *
-     * @param \AppBundle\Entity\OperationTaskHistory|null $operationTaskHistory
-     *
-     * @return Image
-     */
-    public function setOperationTaskHistory(\AppBundle\Entity\OperationTaskHistory $operationTaskHistory = null)
-    {
-        $this->operationTaskHistory = $operationTaskHistory;
-
-        return $this;
-    }
-
-    /**
-     * Get operationTaskHistory.
-     *
-     * @return \AppBundle\Entity\OperationTaskHistory|null
-     */
-    public function getOperationTaskHistory()
-    {
-        return $this->operationTaskHistory;
-    }
-
-    /**
      * Set task.
      *
      * @param \AppBundle\Entity\OperationTaskHistory|null $task
