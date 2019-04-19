@@ -69,6 +69,8 @@ class OperationHistoryController extends ApiController
         $history->setCustomer($customer->getName());
         $history->setGeoCoords($place->getGeoCoords());
         $history->setCleaner($cleaner);
+        $history->setDone(true);
+        $history->setInitialDate(new \DateTime($params['initialDate'] . " this week"));
 
         $date = new \DateTime();
         $date->setTimestamp($params['beginningDate']);

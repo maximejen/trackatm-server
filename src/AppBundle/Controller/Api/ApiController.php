@@ -41,7 +41,7 @@ class ApiController extends Controller
         }
         return new Response(json_encode(array(
             'success' => true,
-            'user' => $this->getCleanerId($user))));
+            'cleanerid' => $this->getCleanerId($user))));
     }
 
     /**
@@ -92,7 +92,8 @@ class ApiController extends Controller
 
         return new Response(json_encode(array(
             'success' => 'true',
-            'token' => $user->getToken())));
+            'token' => $user->getToken(),
+            'cleanerid' => $this->getCleanerId($user))));
 
     }
 
@@ -135,8 +136,7 @@ class ApiController extends Controller
         $entityManager =  $this->get('doctrine.orm.entity_manager');
         $cleaner = $entityManager
             ->getRepository('AppBundle:Cleaner')
-            ->findOneByUser($user->getId());
-            //->findBy(["user" => $user->getId()]);
+            ->findOneBy(["user" => $user]);
         if (!$cleaner)
             return (-1);
         return $cleaner->getId();

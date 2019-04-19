@@ -88,6 +88,12 @@ class OperationHistory
      */
     protected $done;
 
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="initial_date", type="date")
+     */
+    protected $initialDate;
 
     /**
      * Get id.
@@ -334,5 +340,29 @@ class OperationHistory
     public function getDone()
     {
         return $this->done;
+    }
+
+    /**
+     * Set initialDate.
+     *
+     * @param \DateTime $initialDate
+     *
+     * @return OperationHistory
+     */
+    public function setInitialDate($initialDate)
+    {
+        $this->initialDate = $initialDate;
+
+        return $this;
+    }
+
+    /**
+     * Get initialDate.
+     *
+     * @return \DateTime
+     */
+    public function getInitialDate()
+    {
+        return $this->initialDate;
     }
 }
