@@ -125,7 +125,6 @@ class OperationHistoryController extends HomeController
 
         // Get all the dates between firstDate and secondDate
         $planning = $this->getOperationsPlanning($dates[0], $dates[1], $week);
-        var_dump($histories);
         /** @var OperationHistory $history */
         foreach ($histories as $key => $history)
             $planning[$history->getBeginningDate()->format("Y-m-d")][] = $history;

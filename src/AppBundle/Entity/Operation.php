@@ -49,6 +49,21 @@ class Operation
      */
     protected $template; // name, comment, tasks;
 
+    /**
+     * @var boolean
+     */
+    protected $done;
+
+    public function setDone($done)
+    {
+        $this->done = $done;
+    }
+
+    public function isDone()
+    {
+        return $this->done;
+    }
+
 
     /**
      * Get id.
@@ -83,6 +98,7 @@ class Operation
     {
         return $this->place;
     }
+
     /**
      * Constructor
      */

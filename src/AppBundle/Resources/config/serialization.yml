@@ -65,6 +65,8 @@ AppBundle\Entity\Operation:
       groups: ['operation', 'place']
     template:
       groups: ['operation', 'place', 'cleaner']
+    done:
+      groups: ['operation', 'place', 'cleaner']
 
 AppBundle\Entity\User:
   attributes:
