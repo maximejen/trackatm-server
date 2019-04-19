@@ -1,9 +1,13 @@
 <?php
+
 namespace AppBundle\Controller\Api;
 
 use AppBundle\Entity\Cleaner;
 use AppBundle\Entity\Operation;
+use AppBundle\Entity\OperationHistory;
 use AppBundle\Form\OperationType;
+use DateInterval;
+use DatePeriod;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -35,6 +39,46 @@ class OperationController extends ApiController
         return new Response($serializer->serialize($operations, 'json', ['groups' => ['operation']]));
     }
 
+    private function getWeek($operations)
+    {
+        $week = ["Monday" => [], "Tuesday" => [], "Wednesday" => [], "Thursday" => [], "Friday" => [], "Saturday" => [], "Sunday" => []];
+        foreach ($operations as $key => $operation)
+            $week[ucfirst(strtolower($operation->getDay()))][] = $operation;
+        return $week;
+    }
+
+    private function getOperationsPlanning($date1, $date2, $week)
+    {
+        $today = new \DateTime();
+        $period = new DatePeriod(
+            $date1,
+            new DateInterval('P1D'),
+            $date2
+        );
+        $planning = [];
+        foreach ($period as $key => $value) {
+            $interval = $value->diff($today);
+            if ($week[$value->format("l")] != []) {
+                $planning[$value->format('Y-m-d')] = $week[$value->format("l")];
+            }
+        }
+
+        return $planning;
+    }
+
+    private function fromPlanningToFlat($planning)
+    {
+        $newArray = [];
+
+        foreach ($planning as $item) {
+            foreach ($item as $value) {
+                $newArray[] = $value;
+            }
+        }
+
+        return $newArray;
+    }
+
     /**
      * @Rest\View(serializerGroups={"operation"})
      * @Rest\Get("/api/cleaner/operations/")
@@ -43,16 +87,41 @@ class OperationController extends ApiController
      * @param SerializerInterface $serializer
      *
      * @return JsonResponse|Response
+     * @throws \Exception
      */
     public function getOperationsOfCleaner(Request $request, SerializerInterface $serializer)
     {
         $user = $this->checkUserIsConnected($request);
         if (!$user)
             return new JsonResponse(['message' => "you need to be connected"], 403);
-        $cleaner = $this->getDoctrine()->getManager()->getRepository('AppBundle:Cleaner')->findOneBy(['user' => $user]);
-        $operations = $this->get('doctrine.orm.entity_manager')
-            ->getRepository('AppBundle:Operation')
-            ->findBy(['cleaner' => $cleaner]);
+
+        $today = new\DateTime();
+        $weekAgo = new \DateTime();
+        $weekAgo->modify('-7 days');
+
+        $em = $this->getDoctrine()->getManager();
+        $cleaner = $em->getRepository('AppBundle:Cleaner')->findOneBy(['user' => $user]);
+        $operations = $em->getRepository('AppBundle:Operation')->findBy(['cleaner' => $cleaner]);
+        $histories = $em->getRepository('AppBundle:OperationHistory')->findOperationHistoriesByCleanerAndBetweenTwoDates($cleaner, $weekAgo, $today);
+
+        $week = $this->getWeek($operations);
+        $planning = $this->getOperationsPlanning($weekAgo, $today, $week);
+
+        /** @var OperationHistory $history */
+        foreach ($histories as $history) {
+            $date = $history->getInitialDate()->format('Y-m-d');
+            /** @var Operation $operation */
+            foreach ($planning[$date] as &$operation) {
+                if ($history->getDone() && $history->getPlace() == $operation->getPlace()->getName())
+                    $operation->setDone(true);
+                else
+                    $operation->setDone(false);
+
+            }
+        }
+
+        $operations = $this->fromPlanningToFlat($planning);
+
         return new Response($serializer->serialize($operations, 'json', ['groups' => ['operation']]));
     }
 
