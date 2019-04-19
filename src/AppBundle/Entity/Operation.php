@@ -91,31 +91,6 @@ class Operation
         $this->days = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
-    /**
-     * Add day.
-     *
-     * @param \AppBundle\Entity\CleanerPlanningDay $day
-     *
-     * @return Operation
-     */
-    public function addDay(\AppBundle\Entity\CleanerPlanningDay $day)
-    {
-        $this->days[] = $day;
-
-        return $this;
-    }
-
-    /**
-     * Remove day.
-     *
-     * @param \AppBundle\Entity\CleanerPlanningDay $day
-     *
-     * @return boolean TRUE if this collection contained the specified element, FALSE otherwise.
-     */
-    public function removeDay(\AppBundle\Entity\CleanerPlanningDay $day)
-    {
-        return $this->days->removeElement($day);
-    }
 
     /**
      * Get days.
@@ -149,32 +124,6 @@ class Operation
     public function getComment()
     {
         return $this->comment;
-    }
-
-    /**
-     * Add task.
-     *
-     * @param \AppBundle\Entity\OperationTask $task
-     *
-     * @return Operation
-     */
-    public function addTask(\AppBundle\Entity\OperationTask $task)
-    {
-        $this->tasks[] = $task;
-
-        return $this;
-    }
-
-    /**
-     * Remove task.
-     *
-     * @param \AppBundle\Entity\OperationTask $task
-     *
-     * @return boolean TRUE if this collection contained the specified element, FALSE otherwise.
-     */
-    public function removeTask(\AppBundle\Entity\OperationTask $task)
-    {
-        return $this->tasks->removeElement($task);
     }
 
     /**

@@ -65,9 +65,9 @@ class OperationTaskHistory
     protected $textInput;
 
     /**
-     * @var Image
+     * @var Image[]
      *
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Image", cascade={"persist", "remove"}, mappedBy="operationTaskHistory")
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Image", cascade={"persist", "remove"}, mappedBy="task")
      */
     protected $image;
 

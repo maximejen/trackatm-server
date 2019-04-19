@@ -4,12 +4,8 @@ AppBundle\Entity\Place:
       groups: ['place', 'operation', 'cleaner']
     name:
       groups: ['place', 'operation', 'cleaner']
-    address:
-      groups: ['place', 'operation', 'cleaner']
     operations:
       groups: ['place']
-    description:
-      groups: ['place', 'operation', 'cleaner']
     geoCoords:
       groups: ['place', 'operation', 'cleaner']
     customer:
@@ -76,6 +72,8 @@ AppBundle\Entity\User:
       groups: ['user', 'place', 'operation', 'cleaner']
     email:
       groups: ['user', 'place', 'operation', 'cleaner']
+    admin:
+      groups: ['user', 'place', 'operation', 'cleaner']
 
 AppBundle\Entity\Customer:
   attributes:
@@ -84,4 +82,6 @@ AppBundle\Entity\Customer:
     name:
       groups: ['cleaner', 'customer', 'user', 'operation', 'place']
     email:
+      groups: ['cleaner', 'customer', 'user', 'operation', 'place']
+    color:
       groups: ['cleaner', 'customer', 'user', 'operation', 'place']

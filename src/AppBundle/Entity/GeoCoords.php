@@ -34,6 +34,13 @@ class GeoCoords
      * @ORM\Column(name="lat", type="float")
      */
     protected $lat;
+
+    /**
+     * @var OperationHistory
+     *
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\OperationHistory", mappedBy="geoCoords")
+     */
+    protected $history;
     
     /**
      * Get id.

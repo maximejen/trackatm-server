@@ -33,7 +33,8 @@
                             <select id="js-customer-choice" name="customer">
                                 <option value="">Select a customer</option>
                                 {% for customer in customers %}
-                                    <option id="{{ 'js-cleaner' ~ customer.id }}" value="{{ customer.id }}" {% if selectedCustomer is not null and selectedCustomer.id == customer.id %}selected{% endif %}>
+                                    <option id="{{ 'js-cleaner' ~ customer.id }}" value="{{ customer.id }}"
+                                            {% if selectedCustomer is not null and selectedCustomer.id == customer.id %}selected{% endif %}>
                                         {{ customer.name }}
                                     </option>
                                 {% endfor %}
@@ -111,6 +112,7 @@
         </section>
         <section class="container operations-container">
             <div class="columns is-multiline is-mobile is-centered">
+                {{ dump(operationsPlanned) }}
                 {% for key, operations in operationsPlanned %}
                     <div class="column is-12 operation-histories-container">
                         <div class="columns">
@@ -142,10 +144,11 @@
                                         <div class="content">
                                             <ul>
                                                 <li>Cleaner #{{ operation.cleaner.id }}</li>
-{#                                                <li>{{ operation.place.address }}</li>#}
-                                                <li>
-                                                    <time datetime="{{ key }}">Saturday 1st Jan 2016 11:09 AM</time>
-                                                </li>
+                                                {% if operation.beginningDate is defined %}
+                                                    <li>
+                                                        <time datetime="{{ key }}">{{ operation.beginningDate.format('l jS F Y - g:ia') }}</time>
+                                                    </li>
+                                                {% endif %}
                                             </ul>
                                         </div>
                                     </div>

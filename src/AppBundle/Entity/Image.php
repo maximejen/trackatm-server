@@ -52,6 +52,13 @@ class Image
     private $updatedAt;
 
     /**
+     * @var OperationTaskHistory
+     *
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\OperationTaskHistory", inversedBy="image")
+     */
+    protected $task;
+
+    /**
      * Get id.
      *
      * @return int
@@ -183,5 +190,29 @@ class Image
     public function getOperationTaskHistory()
     {
         return $this->operationTaskHistory;
+    }
+
+    /**
+     * Set task.
+     *
+     * @param \AppBundle\Entity\OperationTaskHistory|null $task
+     *
+     * @return Image
+     */
+    public function setTask(\AppBundle\Entity\OperationTaskHistory $task = null)
+    {
+        $this->task = $task;
+
+        return $this;
+    }
+
+    /**
+     * Get task.
+     *
+     * @return \AppBundle\Entity\OperationTaskHistory|null
+     */
+    public function getTask()
+    {
+        return $this->task;
     }
 }

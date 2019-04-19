@@ -107,54 +107,6 @@ class Place
     {
         return $this->geoCoords;
     }
-
-    /**
-     * Set description.
-     *
-     * @param string $description
-     *
-     * @return Place
-     */
-    public function setDescription($description)
-    {
-        $this->description = $description;
-
-        return $this;
-    }
-
-    /**
-     * Get description.
-     *
-     * @return string
-     */
-    public function getDescription()
-    {
-        return $this->description;
-    }
-
-    /**
-     * Set address.
-     *
-     * @param string $address
-     *
-     * @return Place
-     */
-    public function setAddress($address)
-    {
-        $this->address = $address;
-
-        return $this;
-    }
-
-    /**
-     * Get address.
-     *
-     * @return string
-     */
-    public function getAddress()
-    {
-        return $this->address;
-    }
     /**
      * Constructor
      */
