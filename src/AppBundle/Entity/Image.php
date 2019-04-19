@@ -7,10 +7,8 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use Symfony\Component\HttpFoundation\File\File;
 
 /**
- * Image
- *
- * @ORM\Table(name="image")
- * @ORM\Entity(repositoryClass="AppBundle\Repository\ImageRepository")
+ * @ORM\Entity
+ * @Vich\Uploadable
  */
 class Image
 {
@@ -52,6 +50,13 @@ class Image
      * @var \DateTime
      */
     private $updatedAt;
+
+    /**
+     * @var OperationTaskHistory
+     *
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\OperationTaskHistory", inversedBy="image")
+     */
+    private $operationTaskHistory;
 
     /**
      * Get id.
@@ -160,5 +165,30 @@ class Image
     public function getUpdatedAt()
     {
         return $this->updatedAt;
+    }
+
+
+    /**
+     * Set operationTaskHistory.
+     *
+     * @param \AppBundle\Entity\OperationTaskHistory|null $operationTaskHistory
+     *
+     * @return Image
+     */
+    public function setOperationTaskHistory(\AppBundle\Entity\OperationTaskHistory $operationTaskHistory = null)
+    {
+        $this->operationTaskHistory = $operationTaskHistory;
+
+        return $this;
+    }
+
+    /**
+     * Get operationTaskHistory.
+     *
+     * @return \AppBundle\Entity\OperationTaskHistory|null
+     */
+    public function getOperationTaskHistory()
+    {
+        return $this->operationTaskHistory;
     }
 }
