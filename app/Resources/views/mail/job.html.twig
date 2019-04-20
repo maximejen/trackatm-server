@@ -1,0 +1,103 @@
+<section>
+    <div style="display: flex; justify-content: space-around; align-items: center; background-color: {{ color }}; height: 70px">
+        <div class="headert">
+           Time spent: {{ timeSpent }}
+        </div>
+        <div class="headert">
+            Completed on: {{ completed }}
+        </div>
+    </div>
+</section>
+<section class="container operations-container">
+            {% for task in history.tasks %}
+                    <div class="todo-list columns is-multiline is-mobile">
+                        <label class="todo column is-full">
+                            <input class="todo__state" type="checkbox" disabled
+                                   {% if task.status == true %}checked{% endif %}/>
+                            <a class="todo__text">{{ task.name }}</a>
+                        </label>
+                        <div class="column is-full sub-elements">
+                            <div class="cleaner-comment">
+                                {{ task.textInput }}
+                            </div>
+                            {% if task.image|length > 0 %}
+                                <div class="images">
+                                    {% for image in task.image %}
+                                        <img class="image" width="20%" src="{{ app.request.getSchemeAndHttpHost() ~ "/images/oh/" ~ image.imageName }}" alt="image"/>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+            {% endfor %}
+</section>
+
+
+<style>
+    section {
+        overflow-y: scroll;
+    }
+    img {
+    }
+    .headert {
+        font-size: 1.3em;
+    }
+
+    .images {
+        text-align:center;
+    }
+
+    .image {
+        display:inline-block;
+    }
+
+    .operations-container {
+        margin-top: 3em !important;
+    }
+
+    .cleaner-comment {
+        word-wrap: break-word;      /* IE 5.5-7 */
+        white-space: -moz-pre-wrap; /* Firefox 1.0-2.0 */
+    }
+
+    .sub-elements {
+        text-align: left;
+    }
+
+    .todo-list {
+        text-align: center;
+        background: #FFF;
+        font-size: 20px;
+        margin: auto;
+        padding: 0.5em 1em;
+        /*width: 50%;*/
+        box-shadow: 0 5px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    .todo {
+        display: block;
+        margin: 0 auto;
+        cursor: pointer;
+        padding: 1em 1em 1em 16%;
+    }
+
+    .todo:last-child {
+        border-bottom: none;
+    }
+
+    .todo__state {
+        position: absolute;
+        top: 0;
+        left: 0;
+        opacity: 0;
+    }
+
+    .todo__text {
+        color: #122f34;
+        transition: all 0.4s linear 0.4s;
+        word-wrap: break-word;      /* IE 5.5-7 */
+        white-space: -moz-pre-wrap; /* Firefox 1.0-2.0 */
+    }
+
+
+</style>

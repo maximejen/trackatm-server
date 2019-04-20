@@ -9,27 +9,29 @@
 namespace AppBundle\Service;
 
 
-use Twig\Environment;
-use Twig\TemplateWrapper;
+use Symfony\Component\Templating\DelegatingEngine;
 
 class MailerService
 {
     private $mailer;
     private $twig;
 
-    public function __construct(\Swift_Mailer $mailer, Environment $twig)
+    public function __construct(\Swift_Mailer $mailer, DelegatingEngine $twig)
     {
         $this->mailer = $mailer;
         $this->twig = $twig;
     }
 
-    public function sendMail($sendTo, $values, $templateName)
+    public function sendMail($sendTo, $subject, $params, $templateName)
     {
         $message = \Swift_Message::newInstance()
-            ->setSubject("Hello world")
+            ->setSubject($subject)
             ->setFrom("damsltc57@gmail.com")
             ->setTo($sendTo)
-            ->setBody("Hello world");
+            ->setBody($this->twig->render(
+                $templateName,
+                $params
+            ), 'text/html');
         $this->mailer->send($message);
     }
 }
