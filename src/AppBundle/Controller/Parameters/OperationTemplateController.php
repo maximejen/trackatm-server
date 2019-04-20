@@ -92,6 +92,9 @@ class OperationTemplateController extends ParametersController
 
         if ($form->isValid() && $form->isSubmitted()) {
             $em = $this->get('doctrine.orm.entity_manager');
+            foreach ($operationTemplate->getTasks() as $elem) {
+                $elem->setOperation($operationTemplate);
+            }
 
             $em->persist($operationTemplate);
             $em->flush();
