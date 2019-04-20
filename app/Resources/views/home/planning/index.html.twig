@@ -15,24 +15,47 @@
             </div>
         </section>
         <section class="container container-planning">
-            <div class="columns">
+            <div class="columns is-multiline is-mobile">
                 <div class="column is-4">
+                    <form action="" method="get">
+                        <div class="columns is-multiline is-mobile is-1">
+                            <input type="number" name="customer" style="display: none" value="{{ customerId }}">
+                            <div class="column is-10">
+                                <p class="control has-icons-left">
+                                    <input class="input is-medium" placeholder="Search" name="search" value="{{ search }}">
+                                    <span class="icon is-small is-left">
+                                      <i class="fas fa-search"></i>
+                                    </span>
+                                </p>
+                            </div>
+                            <div class="column is-2">
+                                <button class="button is-medium is-primary is-fullwidth" type="submit">
+                                    <span class="icon is-small">
+                                      <i class="fas fa-search"></i>
+                                    </span>
+                                </button>
+                            </div>
+                            <div class="column is-full"></div>
+                        </div>
+                    </form>
                     <nav class="panel">
                         <p class="panel-heading">
                             Places
                         </p>
-                        <div class="panel-block">
-                            <p class="control has-icons-left">
-                                <input class="input is-small" type="text" placeholder="search">
-                                <span class="icon is-small is-left">
-                                    <i class="fas fa-search" aria-hidden="true"></i>
-                                </span>
-                            </p>
-                        </div>
                         <p class="panel-tabs" style="padding-bottom: 1em">
-                            <a class="is-active">all</a>
+                            <a
+                                    href="{{ path('planningpage', {'search': search}) }}"
+                                    {% if customerId is null or customerId == "" %}class="is-active"{% endif %}
+                            >
+                                all
+                            </a>
                             {% for customer in customers %}
-                                <a>{{ customer.name }}</a>
+                                <a
+                                        href="{{ path('planningpage', {'search': search, 'customer': customer.id}) }}"
+                                        {% if customer.id == customerId %}class="is-active"{% endif %}
+                                >
+                                    {{ customer.name }}
+                                </a>
                             {% endfor %}
                         </p>
                         {% for place in places %}
@@ -43,37 +66,43 @@
                             </a>
                         {% endfor %}
                         <div class="panel-block">
-                            <button class="button is-link is-outlined is-fullwidth">
-                                reset all filters
-                            </button>
+                            <a href="{{ path('planningpage') }}"
+                               class="button is-fullwidth is-medium is-danger is-outlined">
+                                <span>Reset filters</span>
+                                <span class="icon is-small">
+                                  <i class="fas fa-undo"></i>
+                                </span>
+                            </a>
                         </div>
                     </nav>
                 </div>
-                <div class="cleaner-planning column is-9">
-                    <div class="select is-primary is-rounded is-medium">
-                        <select id="js-cleaner-choice">
-                            <option value="">Select a cleaner</option>
-                            {% for cleaner in cleaners %}
-                                <option id="{{ 'js-cleaner' ~ cleaner.id }}"
-                                        value="{{ cleaner.id }}">{{ "Cleaner #" ~cleaner.id }}</option>s
-                            {% endfor %}
-                        </select>
+                <div class="column is-8">
+                        <div class="select is-primary is-medium is-fullwidth">
+                            <select id="js-cleaner-choice">
+                                <option value="">Select a cleaner</option>
+                                {% for cleaner in cleaners %}
+                                    <option id="{{ 'js-cleaner' ~ cleaner.id }}"
+                                            value="{{ cleaner.id }}">{{ "Cleaner #" ~cleaner.id }}</option>s
+                                {% endfor %}
+                            </select>
+                        </div>
+                    <div class="column is-full">
+                        <table class="table is-hoverable is-fullwidth">
+                            <thead>
+                            <tr class="is-primary is-selected">
+                                <th>Monday</th>
+                                <th>Tueday</th>
+                                <th>Wednesday</th>
+                                <th>Thursday</th>
+                                <th>Friday</th>
+                                <th>Saturday</th>
+                                <th>Sunday</th>
+                            </tr>
+                            </thead>
+                            <tbody class="js-cleaner-planning-table-body snip1226 ">
+                            </tbody>
+                        </table>
                     </div>
-                    <table class="table is-fullwidth is-hoverable">
-                        <thead>
-                        <tr class="is-primary is-selected">
-                            <th>Monday</th>
-                            <th>Tuesday</th>
-                            <th>Wednesday</th>
-                            <th>Thursday</th>
-                            <th>Friday</th>
-                            <th>Saturday</th>
-                            <th>Sunday</th>
-                        </tr>
-                        </thead>
-                        <tbody class="js-cleaner-planning-table-body snip1226">
-                        </tbody>
-                    </table>
                 </div>
             </div>
         </section>
@@ -108,10 +137,7 @@
 {% block stylesheets %}
     <style>
         .cleaner-planning {
-            background: #EEEEEE;
-            -webkit-border-radius: 1em;
-            -moz-border-radius: 1em;
-            border-radius: 1em;
+            background: #f9f9f9 !important;
         }
 
         .select {
@@ -129,16 +155,19 @@
         .snip1226 {
             text-align: center;
         }
+
         .snip1226 * {
             box-sizing: border-box;
             -webkit-transition: all 0.35s ease;
             transition: all 0.35s ease;
         }
+
         .snip1226 td {
             list-style: outside none none;
             margin: 0 1.5em;
             overflow: hidden;
         }
+
         .snip1226 a {
             padding: 0.3em 0;
             color: rgba(0, 0, 0, 0.8);
@@ -148,12 +177,14 @@
             margin: 0;
             text-decoration: none;
         }
+
         .snip1226 a:before,
         .snip1226 a:after {
             position: absolute;
             -webkit-transition: all 0.35s ease;
             transition: all 0.35s ease;
         }
+
         .snip1226 a:after {
             padding: 0.3em 0;
             position: absolute;
@@ -163,6 +194,7 @@
             color: red;
             white-space: nowrap;
         }
+
         .snip1226 td:hover a,
         .snip1226 .current a {
             transform: translateY(100%);

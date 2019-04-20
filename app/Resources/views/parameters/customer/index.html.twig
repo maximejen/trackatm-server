@@ -38,7 +38,7 @@
                         <th>{{ customer.id }}</th>
                         <td>{{ customer.name }}</td>
                         <td>{{ customer.email }}</td>
-                        <td><span style="background-color: {{ customer.color }}; color: {{ customer.color }}">{{ customer.color }}</span></td>
+                        <td><span style="background-color: {{ customer.color }}; color: {{ customer.color }}">##</span></td>
                         <td>
                             <a class="button is-link is-warning" href="
                             {{ path('parameters_edit_customer_page', {'id': customer.id}) }}">

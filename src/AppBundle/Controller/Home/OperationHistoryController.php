@@ -7,7 +7,10 @@ use AppBundle\Controller\HomeController;
 use AppBundle\Entity\OperationHistory;
 use \DateInterval;
 use DatePeriod;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -115,7 +118,6 @@ class OperationHistoryController extends HomeController
         $histories = $this->getOperationHistories($customer, $dates);
         $week = $this->getWeek($operations);
 
-
         $numberDone = 0;
         $numberOverdue = 0;
         /** @var OperationHistory $history */
@@ -138,6 +140,11 @@ class OperationHistoryController extends HomeController
             $date2 = new \DateTime($b);
             return $date1 > $date2 ? 1 : -1;
         });
+
+        if ($request->get('file') == true) {
+            $fileGeneratorService = $this->container->get('file_genertor');
+            return $this->file($fileGeneratorService->generateCsv($dates[0], $dates[1], $histories, $operations));
+        }
 
         return $this->render('home/operationHistory/index.html.twig', [
             'menuElements' => $this->getMenuParameters(),

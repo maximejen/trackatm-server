@@ -2,6 +2,8 @@
 
 namespace AppBundle\Repository;
 
+use AppBundle\Entity\Customer;
+
 /**
  * PlaceRepository
  *
@@ -16,6 +18,29 @@ class PlaceRepository extends \Doctrine\ORM\EntityRepository
         return $this->_em->getRepository("AppBundle:Place")->createQueryBuilder('p')
             ->where('p.name LIKE :name')
             ->setParameter('name', $name)
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findPlaceByCustomerAndName($customerId, $name)
+    {
+        $name = '%' . $name . '%';
+        return $this->_em->getRepository("AppBundle:Place")->createQueryBuilder('p')
+            ->where('p.name LIKE :name')
+            ->andWhere('customer.id = :customer')
+            ->join('p.customer', 'customer')
+            ->setParameter('name', $name)
+            ->setParameter('customer', $customerId)
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findPlaceByCustomer($customerId)
+    {
+        return $this->_em->getRepository("AppBundle:Place")->createQueryBuilder('p')
+            ->where('customer.id = :customer')
+            ->join('p.customer', 'customer')
+            ->setParameter('customer', $customerId)
             ->getQuery()
             ->getResult();
     }

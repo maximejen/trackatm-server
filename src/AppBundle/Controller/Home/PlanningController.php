@@ -32,8 +32,18 @@ class PlanningController extends HomeController {
     {
         $em = $this->getDoctrine()->getManager();
 
+        $search = $request->get('search');
+        $customerId = $request->get('customer');
+
         $cleaners = $em->getRepository('AppBundle:Cleaner')->findAll();
-        $places = $em->getRepository('AppBundle:Place')->findAll();
+        if ($search != null && $customerId == null)
+            $places = $em->getRepository('AppBundle:Place')->findPlaceByName($search);
+        else if ($search != null && $customerId != null)
+            $places = $em->getRepository('AppBundle:Place')->findPlaceByCustomerAndName($customerId, $search);
+        else if ($customerId != null && $search == null)
+            $places = $em->getRepository('AppBundle:Place')->findPlaceByCustomer($customerId);
+        else
+            $places = $em->getRepository('AppBundle:Place')->findAll();
         $customers = $em->getRepository('AppBundle:Customer')->findAll();
 
         $operation = new Operation();
@@ -64,7 +74,9 @@ class PlanningController extends HomeController {
             "places" => $places,
             "customers" => $customers,
             "form" => $form->createView(),
-            "userToken" => $this->getUser()->getToken()
+            "userToken" => $this->getUser()->getToken(),
+            "search" => $search,
+            "customerId" => $customerId
         ]);
     }
 }

@@ -37,3 +37,8 @@ services:
         class: AppBundle\Service\MailerService
         arguments: ['@mailer', '@templating']
         public: true
+
+    file_genertor:
+        class: AppBundle\Service\FileGeneratorService
+        arguments: ['@kernel']
+        public: true
