@@ -141,8 +141,8 @@ class OperationHistoryController extends HomeController
             return $date1 > $date2 ? 1 : -1;
         });
 
+        $fileGeneratorService = $this->container->get('file_genertor');
         if ($request->get('file') == true) {
-            $fileGeneratorService = $this->container->get('file_genertor');
             return $this->file($fileGeneratorService->generateCsv($dates[0], $dates[1], $histories, $operations));
         }
 
@@ -161,6 +161,57 @@ class OperationHistoryController extends HomeController
             "numberOfOperations" => $count,
             "numberOfDone" => $numberDone,
             "numberOfNotDone" => $numberOverdue,
+            "planning" => $fileGeneratorService->getPlanningPerMonths($dates[0], $dates[1], $histories, $operations)
+        ]);
+    }
+
+    /**
+     * @Route("/pdf", name="operationhistories_pdf")
+     *
+     * @param Request $request
+     * @return BinaryFileResponse|\Symfony\Component\HttpFoundation\Response
+     */
+    public function pdfContentAction(Request $request)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $customer = $this->getCustomer($request);
+        $dates = $this->getDates($request);
+        $places = $this->getPlaces($customer);
+        $operations = $this->getOperations($customer);
+        $histories = $this->getOperationHistories($customer, $dates);
+        $week = $this->getWeek($operations);
+
+        $numberDone = 0;
+        $numberOverdue = 0;
+        /** @var OperationHistory $history */
+        foreach ($histories as $history) {
+            $history->getDone() ? $numberDone++ : $numberOverdue++;
+        }
+
+        // Get all the dates between firstDate and secondDate
+        $planning = $this->getOperationsPlanning($dates[0], $dates[1], $week);
+        /** @var OperationHistory $history */
+        foreach ($histories as $key => $history)
+            $planning[$history->getBeginningDate()->format("Y-m-d")][] = $history;
+
+        $count = 0;
+        foreach ($planning as $item)
+            $count += count($item);
+
+        uksort($planning, function ($a, $b) {
+            $date1 = new \DateTime($a);
+            $date2 = new \DateTime($b);
+            return $date1 > $date2 ? 1 : -1;
+        });
+
+        $fileGeneratorService = $this->container->get('file_genertor');
+
+        return $this->render('home/operationHistory/month-resume/month-resume.html.twig', [
+            "firstDate" => $dates[0],
+            "secondDate" => $dates[1],
+            "planning" => $fileGeneratorService->getPlanningPerMonths($dates[0], $dates[1], $histories, $operations),
+            "color" => $customer != null ? $customer->getColor() : null,
+            "pdf" => true
         ]);
     }
 
@@ -173,11 +224,14 @@ class OperationHistoryController extends HomeController
      */
     public function viewOperationHistory(OperationHistory $history)
     {
+        $em = $this->getDoctrine()->getManager();
+        $customer = $em->getRepository("AppBundle:Customer")->findBy(['name' => $history->getCustomer()]);
         return $this->render('home/operationHistory/view.html.twig', [
             'menuElements' => $this->getMenuParameters(),
             'menuMode' => "home",
             "isConnected" => !$this->getUser() == NULL,
-            "history" => $history
+            "history" => $history,
+            "customer" => $customer
         ]);
     }
 }
