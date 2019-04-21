@@ -234,4 +234,35 @@ class OperationHistoryController extends HomeController
             "customer" => $customer
         ]);
     }
+
+    private function getGoodColorOfText($bgColor, $lightColor, $darkColor)
+    {
+        $color = ($bgColor[0] == '#') ? substr($bgColor, 1, 7) : $bgColor;
+        $r = intval(substr($color, 0, 2), 16);
+        $g = intval(substr($color, 2, 2), 16);
+        $b = intval(substr($color, 4, 2), 16);
+        return ((($r * 0.299) + ($g * 0.587) + ($b * 0.114)) > 186) ? $darkColor : $lightColor;
+    }
+
+    /**
+     * @Route("/pdf/{id}", name="operationhistory_pdf")
+     *
+     * @param OperationHistory $history
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function pdfOperationHistory(OperationHistory $history)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $customer = $em->getRepository("AppBundle:Customer")->findOneBy(['name' => $history->getCustomer()]);
+        $timeSpent = $history->getEndingDate()->diff($history->getBeginningDate());
+        return $this->render('home/operationHistory/job-report/job-report.html.twig', [
+            "history" => $history,
+            "timeSpent" => $timeSpent->h . 'h:' . $timeSpent->m . 'm',
+            "completed" => $history->getEndingDate()->format("l jS F Y"),
+            "color" => $customer->getColor(),
+            "textColor" => $this->getGoodColorOfText($customer->getColor(), "white", "black"),
+            "arrivingHour" => $history->getBeginningDate()->format('H:i'),
+            "customer" => $customer
+        ]);
+    }
 }
