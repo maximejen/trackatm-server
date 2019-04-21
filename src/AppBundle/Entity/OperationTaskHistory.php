@@ -72,6 +72,13 @@ class OperationTaskHistory
     protected $image;
 
     /**
+     * @var int
+     *
+     * @ORM\Column(name="position", type="integer")
+     */
+    protected $position;
+
+    /**
      * Get id.
      *
      * @return int
@@ -267,5 +274,29 @@ class OperationTaskHistory
     public function getImage()
     {
         return $this->image;
+    }
+
+    /**
+     * Set position.
+     *
+     * @param int $position
+     *
+     * @return OperationTaskHistory
+     */
+    public function setPosition($position)
+    {
+        $this->position = $position;
+
+        return $this;
+    }
+
+    /**
+     * Get position.
+     *
+     * @return int
+     */
+    public function getPosition()
+    {
+        return $this->position;
     }
 }

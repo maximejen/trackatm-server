@@ -105,10 +105,12 @@ class OperationHistoryController extends ApiController
         $task = new OperationTaskHistory();
 
         $task->setName($request->request->get("name"));
-        $task->setComment($request->request->get('comment'));
-        $task->setStatus($request->request->get('checked'));
-        $task->setImagesForced($request->request->get('imagesForced'));
-        $task->setTextInput($request->request->get('textInput'));
+        $task->setComment($request->request->get("comment"));
+        $task->setStatus($request->request->get("checked"));
+        $task->setImagesForced($request->request->get("imagesForced"));
+        $task->setTextInput($request->request->get("textInput"));
+        $task->setPosition($request->request->get("position"));
+
         $operationHistory->addTask($task);
         $entityManager->persist($operationHistory);
         $entityManager->flush();

@@ -71,6 +71,7 @@ class OperationHistory
      * @var OperationTaskHistory[]
      *
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\OperationTaskHistory", cascade={"persist", "remove"}, mappedBy="operation")
+     * @ORM\OrderBy({"position" = "ASC"})
      */
     protected $tasks;
 
