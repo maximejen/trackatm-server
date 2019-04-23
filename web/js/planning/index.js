@@ -1,5 +1,5 @@
 let cleaner = undefined;
-const url = location.protocol + '//' + location.host; // TODO : get the url of the server from dynamically
+const url = location.protocol + '//' + location.host;
 
 const cleanerSelected = localStorage.getItem('cleanerId');
 if (cleanerSelected !== undefined) {
