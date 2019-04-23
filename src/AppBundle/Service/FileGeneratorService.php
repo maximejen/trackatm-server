@@ -3,11 +3,14 @@
 namespace AppBundle\Service;
 
 
+use AppBundle\Entity\Customer;
+use AppBundle\Entity\GeoCoords;
 use AppBundle\Entity\Operation;
 use AppBundle\Entity\OperationHistory;
 use AppBundle\Entity\Place;
 use DateInterval;
 use DatePeriod;
+use Doctrine\ORM\EntityManager;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
@@ -227,5 +230,42 @@ class FileGeneratorService
             $toWrite .= "\n";
         }
         file_put_contents("csv/" . $fileName, $toWrite);
+    }
+
+    public function fromCSVToPlaces(EntityManager $em, $csv)
+    {
+        $lines = explode("\r\n", $csv);
+        $columns = explode(";", $lines[0]);
+        unset($lines[0]);
+        foreach ($columns as $key => $column) {
+            $columns[$column] = $key;
+        }
+
+        foreach ($lines as $key => $line) {
+            $line = explode(";", $line);
+            $placeName = '[' . $line[$columns['id']] . '] ' . $line[$columns['name']];
+            $lat = $line[$columns['lat']];
+            $lon = $line[$columns['lon']];
+            $customerName = $line[$columns['customer']];
+            $lat = str_replace(",", ".", $lat);
+            $lon = str_replace(",", ".", $lon);
+            $place = new Place();
+            $place->setName($placeName);
+            $geoCoords = new GeoCoords();
+            $geoCoords->setLat(floatval($lat));
+            $geoCoords->setLon(floatval($lon));
+            $place->setGeoCoords($geoCoords);
+            $customer = $em->getRepository('AppBundle:Customer')->findOneBy(['name' => $customerName]);
+            if ($customer) {
+                $place->setCustomer($customer);
+                $potentialPlace = $em->getRepository('AppBundle:Place')->findOneBy(['name' => $placeName]);
+                if ($potentialPlace == null) {
+                    $em->persist($place);
+                    $em->flush();
+                }
+            }
+            else
+                continue;
+        }
     }
 }

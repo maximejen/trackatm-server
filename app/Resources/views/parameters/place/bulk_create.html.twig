@@ -1,0 +1,112 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div>
+        <section class="hero is-light">
+            <div class="hero-body">
+                <div class="container">
+                    <h1 class="title">
+                        Add
+                    </h1>
+                    <h2 class="subtitle">
+                        multiple places
+                    </h2>
+                </div>
+            </div>
+        </section>
+        <section class="container">
+            <div>
+                <div class="title example">Example:</div>
+                <table class="table is-fullwidth">
+                    <thead>
+                    <tr>
+                        <th>id</th>
+                        <th>name</th>
+                        <th>lat</th>
+                        <th>lon</th>
+                        <th>customer</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <th>751</th>
+                        <th>360 MALL -2</th>
+                        <th>29,267804</th>
+                        <th>47,992934</th>
+                        <th>GB</th>
+                    </tr>
+                    <tr>
+                        <th>...</th>
+                        <th>...</th>
+                        <th>...</th>
+                        <th>...</th>
+                        <th>...</th>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <form action="" method="POST">
+
+                {{ form_start(form) }}
+{#                <div class="file">#}
+{#                    <label class="file-label">#}
+{#                        {{ form_widget(form.file, {#}
+{#                            'attr': {#}
+{#                                'class': "file-input"#}
+{#                            }#}
+{#                        }) }}#}
+{#                        <span class="file-cta">#}
+{#                          <span class="file-icon">#}
+{#                            <i class="fas fa-upload"></i>#}
+{#                          </span>#}
+{#                          <span class="file-label">#}
+{#                            Choose a file…#}
+{#                          </span>#}
+{#                        </span>#}
+{#                    </label>#}
+{#                </div>#}
+                {{ form_widget(form.csv, {
+                    'attr': {
+                        'class': "textarea",
+                        'rows': "10"
+                    }
+                }) }}
+                <div class="form-element columns">
+                    <div class="form-element column">
+                        <button class="button is-warning is-medium" type="submit">Create place</button>
+                    </div>
+                </div>
+                {{ form_end(form) }}
+            </form>
+        </section>
+    </div>
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .example {
+            margin: 2em 0;
+        }
+
+        form {
+            margin-top: 1em;
+        }
+
+        .form-element {
+            padding-top: 2.5em;
+        }
+
+        .form-element > button {
+            width: 100%;
+        }
+
+        div.form-label {
+            margin-bottom: 0.5em;
+        }
+
+        .container {
+            padding-bottom: 2em;
+        }
+    </style>
+{% endblock %}

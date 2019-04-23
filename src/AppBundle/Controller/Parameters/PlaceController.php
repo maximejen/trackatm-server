@@ -4,6 +4,7 @@ namespace AppBundle\Controller\Parameters;
 
 use AppBundle\Controller\ParametersController;
 use AppBundle\Entity\Place;
+use AppBundle\Form\PlaceBulkCreateType;
 use AppBundle\Form\PlaceType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -28,8 +29,7 @@ class PlaceController extends ParametersController
         $search = $request->get("search");
         if ($search != NULL && $search != "") {
             $places = $em->getRepository("AppBundle:Place")->findPlaceByName($search);
-        }
-        else {
+        } else {
             $places = $em->getRepository("AppBundle:Place")->findAll();
         }
 
@@ -68,6 +68,33 @@ class PlaceController extends ParametersController
         ];
 
         return $this->render('parameters/place/create.html.twig', array_merge($params, $this->getCommonParametersForParameters()));
+    }
+
+    /**
+     * @Route("/places/bulk_create", name="parameters_bulk_create_place_page")
+     *
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function bulkCreateAction(Request $request)
+    {
+        $form = $this->createForm(PlaceBulkCreateType::class);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $data = $form->get('csv')->getData();
+            $fileGenerator = $this->container->get('file_genertor');
+            $fileGenerator->fromCSVToPlaces($this->getDoctrine()->getManager(), $data);
+        }
+
+        // TODO : make a text input to put the csv content inside.
+        // TODO : read the CSV and then generate all the places based on the CSV.
+
+         // TODO : Later implement a field to ask the customer for all the given places. In that case, ignore a column named customer in the csv.
+
+        $params = ['form' => $form->createView()];
+        return $this->render('parameters/place/bulk_create.html.twig', array_merge($params, $this->getCommonParametersForParameters()));
     }
 
     /**
