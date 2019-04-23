@@ -22,7 +22,6 @@ class AppKernel extends Kernel
             new FOS\RestBundle\FOSRestBundle(),
             new Nelmio\CorsBundle\NelmioCorsBundle(),
             new Vich\UploaderBundle\VichUploaderBundle(),
-            new Knp\Bundle\SnappyBundle\KnpSnappyBundle(),
 
         ];
 
