@@ -2,18 +2,6 @@
 
 {% block body %}
     <div>
-        <section class="hero is-light">
-            <div class="hero-body">
-                <div class="container">
-                    <h1 class="title">
-                        {{ history.customer }} - {{ history.place }}
-                    </h1>
-                    <h2 class="subtitle">
-                        {{ history.beginningDate.format('l jS F Y - g:ia') }}
-                    </h2>
-                </div>
-            </div>
-        </section>
         {% include ':home/operationHistory/job-report:content.html.twig' %}
     </div>
 {% endblock %}

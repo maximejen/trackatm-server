@@ -22,7 +22,7 @@ class FileGeneratorService
         $this->kernel = $kernel;
     }
 
-    private function returnFile($dir, $fileName)
+    public function returnFile($dir, $fileName)
     {
         $file = new File($this->kernel->getRootDir() . $dir . $fileName);
         $response = new BinaryFileResponse($file);

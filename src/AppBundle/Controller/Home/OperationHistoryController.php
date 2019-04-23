@@ -5,12 +5,14 @@ namespace AppBundle\Controller\Home;
 use AppBundle\Controller\HomeController;
 
 use AppBundle\Entity\OperationHistory;
+use daandesmedt\PHPHeadlessChrome\HeadlessChrome;
 use \DateInterval;
 use DatePeriod;
+use dawood\phpChrome\Chrome;
+use Knp\Bundle\SnappyBundle\Snappy\Response\PdfResponse;
+use Spipu\Html2Pdf\Html2Pdf;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
-use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -21,7 +23,8 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class OperationHistoryController extends HomeController
 {
-    private function getCustomer(Request $request) {
+    private function getCustomer(Request $request)
+    {
         $em = $this->getDoctrine()->getManager();
         $customerId = $request->get('customer');
         $customer = null;
@@ -31,7 +34,8 @@ class OperationHistoryController extends HomeController
         return $customer;
     }
 
-    private function getDates(Request $request) {
+    private function getDates(Request $request)
+    {
         $today = new \DateTime();
         $firstDate = $request->get("firstDate");
         $secondDate = $request->get("secondDate");
@@ -44,7 +48,8 @@ class OperationHistoryController extends HomeController
         return [$firstDate, $secondDate];
     }
 
-    private function getPlaces($customer) {
+    private function getPlaces($customer)
+    {
         $em = $this->getDoctrine()->getManager();
         if ($customer != null)
             $places = $em->getRepository('AppBundle:Place')->findBy(['customer' => $customer]);
@@ -225,12 +230,18 @@ class OperationHistoryController extends HomeController
     public function viewOperationHistory(OperationHistory $history)
     {
         $em = $this->getDoctrine()->getManager();
-        $customer = $em->getRepository("AppBundle:Customer")->findBy(['name' => $history->getCustomer()]);
+        $customer = $em->getRepository("AppBundle:Customer")->findOneBy(['name' => $history->getCustomer()]);
+        $timeSpent = $history->getEndingDate()->diff($history->getBeginningDate());
         return $this->render('home/operationHistory/view.html.twig', [
             'menuElements' => $this->getMenuParameters(),
             'menuMode' => "home",
             "isConnected" => !$this->getUser() == NULL,
             "history" => $history,
+            "timeSpent" => $timeSpent->h . 'h:' . $timeSpent->m . 'm',
+            "completed" => $history->getEndingDate()->format("l jS F Y"),
+            "color" => $customer->getColor(),
+            "textColor" => $this->getGoodColorOfText($customer->getColor(), "white", "black"),
+            "arrivingHour" => $history->getBeginningDate()->format('H:i'),
             "customer" => $customer
         ]);
     }
@@ -250,7 +261,7 @@ class OperationHistoryController extends HomeController
      * @param OperationHistory $history
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function pdfOperationHistory(OperationHistory $history)
+    public function pdfOperationHistory(Request $request, OperationHistory $history)
     {
         $em = $this->getDoctrine()->getManager();
         $customer = $em->getRepository("AppBundle:Customer")->findOneBy(['name' => $history->getCustomer()]);
@@ -262,7 +273,106 @@ class OperationHistoryController extends HomeController
             "color" => $customer->getColor(),
             "textColor" => $this->getGoodColorOfText($customer->getColor(), "white", "black"),
             "arrivingHour" => $history->getBeginningDate()->format('H:i'),
-            "customer" => $customer
+            "customer" => $customer,
+            "pdf" => false,
         ]);
+    }
+
+    /**
+     * @Route("/pdf/generate/{id}", name="operationhistory_pdf_generate")
+     *
+     * @param Request $request
+     * @return BinaryFileResponse
+     * @throws \Exception
+     */
+    public function generatePdfOperationHistory(Request $request, OperationHistory $history)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $customer = $em->getRepository("AppBundle:Customer")->findOneBy(['name' => $history->getCustomer()]);
+        $timeSpent = $history->getEndingDate()->diff($history->getBeginningDate());
+        $today = new \DateTime();
+        $fileGenerator = $this->container->get('file_genertor');
+//        $cmd = "/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --headless --disable-gpu --print-to-pdf=".
+//            $request->server->get('DOCUMENT_ROOT').$request->getBasePath() . '/pdf/' . $today->getTimestamp() . 'generated.pdf' .
+////            " http://localhost:8000/app.php" . $this->generateUrl("operationhistory_pdf", ['id' => $request->get('id')]) . " --crash-dumps-dir=/tmp";
+//            " --crash-dumps-dir=/tmp " .
+//
+//
+//
+
+
+//        var_dump($cmd);
+//        exec($cmd);
+
+//        $chrome = new Chrome(null,'/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome');
+//        $chrome->useHtml($this->renderView(
+//            ':home/operationHistory/job-report:job-report.html.twig',
+//            [
+//                "history" => $history,
+//                "timeSpent" => $timeSpent->h . 'h:' . $timeSpent->m . 'm',
+//                "completed" => $history->getEndingDate()->format("l jS F Y"),
+//                "color" => $customer->getColor(),
+//                "textColor" => $this->getGoodColorOfText($customer->getColor(), "white", "black"),
+//                "arrivingHour" => $history->getBeginningDate()->format('H:i'),
+//                "customer" => $customer,
+//                "pdf" => true,
+//            ]
+//        ));
+//        var_dump($chrome->getPdf("./generated.pdf"));
+//        die();
+
+//        var_dump($request->server->get('DOCUMENT_ROOT').$request->getBasePath() . '/pdf/' . $today->getTimestamp() . ' - generated.pdf');
+//        file_put_contents(
+//            $request->server->get('DOCUMENT_ROOT').$request->getBasePath() . "/tmp.html",
+//            );
+        $htmlCode = $this->renderView(
+            ':home/operationHistory/job-report:job-report.html.twig',
+            [
+                "history" => $history,
+                "timeSpent" => $timeSpent->h . 'h:' . $timeSpent->m . 'm',
+                "completed" => $history->getEndingDate()->format("l jS F Y"),
+                "color" => $customer->getColor(),
+                "textColor" => $this->getGoodColorOfText($customer->getColor(), "white", "black"),
+                "arrivingHour" => $history->getBeginningDate()->format('H:i'),
+                "customer" => $customer,
+                "pdf" => true,
+            ]
+        );
+
+        $post = json_encode([
+            "htmlCode" => $htmlCode,
+            "type" => "htmlToPdf"
+        ]);
+
+        $header = [
+            'Content-Type: application/json',
+            "Content-Length: " . strlen($post)
+        ];
+
+        var_dump($header, $post);
+
+        $ch = curl_init("https://api.sejda.com/v1/tasks");
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
+        file_put_contents(
+            $request->server->get('DOCUMENT_ROOT') . $request->getBasePath() . '/pdf/' . $today->getTimestamp() . ' - generated.pdf',
+            curl_exec($ch)
+        );
+        curl_close($ch);
+
+//        die();
+
+//        return new PdfResponse($this->get('knp_snappy.pdf')->getOutput("http://localhost:8000" . $this->generateUrl("operationhistory_pdf", ['id' => $customer->getId()])),
+//            $request->server->get('DOCUMENT_ROOT').$request->getBasePath() . '/pdf/' . $today->getTimestamp() . ' - generated.pdf');
+
+//        exec("/usr/local/bin/wkhtmltopdf --lowquality http://localhost:8000/operation-history/pdf/1 /Users/maxime/delivery/work/trackatm-server/web/test.pdf");
+
+//        $this->get('knp_snappy.pdf')->generate("http://localhost:8000".$this->generateUrl("operationhistory_pdf", ['id' => $request->get('id')]),
+//            $request->server->get('DOCUMENT_ROOT').$request->getBasePath() . '/pdf/' . $today->getTimestamp() . 'generated.pdf');
+
+        return $this->file($fileGenerator->returnFile("/../web/pdf/",  $today->getTimestamp() . ' - generated.pdf'));
     }
 }
