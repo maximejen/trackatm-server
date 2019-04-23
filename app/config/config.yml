@@ -123,11 +123,3 @@ vich_uploader:
             inject_on_load: false
             delete_on_update: true
             delete_on_remove: true
-
-knp_snappy:
-    temporary_folder: "%kernel.cache_dir%/snappy"
-    process_timeout: 20 # In seconds
-    pdf:
-        enabled:    true
-        binary:     /usr/local/bin/wkhtmltopdf
-        options:    []
