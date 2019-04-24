@@ -357,8 +357,9 @@ class OperationHistoryController extends HomeController
 
         curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
+        $fileName = $today->getTimestamp() . ' - generated.pdf';
         file_put_contents(
-            $request->server->get('DOCUMENT_ROOT') . $request->getBasePath() . '/pdf/' . $today->getTimestamp() . ' - generated.pdf',
+            $request->server->get('DOCUMENT_ROOT') . $request->getBasePath() . '/pdf/' . $fileName,
             curl_exec($ch)
         );
         curl_close($ch);
@@ -373,6 +374,6 @@ class OperationHistoryController extends HomeController
 //        $this->get('knp_snappy.pdf')->generate("http://localhost:8000".$this->generateUrl("operationhistory_pdf", ['id' => $request->get('id')]),
 //            $request->server->get('DOCUMENT_ROOT').$request->getBasePath() . '/pdf/' . $today->getTimestamp() . 'generated.pdf');
 
-        return $this->file($fileGenerator->returnFile("/../web/pdf/",  $today->getTimestamp() . ' - generated.pdf'));
+        return $this->file($fileGenerator->returnFile("/../web/pdf/",  $fileName));
     }
 }
