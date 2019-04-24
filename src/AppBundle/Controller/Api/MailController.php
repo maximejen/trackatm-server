@@ -113,7 +113,7 @@ class MailController extends ApiController
             "completedDate" => $operationHistory->getEndingDate()->format("l jS F Y"),
             "operationName" => $operationHistory->getCustomer() . ' - ' . $operationHistory->getPlace(),
             "atmName" => $operationHistory->getPlace(),
-            "arrivedOnSite" => $operationHistory->getBeginningDate()->format("h:m"),
+            "arrivedOnSite" => $operationHistory->getBeginningDate()->format("H:i"),
             "nbTasks" => $operationHistory->getTasks()->count(),
             "color" => $customer->getColor()
         ];
