@@ -1,0 +1,131 @@
+<div {% if pdf is defined and pdf == true %}class="container"{% endif %}>
+    <div class="hero is-light">
+        <div class="hero-body">
+            <div class="container">
+                <h1 class="title">
+                    {{ history.customer }} - {{ history.place }}
+                </h1>
+                <h2 class="subtitle">
+                    {{ history.name }}
+                </h2>
+            </div>
+        </div>
+    </div>
+    <div>
+        <div class="level">
+            <div class="level-item has-text-centered">
+                <div>
+                    <p class="heading">Time spent</p>
+                    <p class="title">{{ timeSpent }}</p>
+                </div>
+            </div>
+            <div class="level-item has-text-centered">
+                <div>
+                    <p class="heading">Completed on</p>
+                    <p class="title">{{ completed }}</p>
+                </div>
+            </div>
+            <div class="level-item has-text-centered">
+                <div>
+                    <p class="heading">Arrived on site</p>
+                    <p class="title">{{ arrivingHour }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container operations-container">
+        <div class="columns is-multiline is-mobile is-centered">
+            <ul class="column is-full columns is-mobile is-multiline is-centered is-half">
+                {% for task in history.tasks %}
+                    <li class="column is-full">
+                        <div class="todo-list columns is-multiline is-mobile is-centered has-text-centered">
+                            <label class="todo column is-full columns">
+                                <span class="icon is-large column is-1">
+                                {% if task.status == true %}
+                                    <i class="fas fa-check"></i>
+                                {% else %}
+                                    <i class="far fa-square"></i>
+                                {% endif %}
+                                </span>
+                                <span class="todo__text column is-11">{{ task.name }}</span>
+                            </label>
+                            <div class="column is-full sub-elements">
+                                <div class="cleaner-comment">
+                                    {{ task.textInput }}
+                                </div>
+                                {% if task.image|length > 0 %}
+                                    <div>
+                                        {% for image in task.image %}
+                                            <img width="32%"
+                                                 src="{{ app.request.getSchemeAndHttpHost() ~ "/images/oh/" ~ image.imageName }}"
+                                                 alt="image"/>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+<style>
+    .hero {
+        background-color: {{ color }} !important;
+        color: {{ textColor }} !important;
+    }
+
+    .title, .subtitle {
+        color: {{ textColor }} !important;
+    }
+
+    .level {
+        background-color: {{ color }};
+        color: {{ textColor }};
+        padding-top: 2em;
+        padding-bottom: 2em;
+    }
+
+    .operations-container {
+        margin-top: 3em !important;
+    }
+
+    .cleaner-comment {
+        word-wrap: break-word; /* IE 5.5-7 */
+        white-space: -moz-pre-wrap; /* Firefox 1.0-2.0 */
+    }
+
+    .sub-elements {
+        text-align: left;
+    }
+
+    .todo-list {
+        text-align: center;
+        background: #FFF;
+        font-size: 20px;
+        margin: auto;
+        padding: 0.5em 1em;
+        /*width: 50%;*/
+        box-shadow: 0 5px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    .todo {
+        display: block;
+        position: relative;
+        margin: 0 auto;
+        cursor: pointer;
+        padding: 1em 1em 1em 16%;
+    }
+
+    .todo:last-child {
+        border-bottom: none;
+    }
+
+    .todo__text {
+        color: #122f34;
+        transition: all 0.4s linear 0.4s;
+        word-wrap: break-word; /* IE 5.5-7 */
+        white-space: -moz-pre-wrap; /* Firefox 1.0-2.0 */
+    }
+</style>

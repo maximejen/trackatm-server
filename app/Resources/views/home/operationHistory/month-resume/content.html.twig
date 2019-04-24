@@ -1,0 +1,65 @@
+{% for month in planning %}
+    <section class="column is-full hero is-light">
+        <div class="hero-body">
+            <div class="container">
+                <h1 class="title">
+                    {{ month.date.format('F Y') }}
+                </h1>
+            </div>
+        </div>
+    </section>
+    <table class="column is-full table is-hoverable is-fullwidth is-bordered month-view">
+        <thead class="">
+        <tr class="is-primary is-selected">
+            {% for key, table in month.content['columns'] %}
+                {% if key is same as("customer") or key is same as("place") or key is same as("lat") or key is same as("lon") or key is same as("TOTAL") %}
+                    <th>{{ key }}</th>
+                {% else %}
+                    <th>{{ "%02d"|format(key) }}</th>
+                {% endif %}
+            {% endfor %}
+        </tr>
+        </thead>
+        <tbody class="">
+        {% for key, line in month.content %}
+            {% if key != "columns" %}
+                <tr>
+                    {% for key, cell in line %}
+                        <td nowrap="nowrap">
+                            {% if cell is null %}
+                                &nbsp;
+                            {% else %}
+                                {% set link = cell is iterable %}
+                                {% if link %}
+                                    {% for key, elem in cell %}
+                                        <a href="{{ path('operationhistory_view', {'id': elem.id}) }}">
+                                            {{ elem.beginningDate.format('H:i') }}
+                                        </a>
+                                        {% if key != (cell|length - 1) %}
+                                            {{ "/" }}
+                                        {% endif %}
+                                    {% endfor %}
+                                {% else %}
+                                    {{ cell }}
+                                {% endif %}
+                            {% endif %}
+                        </td>
+                    {% endfor %}
+                </tr>
+            {% endif %}
+        {% endfor %}
+        </tbody>
+    </table>
+{% endfor %}
+<style>
+    th {
+        white-space: nowrap;
+        {% if color is defined and color is not null %}background: {{ color }} !important;{% endif %}
+        {% if pdf is defined and pdf == true %}font-size: 0.8em !important;{% endif %}
+    }
+
+    td {
+        {% if pdf is defined and pdf == true %}font-size: 0.8em !important;{% endif %}
+    }
+
+</style>

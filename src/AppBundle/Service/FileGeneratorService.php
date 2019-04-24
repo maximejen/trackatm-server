@@ -3,11 +3,14 @@
 namespace AppBundle\Service;
 
 
+use AppBundle\Entity\Customer;
+use AppBundle\Entity\GeoCoords;
 use AppBundle\Entity\Operation;
 use AppBundle\Entity\OperationHistory;
 use AppBundle\Entity\Place;
 use DateInterval;
 use DatePeriod;
+use Doctrine\ORM\EntityManager;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
@@ -22,7 +25,7 @@ class FileGeneratorService
         $this->kernel = $kernel;
     }
 
-    private function returnFile($dir, $fileName)
+    public function returnFile($dir, $fileName)
     {
         $file = new File($this->kernel->getRootDir() . $dir . $fileName);
         $response = new BinaryFileResponse($file);
@@ -32,11 +35,12 @@ class FileGeneratorService
 
     private function getInterval(\DateTime $date1, \DateTime $date2)
     {
-        $date2->modify('+1 days');
+        $tmpDate = new \DateTime($date2->format('Y-m-d'));
+        $tmpDate->modify('+1 days');
         $period = new DatePeriod(
             $date1,
             new DateInterval('P1D'),
-            $date2
+            $tmpDate
         );
         return $period;
     }
@@ -53,18 +57,37 @@ class FileGeneratorService
         return $planning;
     }
 
-    private function generateMainColumns(\DateTime $date1, \DateTime $date2, $operations) {
-        $columns = ["n" => $this->getAllPlacesConcerned($operations), "Place Name" => [], "Customer" => [], "LAT" => [], "LON" => []];
+    private function generateEmptyTable(\DateTime $date1, \DateTime $date2, $operations)
+    {
+        $cols = ["customer" => 0, "place" => 1, "lat" => 2, "lon" => 3];
+        $places = $this->getAllPlacesConcerned($operations);
+        $content = [];
+
+        foreach ($places as $place) {
+            $placeName = $place->getName();
+            $content[$placeName]["customer"] = $place->getCustomer()->getName();
+            $content[$placeName]["place"] = $place->getName();
+            $content[$placeName]["lat"] = $place->getGeoCoords()->getLat();
+            $content[$placeName]["lon"] = $place->getGeoCoords()->getLon();
+        }
+
         $period = $this->getInterval($date1, $date2);
         /** @var \DateTime $date */
         foreach ($period as $date) {
-            $columns[$date->format('l - Y-m-d')] = [];
+            $index = intval($date->format('d'));
+            $cols[$index] = count($cols);
+            foreach ($content as &$item)
+                $item[$index] = null;
         }
-        $columns["TOTAL"] = [];
-        return $columns;
+        foreach ($content as &$item)
+            $item["TOTAL"] = 0;
+        $cols["TOTAL"] = count($cols);
+        $content["columns"] = $cols;
+        return $content;
     }
 
-    private function getAllPlacesConcerned($operations) {
+    private function getAllPlacesConcerned($operations)
+    {
         $places = [];
         /** @var Operation $operation */
         foreach ($operations as $operation) {
@@ -73,58 +96,60 @@ class FileGeneratorService
         return $places;
     }
 
-    public function mapPlacesInArray($content, $histories)
+    private function getMonthsBetweenTwoDates($date1, $date2)
     {
-        /** @var Place $place */
-        foreach ($content["n"] as $place) {
-            $content["Place Name"][$place->getName()] = $place->getName();
-            $content["Customer"][$place->getName()] = $place->getCustomer()->getName();
-            $content["LAT"][$place->getName()] = $place->getGeoCoords()->getLat();
-            $content["LON"][$place->getName()] = $place->getGeoCoords()->getLon();
-            $content["TOTAL"][$place->getName()] = 0;
+        $tmpDate = new \DateTime($date1->format("Y-m-d"));
+        $months = [];
+        while ($tmpDate->format('Y-m') != $date2->format('Y-m')) {
+            $months[] = $tmpDate->format("Y-m");
+            $tmpDate->modify('+1 months');
         }
+        $months[] = $tmpDate->format("Y-m");
+        return $months;
+    }
+
+    private function mapHistoriesToTable($content, $histories, $month)
+    {
         /** @var OperationHistory $history */
         foreach ($histories as $history) {
-            $cell = array_key_exists($history->getPlace(), $content[$history->getBeginningDate()->format('l - Y-m-d')]);
-            if ($cell == true)
-                $cell = $content[$history->getBeginningDate()->format('l - Y-m-d')][$history->getPlace()];
-            if ($cell == false)
-                $content[$history->getBeginningDate()->format('l - Y-m-d')][$history->getPlace()] = 1;
-            else if ($cell > 0)
-                $content[$history->getBeginningDate()->format('l - Y-m-d')][$history->getPlace()] += 1;
-            $content["TOTAL"][$history->getPlace()] += 1;
+            $date = $history->getBeginningDate();
+
+            if ($date->format('Y-m') != $month) // ignore histories that are not from the current month
+                continue;
+            $place = $history->getPlace();
+
+            $index = intval($date->format('d'));
+            $content[$place][$index][] = $history;
+            $content[$place]["TOTAL"]++;
         }
         return $content;
     }
 
-    private function createCSV($fileName, $content, string $date1, string $date2, $customer)
+    public function getPlanningPerMonths(\DateTime $date1, \DateTime $date2, $histories, $operations)
     {
-        $toWrite = "from;$date1;to;$date2";
-        $toWrite .= $customer != null ? "customer;$customer" : "";
-        $toWrite .= "\n";
+        $months = $this->getMonthsBetweenTwoDates($date1, $date2);
 
+        foreach ($months as $key => $month) {
+            $firstDay = new \DateTime($month);
+            $lastDay = new \DateTime($month);
 
-        foreach ($content as $key => $item) {
-            $toWrite .= $key;
-            if ($key == "TOTAL")
-                $toWrite .= "\n";
+            if ($key == 0)
+                $firstDay = new \DateTime($date1->format('Y-m-d'));
             else
-                $toWrite .= ";";
+                $firstDay->modify("first day of this month");
+            if ($key == count($months) - 1)
+                $lastDay = new \DateTime($date2->format('Y-m-d'));
+            else
+                $lastDay->modify("last day of this month");
+
+            $content = $this->generateEmptyTable($firstDay, $lastDay, $operations);
+            $content = $this->mapHistoriesToTable($content, $histories, $month);
+
+            $monthTag = $firstDay->format("Y-m");
+            $months[$key] = ["content" => $content, "date" => new \DateTime($monthTag)];
         }
-        foreach ($content["n"] as $place) {
-            foreach ($content as $key => $item) {
-                $exists = array_key_exists($place->getName(), $content[$key]);
-                if ($exists)
-                    $toWrite .= $content[$key][$place->getName()];
-                else
-                    $toWrite .= "";
-                if ($key == "TOTAL")
-                    $toWrite .= "\n";
-                else
-                    $toWrite .= ";";
-            }
-        }
-        file_put_contents("csv/" . $fileName, $toWrite);
+
+        return $months;
     }
 
     public function generateCsv(\DateTime $date1, \DateTime $date2, $histories, $operations, $customer = null)
@@ -132,10 +157,115 @@ class FileGeneratorService
         $now = new \DateTime();
         $fileName = $now->getTimestamp() . " - csvFile.csv";
 
-        $content = $this->generateMainColumns($date1, $date2, $operations);
-        $content = $this->mapPlacesInArray($content, $histories);
-        $this->createCSV($fileName, $content, $date1->format('Y-m-d'), $date2->format('Y-m-d'), $customer);
+        $content = $this->getPlanningPerMonths($date1, $date2, $histories, $operations);
+
+        $this->createOperationHistoryCSV($fileName, $content, $date1->format('Y-m-d'), $date2->format('Y-m-d'), $customer);
 
         return $this->returnFile("/../web/csv/", $fileName);
+    }
+
+    public function mapPlacesInArray($content, $histories, $month, $places)
+    {
+        /** @var Place $place */
+        foreach ($places as $key => $place) {
+            $content["place"][$key] = $place->getName();
+            $content["customer"][$key] = $place->getCustomer()->getName();
+            $content["lat"][$key] = $place->getGeoCoords()->getLat();
+            $content["lon"][$key] = $place->getGeoCoords()->getLon();
+            $content["TOTAL"][$key] = 0;
+        }
+        /** @var OperationHistory $history */
+        foreach ($histories as $history) {
+            $date = $history->getBeginningDate();
+            if ($date->format('Y-m') != $month)
+                continue;
+            $index = intval($date->format('d'));
+            $cell = array_key_exists($history->getPlace(), $content[$index]);
+            if ($cell == true)
+                $cell = $content[$index][$history->getPlace()];
+            if ($cell == false)
+                $content[$index][$history->getPlace()] = 1;
+            else if ($cell > 0)
+                $content[$index][$history->getPlace()] += 1;
+            $content["TOTAL"][$history->getPlace()] += 1;
+        }
+        return $content;
+    }
+
+    private function createOperationHistoryCSV($fileName, $content, string $date1, string $date2, $customer)
+    {
+        $toWrite = "from;$date1;to;$date2\n";
+
+        foreach ($content as &$month) {
+            $monthString = $month['date']->format('F Y');
+            $toWrite .= "$monthString\n";
+            $columns = $month['content']['columns'];
+            foreach ($columns as $key => $item) {
+                $toWrite .= $key;
+                if ($key == "TOTAL")
+                    $toWrite .= "\n";
+                else
+                    $toWrite .= ";";
+            }
+            unset($month['content']['columns']);
+            foreach ($month['content'] as $place => $column) {
+                foreach ($column as $columnKey => $item) {
+                    if ($item == null)
+                        $toWrite .= "";
+                    else if ($item != null && gettype($item) == "array") {
+                        foreach ($item as $ohkeys => $value) {
+                            $toWrite .= $value->getBeginningDate()->format('H:i');
+                            if ($ohkeys != count($item) - 1)
+                                $toWrite .= " / ";
+                        }
+                    }
+                    else
+                        $toWrite .= $item;
+                    if ($columnKey == "TOTAL")
+                        $toWrite .= "\n";
+                    else
+                        $toWrite .= ";";
+                }
+            }
+            $toWrite .= "\n";
+        }
+        file_put_contents("csv/" . $fileName, $toWrite);
+    }
+
+    public function fromCSVToPlaces(EntityManager $em, $csv)
+    {
+        $lines = explode("\r\n", $csv);
+        $columns = explode(";", $lines[0]);
+        unset($lines[0]);
+        foreach ($columns as $key => $column) {
+            $columns[$column] = $key;
+        }
+
+        foreach ($lines as $key => $line) {
+            $line = explode(";", $line);
+            $placeName = '[' . $line[$columns['id']] . '] ' . $line[$columns['name']];
+            $lat = $line[$columns['lat']];
+            $lon = $line[$columns['lon']];
+            $customerName = $line[$columns['customer']];
+            $lat = str_replace(",", ".", $lat);
+            $lon = str_replace(",", ".", $lon);
+            $place = new Place();
+            $place->setName($placeName);
+            $geoCoords = new GeoCoords();
+            $geoCoords->setLat(floatval($lat));
+            $geoCoords->setLon(floatval($lon));
+            $place->setGeoCoords($geoCoords);
+            $customer = $em->getRepository('AppBundle:Customer')->findOneBy(['name' => $customerName]);
+            if ($customer) {
+                $place->setCustomer($customer);
+                $potentialPlace = $em->getRepository('AppBundle:Place')->findOneBy(['name' => $placeName]);
+                if ($potentialPlace == null) {
+                    $em->persist($place);
+                    $em->flush();
+                }
+            }
+            else
+                continue;
+        }
     }
 }
