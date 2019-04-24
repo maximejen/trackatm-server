@@ -9,24 +9,27 @@
 namespace AppBundle\Service;
 
 
+use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\Templating\DelegatingEngine;
 
 class MailerService
 {
     private $mailer;
     private $twig;
+    private $container;
 
-    public function __construct(\Swift_Mailer $mailer, DelegatingEngine $twig)
+    public function __construct(\Swift_Mailer $mailer, DelegatingEngine $twig, Container $container)
     {
         $this->mailer = $mailer;
         $this->twig = $twig;
+        $this->container = $container;
     }
 
     public function sendMail($sendTo, $subject, $params, $templateName)
     {
         $message = \Swift_Message::newInstance()
             ->setSubject($subject)
-            ->setFrom("damsltc57@gmail.com")
+            ->setFrom($this->container->getParameter('mailer_user'))
             ->setTo($sendTo)
             ->setBody($this->twig->render(
                 $templateName,

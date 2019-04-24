@@ -65,7 +65,6 @@ class OperationController extends ApiController
     private function fromPlanningToFlat($planning)
     {
         $newArray = [];
-
         foreach ($planning as $item) {
             foreach ($item as $value) {
                 $newArray[] = $value;
@@ -115,9 +114,7 @@ class OperationController extends ApiController
 
             }
         }
-
         $operations = $this->fromPlanningToFlat($planning);
-
         return new Response($serializer->serialize($operations, 'json', ['groups' => ['operation']]));
     }
 

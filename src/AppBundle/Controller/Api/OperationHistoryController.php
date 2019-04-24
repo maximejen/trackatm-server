@@ -1,18 +1,17 @@
 <?php
 namespace AppBundle\Controller\Api;
 
+use Ajaxray\PHPWatermark\Watermark;
 use AppBundle\Entity\Cleaner;
 use AppBundle\Entity\Image;
-use AppBundle\Entity\Operation;
 use AppBundle\Entity\OperationHistory;
 use AppBundle\Entity\OperationTaskHistory;
-use AppBundle\Form\OperationType;
 use FOS\RestBundle\Controller\Annotations as Rest;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Serializer\SerializerInterface;
-
 /**
  * Class OperationHistoryController
  * @package AppBundle\Controller\Api
@@ -133,15 +132,31 @@ class OperationHistoryController extends ApiController
      */
     public function postImageAction(Request $request, OperationTaskHistory $operationTaskHistory, SerializerInterface $serializer)
     {
+        date_default_timezone_set('Europe/Paris');
+
         if (!$this->checkUserIsConnected($request))
             return new JsonResponse(['message' => "you need to be connected"], 403);
         $entityManager =  $this->get('doctrine.orm.entity_manager');
+        /**  @var $image UploadedFile */
+        $imageFile =$request->files->get("image");
+        $mTime = $imageFile->getMTime();
+
+
         $image = new Image();
-        $image->setImageFile($request->files->get("image"));
+        $image->setImageFile($imageFile);
         $image->setTask($operationTaskHistory);
         $operationTaskHistory->addImage($image);
         $entityManager->persist($operationTaskHistory);
         $entityManager->flush();
+
+        $watermark = new \Ajaxray\PHPWatermark\Watermark($request->server->get('DOCUMENT_ROOT').$request->getBasePath() . '/images/oh/' . $image->getImageName());
+
+        $watermark->setFontSize(100)
+            ->setPosition(Watermark::POSITION_BOTTOM_RIGHT)
+            ->setOpacity(1);
+
+        $watermark->withText(gmdate("Y-m-d\ H:i:s", $mTime), $request->server->get('DOCUMENT_ROOT').$request->getBasePath() . '/images/oh/' . $image->getImageName());
+
         return new Response(json_encode(array(
             'success' => 'true')));
     }

@@ -35,7 +35,7 @@ services:
     #         $someArgument: 'some_value'
     mail.send:
         class: AppBundle\Service\MailerService
-        arguments: ['@mailer', '@templating']
+        arguments: ['@mailer', '@templating', '@service_container']
         public: true
 
     file_genertor:
