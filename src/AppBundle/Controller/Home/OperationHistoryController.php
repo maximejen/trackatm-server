@@ -221,6 +221,85 @@ class OperationHistoryController extends HomeController
     }
 
     /**
+     * @Route("/pdf/generate", name="operationhistories_pdf_generate")
+     *
+     * @param Request $request
+     * @return BinaryFileResponse|\Symfony\Component\HttpFoundation\Response
+     */
+    public function generatePdfContentAction(Request $request)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $customer = $this->getCustomer($request);
+        $dates = $this->getDates($request);
+        $places = $this->getPlaces($customer);
+        $operations = $this->getOperations($customer);
+        $histories = $this->getOperationHistories($customer, $dates);
+        $week = $this->getWeek($operations);
+
+        $numberDone = 0;
+        $numberOverdue = 0;
+        /** @var OperationHistory $history */
+        foreach ($histories as $history) {
+            $history->getDone() ? $numberDone++ : $numberOverdue++;
+        }
+
+        // Get all the dates between firstDate and secondDate
+        $planning = $this->getOperationsPlanning($dates[0], $dates[1], $week);
+        /** @var OperationHistory $history */
+        foreach ($histories as $key => $history)
+            $planning[$history->getBeginningDate()->format("Y-m-d")][] = $history;
+
+        $count = 0;
+        foreach ($planning as $item)
+            $count += count($item);
+
+        uksort($planning, function ($a, $b) {
+            $date1 = new \DateTime($a);
+            $date2 = new \DateTime($b);
+            return $date1 > $date2 ? 1 : -1;
+        });
+
+        $fileGeneratorService = $this->container->get('file_genertor');
+
+        $htmlCode =  $this->renderView('home/operationHistory/month-resume/month-resume.html.twig', [
+            "firstDate" => $dates[0],
+            "secondDate" => $dates[1],
+            "planning" => $fileGeneratorService->getPlanningPerMonths($dates[0], $dates[1], $histories, $operations),
+            "color" => $customer != null ? $customer->getColor() : null,
+            "pdf" => true
+        ]);
+
+        $today = new \DateTime();
+        $fileGenerator = $this->container->get('file_genertor');
+
+        $post = json_encode([
+            "htmlCode" => $htmlCode,
+            "type" => "htmlToPdf"
+        ]);
+
+        $header = [
+            'Content-Type: application/json',
+            "Content-Length: " . strlen($post)
+        ];
+
+        $ch = curl_init("https://api.sejda.com/v1/tasks");
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
+        $fileName = $today->getTimestamp() . ' - generated.pdf';
+        file_put_contents(
+            $request->server->get('DOCUMENT_ROOT') . $request->getBasePath() . '/pdf/' . $fileName,
+            curl_exec($ch)
+        );
+        curl_close($ch);
+
+        $file = $this->file($fileGenerator->returnFile("/../web/pdf/",  $fileName));
+        return $file;
+    }
+
+    /**
      * @Route("/{id}", name="operationhistory_view")
      *
      * @param OperationHistory $history
@@ -329,6 +408,7 @@ class OperationHistoryController extends HomeController
         );
         curl_close($ch);
 
-        return $this->file($fileGenerator->returnFile("/../web/pdf/",  $fileName));
+        $file = $this->file($fileGenerator->returnFile("/../web/pdf/",  $fileName));
+        return $file;
     }
 }

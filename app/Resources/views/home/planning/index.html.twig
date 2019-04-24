@@ -22,7 +22,8 @@
                             <input type="number" name="customer" style="display: none" value="{{ customerId }}">
                             <div class="column is-10">
                                 <p class="control has-icons-left">
-                                    <input class="input is-medium" placeholder="Search" name="search" value="{{ search }}">
+                                    <input class="input is-medium" placeholder="Search" name="search"
+                                           value="{{ search }}">
                                     <span class="icon is-small is-left">
                                       <i class="fas fa-search"></i>
                                     </span>
@@ -58,6 +59,7 @@
                                 </a>
                             {% endfor %}
                         </p>
+                        <p class="places-list">
                         {% for place in places %}
                             <a class="panel-block js-place-choice" data-id="{{ place.id }}" data-name="{{ place.name }}"
                                data-customer-name="{{ place.customer.name }}">
@@ -65,6 +67,7 @@
                                 {{ place.customer.name ~ " - " ~ place.name }}
                             </a>
                         {% endfor %}
+                        </p>
                         <div class="panel-block">
                             <a href="{{ path('planningpage') }}"
                                class="button is-fullwidth is-medium is-danger is-outlined">
@@ -77,15 +80,15 @@
                     </nav>
                 </div>
                 <div class="column is-8">
-                        <div class="select is-primary is-medium is-fullwidth">
-                            <select id="js-cleaner-choice">
-                                <option value="">Select a cleaner</option>
-                                {% for cleaner in cleaners %}
-                                    <option id="{{ 'js-cleaner' ~ cleaner.id }}"
-                                            value="{{ cleaner.id }}">{{ "Cleaner #" ~cleaner.id }}</option>s
-                                {% endfor %}
-                            </select>
-                        </div>
+                    <div class="select is-primary is-medium is-fullwidth">
+                        <select id="js-cleaner-choice">
+                            <option value="">Select a cleaner</option>
+                            {% for cleaner in cleaners %}
+                                <option id="{{ 'js-cleaner' ~ cleaner.id }}"
+                                        value="{{ cleaner.id }}">{{ "Cleaner #" ~cleaner.id }}</option>s
+                            {% endfor %}
+                        </select>
+                    </div>
                     <div class="column is-full">
                         <table class="table is-hoverable is-fullwidth">
                             <thead>
@@ -136,6 +139,12 @@
 
 {% block stylesheets %}
     <style>
+
+        .places-list {
+            overflow-y: scroll;
+            height: 500px;
+        }
+
         .cleaner-planning {
             background: #f9f9f9 !important;
         }

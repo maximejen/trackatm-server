@@ -33,7 +33,7 @@
                                 {% if link %}
                                     {% for key, elem in cell %}
                                         <a href="{{ path('operationhistory_view', {'id': elem.id}) }}">
-                                            {{ elem.beginningDate.format('H:i') }}
+                                            {{ elem.endingDate.format('H:i') }}
                                         </a>
                                         {% if key != (cell|length - 1) %}
                                             {{ "/" }}
