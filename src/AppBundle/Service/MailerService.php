@@ -25,7 +25,7 @@ class MailerService
         $this->container = $container;
     }
 
-    public function sendMail($sendTo, $subject, $params, $templateName)
+    public function sendMail($sendTo, $subject, $params, $templateName, $attachment)
     {
         $message = \Swift_Message::newInstance()
             ->setSubject($subject)
@@ -34,7 +34,8 @@ class MailerService
             ->setBody($this->twig->render(
                 $templateName,
                 $params
-            ), 'text/html');
+            ), 'text/html')
+            ->attach(\Swift_Attachment::fromPath($attachment));
         $this->mailer->send($message);
     }
 }
