@@ -27,7 +27,8 @@ class MailerService
 
     public function sendMail($sendTo, $subject, $params, $templateName, $attachment)
     {
-        $message = \Swift_Message::newInstance()
+        $message = new \Swift_Message();
+        $message
             ->setSubject($subject)
             ->setFrom($this->container->getParameter('mailer_user'))
             ->setTo($sendTo)

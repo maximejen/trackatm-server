@@ -1,4 +1,4 @@
-<div {% if pdf is defined and pdf == true %}class="container"{% endif %}>
+<div id="main" {% if pdf is defined and pdf == true %}class="container"{% endif %}>
     <div class="hero is-light">
         <div class="hero-body">
             <div class="container">
@@ -71,6 +71,10 @@
     </div>
 </div>
 <style>
+    #main {
+        margin-bottom: 10em;
+    }
+
     .hero {
         background-color: {{ color }} !important;
         color: {{ textColor }} !important;

@@ -149,9 +149,12 @@ class OperationHistoryController extends ApiController
         $entityManager->persist($operationTaskHistory);
         $entityManager->flush();
 
-        $watermark = new \Ajaxray\PHPWatermark\Watermark($request->server->get('DOCUMENT_ROOT').$request->getBasePath() . '/images/oh/' . $image->getImageName());
+        $watermark = new Watermark($request->server->get('DOCUMENT_ROOT').$request->getBasePath() . '/images/oh/' . $image->getImageName());
 
         $watermark->setFontSize(100)
+            ->setFont('Arial')
+            ->setOffset(0, 0)
+            ->setStyle(Watermark::STYLE_TEXT_LIGHT)
             ->setPosition(Watermark::POSITION_BOTTOM_RIGHT)
             ->setOpacity(1);
 

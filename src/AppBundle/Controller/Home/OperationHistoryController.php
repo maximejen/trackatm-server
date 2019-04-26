@@ -408,6 +408,8 @@ class OperationHistoryController extends HomeController
         );
         curl_close($ch);
 
+        var_dump($request->server->get('DOCUMENT_ROOT') . $request->getBasePath() . '/pdf/' . $fileName);
+
         $file = $this->file($fileGenerator->returnFile("/../web/pdf/",  $fileName));
         return $file;
     }
