@@ -35,7 +35,6 @@ class MailController extends ApiController
         $customer = $em->getRepository("AppBundle:Customer")->findOneBy(['name' => $history->getCustomer()]);
         $timeSpent = $history->getEndingDate()->diff($history->getBeginningDate());
         $today = new \DateTime();
-        $fileGenerator = $this->container->get('file_genertor');
         $htmlCode = $this->renderView(
             ':home/operationHistory/job-report:job-report.html.twig',
             [
@@ -73,7 +72,7 @@ class MailController extends ApiController
         );
         curl_close($ch);
 
-        $file = $this->file($fileGenerator->returnFile("/../web/pdf/",  $fileName));
+//        $file = $this->file($fileGenerator->returnFile("/../web/pdf/",  $fileName));
         return $request->server->get('DOCUMENT_ROOT') . $request->getBasePath() . '/pdf/' . $fileName;
     }
 

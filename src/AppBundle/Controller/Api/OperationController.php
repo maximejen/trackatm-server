@@ -103,18 +103,20 @@ class OperationController extends ApiController
         $planning = $this->getOperationsPlanning($weekAgo, $today, $week);
 
         /** @var OperationHistory $history */
-        foreach ($histories as $history) {
-            $date = $history->getInitialDate()->format('Y-m-d');
-            /** @var Operation $operation */
-            foreach ($planning[$date] as &$operation) {
-                if ($history->getDone() && $history->getPlace() == $operation->getPlace()->getName())
-                    $operation->setDone(true);
-                else
-                    $operation->setDone(false);
-
-            }
-        }
+//        foreach ($histories as $history) {
+//            $date = $history->getInitialDate()->format('Y-m-d');
+//            /** @var Operation $operation */
+//            foreach ($planning[$date] as &$operation) {
+//                if ($history->getDone() && $history->getPlace() == $operation->getPlace()->getName())
+//                    $operation->setDone(true);
+//                else
+//                    $operation->setDone(false);
+//
+//            }
+//        }
         $operations = $this->fromPlanningToFlat($planning);
+        foreach ($operations as $operation)
+            $operation->setDone(false);
         return new Response($serializer->serialize($operations, 'json', ['groups' => ['operation']]));
     }
 
