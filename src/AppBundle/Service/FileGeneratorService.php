@@ -125,6 +125,34 @@ class FileGeneratorService
         return $content;
     }
 
+    public function addTotalCountLine($content)
+    {
+        $columns = $content['columns'];
+        $newLine = ["TOTAL" => 0];
+        foreach ($content as $key => $line) {
+            if ($key == 'columns')
+                continue;
+            foreach ($line as $itemKey => $item) {
+                if (!array_key_exists($itemKey, $newLine)) {
+                    $newLine[$itemKey] = is_int($itemKey) ? 0 : "";
+                }
+                if ($itemKey == "TOTAL")
+                    $newLine[$itemKey] += $item;
+                if (!is_int($itemKey))
+                    continue;
+                if ($item != null) {
+                    foreach ($item as $value)
+                        $newLine[$itemKey]++;
+                }
+            }
+        }
+        $total = $newLine["TOTAL"];
+        unset($newLine["TOTAL"]);
+        $newLine["TOTAL"] = $total;
+        $content['TOTALS'] = $newLine;
+        return $content;
+    }
+
     public function getPlanningPerMonths(\DateTime $date1, \DateTime $date2, $histories, $operations)
     {
         $months = $this->getMonthsBetweenTwoDates($date1, $date2);
@@ -144,6 +172,7 @@ class FileGeneratorService
 
             $content = $this->generateEmptyTable($firstDay, $lastDay, $operations);
             $content = $this->mapHistoriesToTable($content, $histories, $month);
+            $content = $this->addTotalCountLine($content);
 
             $monthTag = $firstDay->format("Y-m");
             $months[$key] = ["content" => $content, "date" => new \DateTime($monthTag)];
