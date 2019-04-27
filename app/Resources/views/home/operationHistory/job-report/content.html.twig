@@ -54,9 +54,9 @@
                                     {{ task.textInput }}
                                 </div>
                                 {% if task.image|length > 0 %}
-                                    <div>
+                                    <div class="columns">
                                         {% for image in task.image %}
-                                            <img width="32%"
+                                            <img class="column is-4"
                                                  src="{{ app.request.getSchemeAndHttpHost() ~ "/images/oh/" ~ image.imageName }}"
                                                  alt="image"/>
                                         {% endfor %}
@@ -71,6 +71,10 @@
     </div>
 </div>
 <style>
+    img {
+        height: 100%;
+    }
+
     #main {
         margin-bottom: 10em;
     }
