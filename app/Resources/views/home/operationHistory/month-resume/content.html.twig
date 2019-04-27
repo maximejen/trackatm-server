@@ -32,9 +32,13 @@
                                 {% set link = cell is iterable %}
                                 {% if link %}
                                     {% for key, elem in cell %}
-                                        <a href="{{ path('operationhistory_view', {'id': elem.id}) }}">
+                                        {% if pdf is defined and pdf == true %}
                                             {{ elem.endingDate.format('H:i') }}
-                                        </a>
+                                        {% else %}
+                                            <a href="{{ path('operationhistory_view', {'id': elem.id}) }}">
+                                                {{ elem.endingDate.format('H:i') }}
+                                            </a>
+                                        {% endif %}
                                         {% if key != (cell|length - 1) %}
                                             {{ "/" }}
                                         {% endif %}
@@ -54,12 +58,14 @@
 <style>
     th {
         white-space: nowrap;
-        {% if color is defined and color is not null %}background: {{ color }} !important;{% endif %}
-        {% if pdf is defined and pdf == true %}font-size: 0.8em !important;{% endif %}
+        {% if color is defined and color is not null %} background: {{ color }} !important;
+    {% endif %} {% if pdf is defined and pdf == true %} font-size: 0.8em !important;
+    {% endif %}
     }
 
     td {
-        {% if pdf is defined and pdf == true %}font-size: 0.8em !important;{% endif %}
+        {% if pdf is defined and pdf == true %} font-size: 0.8em !important;
+    {% endif %}
     }
 
 </style>
