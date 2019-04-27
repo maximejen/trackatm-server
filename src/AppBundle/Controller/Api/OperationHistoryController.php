@@ -151,6 +151,7 @@ class OperationHistoryController extends ApiController
 
         $watermark = new Watermark($request->server->get('DOCUMENT_ROOT').$request->getBasePath() . '/images/oh/' . $image->getImageName());
 
+
         $watermark->setFontSize(100)
             ->setFont('Arial')
             ->setOffset(0, 0)
