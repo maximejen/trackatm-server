@@ -154,7 +154,7 @@ class OperationHistoryController extends ApiController
 
         $watermark->setFontSize(100)
             ->setFont('Arial')
-            ->setOffset(0, 0)
+            ->setOffset(0, -20)
             ->setStyle(Watermark::STYLE_TEXT_LIGHT)
             ->setPosition(Watermark::POSITION_BOTTOM_RIGHT)
             ->setOpacity(1)
