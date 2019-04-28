@@ -157,7 +157,9 @@ class OperationHistoryController extends ApiController
             ->setOffset(0, 0)
             ->setStyle(Watermark::STYLE_TEXT_LIGHT)
             ->setPosition(Watermark::POSITION_BOTTOM_RIGHT)
-            ->setOpacity(1);
+            ->setOpacity(1)
+
+        ;
 
         $watermark->withText(gmdate("Y-m-d\ H:i:s", $mTime), $request->server->get('DOCUMENT_ROOT').$request->getBasePath() . '/images/oh/' . $image->getImageName());
 
