@@ -168,7 +168,10 @@ class OperationHistoryController extends ApiController
             ->setOffset(0, 35)
             ->withImage($request->server->get('DOCUMENT_ROOT') . $request->getBasePath() . '/images/white.png');
 
-        $watermark->withText(gmdate("Y-m-d\ H:i:s", $mTime), $request->server->get('DOCUMENT_ROOT') . $request->getBasePath() . '/images/oh/' . $image->getImageName());
+        $hour = new \DateTime(gmdate("Y-m-d\ H:i:s \G\M\T", $mTime));
+        $hour->setTimezone(new \DateTimezone("UTC"));
+        $hour->setTimezone(new \DateTimezone("Asia/Kuwait"));
+        $watermark->withText($hour->format("Y-m-d H:i:s"), $request->server->get('DOCUMENT_ROOT') . $request->getBasePath() . '/images/oh/' . $image->getImageName());
 
         return new Response(json_encode(array(
             'success' => 'true')));

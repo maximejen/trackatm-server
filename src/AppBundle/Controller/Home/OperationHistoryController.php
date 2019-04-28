@@ -261,7 +261,7 @@ class OperationHistoryController extends HomeController
 
         $fileGeneratorService = $this->container->get('file_genertor');
 
-        $htmlCode =  $this->renderView('home/operationHistory/month-resume/month-resume.html.twig', [
+        $htmlCode = $this->renderView('home/operationHistory/month-resume/month-resume.html.twig', [
             "firstDate" => $dates[0],
             "secondDate" => $dates[1],
             "planning" => $fileGeneratorService->getPlanningPerMonths($dates[0], $dates[1], $histories, $operations),
@@ -295,7 +295,7 @@ class OperationHistoryController extends HomeController
         );
         curl_close($ch);
 
-        $file = $this->file($fileGenerator->returnFile("/../web/pdf/",  $fileName));
+        $file = $this->file($fileGenerator->returnFile("/../web/pdf/", $fileName));
         return $file;
     }
 
@@ -308,21 +308,14 @@ class OperationHistoryController extends HomeController
      */
     public function viewOperationHistory(OperationHistory $history)
     {
-        $em = $this->getDoctrine()->getManager();
-        $customer = $em->getRepository("AppBundle:Customer")->findOneBy(['name' => $history->getCustomer()]);
-        $timeSpent = $history->getEndingDate()->diff($history->getBeginningDate());
-        return $this->render('home/operationHistory/view.html.twig', [
+        $args = array_merge([
             'menuElements' => $this->getMenuParameters(),
             'menuMode' => "home",
             "isConnected" => !$this->getUser() == NULL,
-            "history" => $history,
-            "timeSpent" => $timeSpent->h . 'h:' . $timeSpent->m . 'm',
-            "completed" => $history->getEndingDate()->format("l jS F Y"),
-            "color" => $customer->getColor(),
-            "textColor" => $this->getGoodColorOfText($customer->getColor(), "white", "black"),
-            "arrivingHour" => $history->getBeginningDate()->format('H:i'),
-            "customer" => $customer
-        ]);
+        ], $this->generateArguments($history)
+        );
+
+        return $this->render('home/operationHistory/view.html.twig', $args);
     }
 
     private function getGoodColorOfText($bgColor, $lightColor, $darkColor)
@@ -342,19 +335,29 @@ class OperationHistoryController extends HomeController
      */
     public function pdfOperationHistory(Request $request, OperationHistory $history)
     {
+        return $this->render('home/operationHistory/job-report/job-report.html.twig', $this->generateArguments($history));
+    }
+
+    private function generateArguments(OperationHistory $history)
+    {
         $em = $this->getDoctrine()->getManager();
         $customer = $em->getRepository("AppBundle:Customer")->findOneBy(['name' => $history->getCustomer()]);
         $timeSpent = $history->getEndingDate()->diff($history->getBeginningDate());
-        return $this->render('home/operationHistory/job-report/job-report.html.twig', [
+        $arrivingDate = $history->getBeginningDate();
+        $arrivingDate->setTimezone(new \DateTimezone("Asia/Kuwait"));
+        $endingDate = $history->getEndingDate();
+        $endingDate->setTimezone(new \DateTimezone("Asia/Kuwait"));
+
+        return [
             "history" => $history,
             "timeSpent" => $timeSpent->h . 'h:' . $timeSpent->m . 'm',
-            "completed" => $history->getEndingDate()->format("l jS F Y"),
+            "completed" => $endingDate->format("l jS F Y"),
             "color" => $customer->getColor(),
             "textColor" => $this->getGoodColorOfText($customer->getColor(), "white", "black"),
-            "arrivingHour" => $history->getBeginningDate()->format('H:i'),
+            "arrivingHour" => $arrivingDate->format('H:i'),
             "customer" => $customer,
             "pdf" => false,
-        ]);
+        ];
     }
 
     /**
@@ -366,23 +369,10 @@ class OperationHistoryController extends HomeController
      */
     public function generatePdfOperationHistory(Request $request, OperationHistory $history)
     {
-        $em = $this->getDoctrine()->getManager();
-        $customer = $em->getRepository("AppBundle:Customer")->findOneBy(['name' => $history->getCustomer()]);
-        $timeSpent = $history->getEndingDate()->diff($history->getBeginningDate());
         $today = new \DateTime();
         $fileGenerator = $this->container->get('file_genertor');
         $htmlCode = $this->renderView(
-            ':home/operationHistory/job-report:job-report.html.twig',
-            [
-                "history" => $history,
-                "timeSpent" => $timeSpent->h . 'h:' . $timeSpent->m . 'm',
-                "completed" => $history->getEndingDate()->format("l jS F Y"),
-                "color" => $customer->getColor(),
-                "textColor" => $this->getGoodColorOfText($customer->getColor(), "white", "black"),
-                "arrivingHour" => $history->getBeginningDate()->format('H:i'),
-                "customer" => $customer,
-                "pdf" => true,
-            ]
+            ':home/operationHistory/job-report:job-report.html.twig', $this->generateArguments($history)
         );
 
         $post = json_encode([
@@ -410,7 +400,7 @@ class OperationHistoryController extends HomeController
 
         var_dump($request->server->get('DOCUMENT_ROOT') . $request->getBasePath() . '/pdf/' . $fileName);
 
-        $file = $this->file($fileGenerator->returnFile("/../web/pdf/",  $fileName));
+        $file = $this->file($fileGenerator->returnFile("/../web/pdf/", $fileName));
         return $file;
     }
 }
