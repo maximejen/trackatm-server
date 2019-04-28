@@ -144,6 +144,7 @@ class OperationHistoryController extends ApiController
         $imageFile = $request->files->get("image");
         $mTime = $imageFile->getMTime();
 
+        $time = $request->query->get('timestamp');
 
         $image = new Image();
         $image->setImageFile($imageFile);
@@ -169,10 +170,18 @@ class OperationHistoryController extends ApiController
             ->setOffset(0, 35)
             ->withImage($request->server->get('DOCUMENT_ROOT') . $request->getBasePath() . '/images/white.png');
 
-        $hour = new \DateTime(gmdate("Y-m-d\ H:i:s \G\M\T", $mTime));
-        $hour->setTimezone(new \DateTimezone("UTC"));
-        $hour->setTimezone(new \DateTimezone("Asia/Kuwait"));
-        $watermark->withText($hour->format("Y-m-d H:i:s"), $request->server->get('DOCUMENT_ROOT') . $request->getBasePath() . '/images/oh/' . $image->getImageName());
+        if ($time == null) {
+            $hour = new \DateTime(gmdate("Y-m-d\ H:i:s \G\M\T", $mTime));
+        }
+        else {
+            $hour = new \DateTime();
+            $hour->setTimestamp(floatval($time));
+            $hour->setTimezone(new \DateTimezone("UTC"));
+            $hour->setTimezone(new \DateTimezone("Asia/Kuwait"));
+        }
+        $hour = $hour->format("Y-m-d H:i:s");
+
+        $watermark->withText($hour, $request->server->get('DOCUMENT_ROOT') . $request->getBasePath() . '/images/oh/' . $image->getImageName());
 
         return new Response(json_encode(array(
             'success' => 'true')));
