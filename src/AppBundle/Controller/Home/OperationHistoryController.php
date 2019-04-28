@@ -342,7 +342,8 @@ class OperationHistoryController extends HomeController
     {
         $em = $this->getDoctrine()->getManager();
         $customer = $em->getRepository("AppBundle:Customer")->findOneBy(['name' => $history->getCustomer()]);
-        $timeSpent = $history->getEndingDate()->diff($history->getBeginningDate());
+        $timeSpent = $history->getBeginningDate()->diff($history->getEndingDate());
+        var_dump($timeSpent);
         $arrivingDate = $history->getBeginningDate();
         $arrivingDate->setTimezone(new \DateTimezone("Asia/Kuwait"));
         $endingDate = $history->getEndingDate();
@@ -350,7 +351,7 @@ class OperationHistoryController extends HomeController
 
         return [
             "history" => $history,
-            "timeSpent" => $timeSpent->h . 'h:' . $timeSpent->m . 'm',
+            "timeSpent" => $timeSpent->h . 'h:' . $timeSpent->m . 'm:' . $timeSpent->s . "s",
             "completed" => $endingDate->format("l jS F Y"),
             "color" => $customer->getColor(),
             "textColor" => $this->getGoodColorOfText($customer->getColor(), "white", "black"),
