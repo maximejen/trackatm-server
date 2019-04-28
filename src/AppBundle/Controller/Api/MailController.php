@@ -106,13 +106,19 @@ class MailController extends ApiController
         $timeSpent = $operationHistory->getEndingDate()->diff($operationHistory->getBeginningDate());
         $subject = $operationHistory->getPlace();
         $attachment = $this->generatorPdf($request, $operationHistory);
+
+        $arrivingDate = $operationHistory->getBeginningDate();
+        $arrivingDate->setTimezone(new \DateTimezone("Asia/Kuwait"));
+        $endingDate = $operationHistory->getEndingDate();
+        $endingDate->setTimezone(new \DateTimezone("Asia/Kuwait"));
+
         $params = [
             "history" => $operationHistory,
             "timeSpent" => $timeSpent->h . 'h:' . $timeSpent->m . 'm',
-            "completedDate" => $operationHistory->getEndingDate()->format("l jS F Y"),
+            "completedDate" => $endingDate->format("l jS F Y"),
             "operationName" => $operationHistory->getCustomer() . ' - ' . $operationHistory->getPlace(),
             "atmName" => $operationHistory->getPlace(),
-            "arrivedOnSite" => $operationHistory->getBeginningDate()->format("H:i"),
+            "arrivedOnSite" => $arrivingDate->format("H:i"),
             "nbTasks" => $operationHistory->getTasks()->count(),
             "color" => $customer->getColor()
         ];
