@@ -54,7 +54,7 @@
                                     {{ task.textInput }}
                                 </div>
                                 {% if task.image|length > 0 %}
-                                    <div class="columns">
+                                    <div class="columns is-multiline">
                                         {% for image in task.image %}
                                             <img class="column is-4"
                                                  src="{{ app.request.getSchemeAndHttpHost() ~ "/images/oh/" ~ image.imageName }}"
