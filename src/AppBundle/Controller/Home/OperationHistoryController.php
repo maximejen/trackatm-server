@@ -338,7 +338,7 @@ class OperationHistoryController extends HomeController
         return $this->render('home/operationHistory/job-report/job-report.html.twig', $this->generateArguments($history));
     }
 
-    private function generateArguments(OperationHistory $history)
+    public function generateArguments(OperationHistory $history)
     {
         $em = $this->getDoctrine()->getManager();
         $customer = $em->getRepository("AppBundle:Customer")->findOneBy(['name' => $history->getCustomer()]);

@@ -30,23 +30,32 @@ class MailController extends ApiController
         return ((($r * 0.299) + ($g * 0.587) + ($b * 0.114)) > 186) ? $darkColor : $lightColor;
     }
 
-    private function generatorPdf(Request $request, OperationHistory $history) {
+    public function generateArguments(OperationHistory $history)
+    {
         $em = $this->getDoctrine()->getManager();
         $customer = $em->getRepository("AppBundle:Customer")->findOneBy(['name' => $history->getCustomer()]);
         $timeSpent = $history->getEndingDate()->diff($history->getBeginningDate());
+        $arrivingDate = $history->getBeginningDate();
+        $arrivingDate->setTimezone(new \DateTimezone("Asia/Kuwait"));
+        $endingDate = $history->getEndingDate();
+        $endingDate->setTimezone(new \DateTimezone("Asia/Kuwait"));
+
+        return [
+            "history" => $history,
+            "timeSpent" => $timeSpent->h . 'h:' . $timeSpent->m . 'm',
+            "completed" => $endingDate->format("l jS F Y"),
+            "color" => $customer->getColor(),
+            "textColor" => $this->getGoodColorOfText($customer->getColor(), "white", "black"),
+            "arrivingHour" => $arrivingDate->format('H:i'),
+            "customer" => $customer,
+            "pdf" => false,
+        ];
+    }
+
+    private function generatorPdf(Request $request, OperationHistory $history) {
         $today = new \DateTime();
         $htmlCode = $this->renderView(
-            ':home/operationHistory/job-report:job-report.html.twig',
-            [
-                "history" => $history,
-                "timeSpent" => $timeSpent->h . 'h:' . $timeSpent->m . 'm',
-                "completed" => $history->getEndingDate()->format("l jS F Y"),
-                "color" => $customer->getColor(),
-                "textColor" => $this->getGoodColorOfText($customer->getColor(), "white", "black"),
-                "arrivingHour" => $history->getBeginningDate()->format('H:i'),
-                "customer" => $customer,
-                "pdf" => true,
-            ]
+            ':home/operationHistory/job-report:job-report.html.twig', $this->generateArguments($history)
         );
 
         $post = json_encode([
