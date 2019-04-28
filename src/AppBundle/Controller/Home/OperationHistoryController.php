@@ -343,9 +343,6 @@ class OperationHistoryController extends HomeController
         $em = $this->getDoctrine()->getManager();
         $customer = $em->getRepository("AppBundle:Customer")->findOneBy(['name' => $history->getCustomer()]);
         $timeSpent = $history->getEndingDate()->diff($history->getBeginningDate());
-        var_dump($timeSpent);
-        var_dump($history->getBeginningDate());
-        var_dump($history->getEndingDate());
         $arrivingDate = $history->getBeginningDate();
         $arrivingDate->setTimezone(new \DateTimezone("Asia/Kuwait"));
         $endingDate = $history->getEndingDate();
@@ -400,8 +397,6 @@ class OperationHistoryController extends HomeController
             curl_exec($ch)
         );
         curl_close($ch);
-
-        var_dump($request->server->get('DOCUMENT_ROOT') . $request->getBasePath() . '/pdf/' . $fileName);
 
         $file = $this->file($fileGenerator->returnFile("/../web/pdf/", $fileName));
         return $file;

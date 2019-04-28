@@ -50,8 +50,6 @@ class CleanerController extends ParametersController
         $form->handleRequest($request);
 
         if ($form->isValid() && $form->isSubmitted()) {
-            var_dump($request->request);
-            //die();
             $em = $this->get('doctrine.orm.entity_manager');
             $em->persist($cleaner);
             $em->flush();
