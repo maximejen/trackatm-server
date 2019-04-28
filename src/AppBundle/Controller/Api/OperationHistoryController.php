@@ -1,4 +1,5 @@
 <?php
+
 namespace AppBundle\Controller\Api;
 
 use Ajaxray\PHPWatermark\Watermark;
@@ -12,6 +13,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Serializer\SerializerInterface;
+
 /**
  * Class OperationHistoryController
  * @package AppBundle\Controller\Api
@@ -48,7 +50,7 @@ class OperationHistoryController extends ApiController
             return $response;
         }
 
-        $entityManager =  $this->get('doctrine.orm.entity_manager');
+        $entityManager = $this->get('doctrine.orm.entity_manager');
         $operation = $entityManager
             ->getRepository('AppBundle:Operation')
             ->findOneBy(['id' => $params['operationId']]);
@@ -99,7 +101,7 @@ class OperationHistoryController extends ApiController
         if (!$this->checkUserIsConnected($request))
             return new JsonResponse(['message' => "you need to be connected"], 403);
 
-        $entityManager =  $this->get('doctrine.orm.entity_manager');
+        $entityManager = $this->get('doctrine.orm.entity_manager');
 
         $task = new OperationTaskHistory();
 
@@ -118,7 +120,7 @@ class OperationHistoryController extends ApiController
         return new Response(json_encode(array(
             'success' => 'true',
             'taskId' => $id
-            )));
+        )));
     }
 
     /**
@@ -136,9 +138,9 @@ class OperationHistoryController extends ApiController
 
         if (!$this->checkUserIsConnected($request))
             return new JsonResponse(['message' => "you need to be connected"], 403);
-        $entityManager =  $this->get('doctrine.orm.entity_manager');
+        $entityManager = $this->get('doctrine.orm.entity_manager');
         /**  @var $image UploadedFile */
-        $imageFile =$request->files->get("image");
+        $imageFile = $request->files->get("image");
         $mTime = $imageFile->getMTime();
 
 
@@ -149,19 +151,24 @@ class OperationHistoryController extends ApiController
         $entityManager->persist($operationTaskHistory);
         $entityManager->flush();
 
-        $watermark = new Watermark($request->server->get('DOCUMENT_ROOT').$request->getBasePath() . '/images/oh/' . $image->getImageName());
+        $watermark = new Watermark($request->server->get('DOCUMENT_ROOT') . $request->getBasePath() . '/images/oh/' . $image->getImageName());
 
 
         $watermark->setFontSize(100)
             ->setFont('Arial')
-            ->setOffset(0, 100)
+            ->setOffset(0, 25)
             ->setStyle(Watermark::STYLE_TEXT_LIGHT)
             ->setPosition(Watermark::POSITION_BOTTOM_RIGHT)
-            ->setOpacity(1)
-            ->withImage($request->server->get('DOCUMENT_ROOT').$request->getBasePath() . '/images/white.png')
-        ;
+            ->setOpacity(1);
 
-        $watermark->withText(gmdate("Y-m-d\ H:i:s", $mTime), $request->server->get('DOCUMENT_ROOT').$request->getBasePath() . '/images/oh/' . $image->getImageName());
+        $imageMark = new Watermark($request->server->get('DOCUMENT_ROOT') . $request->getBasePath() . '/images/oh/' . $image->getImageName());
+        $imageMark
+            ->setPosition(Watermark::POSITION_BOTTOM_RIGHT)
+            ->setOpacity(0.8)
+            ->setOffset(0, 35)
+            ->withImage($request->server->get('DOCUMENT_ROOT') . $request->getBasePath() . '/images/white.png');
+
+        $watermark->withText(gmdate("Y-m-d\ H:i:s", $mTime), $request->server->get('DOCUMENT_ROOT') . $request->getBasePath() . '/images/oh/' . $image->getImageName());
 
         return new Response(json_encode(array(
             'success' => 'true')));
