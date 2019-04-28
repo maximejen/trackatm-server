@@ -117,6 +117,9 @@ class FileGeneratorService
             if ($date->format('Y-m') != $month) // ignore histories that are not from the current month
                 continue;
             $place = $history->getPlace();
+            // Change the time zone so in front it is the good hour that is printed.
+            $history->getEndingDate()->setTimezone(new \DateTimeZone('Asia/Kuwait'));
+            $history->getBeginningDate()->setTimezone(new \DateTimeZone('Asia/Kuwait'));
 
             $index = intval($date->format('d'));
             $content[$place][$index][] = $history;
