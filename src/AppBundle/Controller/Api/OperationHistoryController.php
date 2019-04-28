@@ -76,8 +76,9 @@ class OperationHistoryController extends ApiController
         $date = new \DateTime();
         $date->setTimestamp($params['beginningDate']);
         $history->setBeginningDate($date);
-        $date->setTimestamp($params['endingDate']);
-        $history->setEndingDate($date);
+        $date1 = new \DateTime();
+        $date1->setTimestamp($params['endingDate']);
+        $history->setEndingDate($date1);
 
         $entityManager->persist($history);
         $entityManager->flush();

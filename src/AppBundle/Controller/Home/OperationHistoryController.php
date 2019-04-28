@@ -343,6 +343,9 @@ class OperationHistoryController extends HomeController
         $em = $this->getDoctrine()->getManager();
         $customer = $em->getRepository("AppBundle:Customer")->findOneBy(['name' => $history->getCustomer()]);
         $timeSpent = $history->getEndingDate()->diff($history->getBeginningDate());
+        var_dump($timeSpent);
+        var_dump($history->getBeginningDate());
+        var_dump($history->getEndingDate());
         $arrivingDate = $history->getBeginningDate();
         $arrivingDate->setTimezone(new \DateTimezone("Asia/Kuwait"));
         $endingDate = $history->getEndingDate();
