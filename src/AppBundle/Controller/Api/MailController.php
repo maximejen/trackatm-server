@@ -124,7 +124,7 @@ class MailController extends ApiController
 
         $params = [
             "history" => $operationHistory,
-            "timeSpent" => $timeSpent->h . 'h:' . $timeSpent->m . 'm',
+            "timeSpent" => $timeSpent->h . 'h:' . $timeSpent->i . 'm:' . $timeSpent->s . "s",
             "completedDate" => $endingDate->format("l jS F Y"),
             "operationName" => $operationHistory->getCustomer() . ' - ' . $operationHistory->getPlace(),
             "atmName" => $operationHistory->getPlace(),
