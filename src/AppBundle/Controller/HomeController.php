@@ -24,6 +24,14 @@ class HomeController extends Controller
         return $this->redirect($this->generateUrl('planningpage'));
     }
 
+    /**
+     * @Route("/privacy", name="privacy")
+     */
+    public function privacyAction()
+    {
+        return $this->render(':home/operationHistory:privacy.html.twig');
+    }
+
     protected function getMenuParameters()
     {
         return
