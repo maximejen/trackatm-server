@@ -14,6 +14,15 @@
                 </div>
             </div>
         </section>
+        <section class="is-light content-container">
+            <div class="columns">
+                <div class="column">
+                    <a class="button is-primary" href="{{ path('operation_create', {'cleaner': cleaner.id, 'day': day}) }}">
+                        <i class="fa fa-plus"></i>
+                    </a>
+                </div>
+            </div>
+        </section>
         <section class="container content-container">
             <table class="table is-fullwidth is-hoverable">
                 <thead>
@@ -36,7 +45,7 @@
                             ">
                                 <i class="fa fa-pen"></i>
                             </a>
-                            <a class="button is-primary" href="#">
+                            <a class="button is-primary" href="{{ path('operation_delete', {'id': operation.id}) }}">
                                 <i class="fa fa-trash"></i>
                             </a>
                         </td>

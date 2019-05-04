@@ -171,4 +171,47 @@ class OperationGroupsController extends HomeController {
         $em->flush();
         return $this->redirectToRoute('operation_groups');
     }
+
+    /**
+     * @Route("/operation/create", name="operation_create", methods={"GET", "POST"})
+     * @param Request $request
+     * @param Operation $operation
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
+     */
+    public function createAction(Request $request)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $operation = new Operation();
+
+        $day = $request->query->get('day');
+        if ($day)
+            $operation->setDay($day);
+        $cleanerId = $request->query->get('cleaner');
+        if ($cleanerId) {
+            $cleaner = $em->getRepository("AppBundle:Cleaner")->find($cleanerId);
+            $operation->setCleaner($cleaner);
+        }
+
+        $form = $this->createForm(OperationType::class, $operation);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em->persist($operation);
+            $em->flush();
+            return $this->redirectToRoute('operation_group', [
+                'day' => $operation->getDay(),
+                'customer' => $operation->getPlace()->getCustomer()->getId(),
+                'cleaner' => $operation->getCleaner()->getId()
+            ]);
+        }
+
+        $generalParams = [
+            'menuElements' => $this->getMenuParameters(),
+            'menuMode' => "home",
+            "isConnected" => !$this->getUser() == NULL,
+        ];
+        return $this->render(":home/operationGroups:create.html.twig", array_merge($generalParams, [
+            'form' => $form->createView()
+        ]));
+    }
 }
