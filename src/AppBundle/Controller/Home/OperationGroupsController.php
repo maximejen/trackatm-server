@@ -62,16 +62,19 @@ class OperationGroupsController extends HomeController {
         $nbOperationGroups = count($customers) * count($cleaners) * 7;
 
         $operationGroups = ["Monday" => [], "Tuesday" => [], "Wednesday" => [], "Thursday" => [], "Friday" => [], "Saturday" => [], "Sunday" => []];
-        foreach ($operationGroups as &$day) {
-            foreach ($cleaners as $cleanerTmp) {
-                $day[$cleanerTmp->getId()] = [];
-                foreach ($customers as $customerTmp) {
-                    $day[$cleanerTmp->getId()][$customerTmp->getName()]['id'] = $customerTmp->getId();
-                }
-            }
-        }
+//        foreach ($operationGroups as &$day) {
+//            foreach ($cleaners as $cleanerTmp) {
+//                if (!$cleanerId || ($cleanerId && $cleanerTmp->getId() == $cleanerId))
+//                    $day[$cleanerTmp->getId()] = [];
+//                foreach ($customers as $customerTmp) {
+//                    if (!$customerId || ($customerId && $customerTmp->getId() == $customerId))
+//                        $day[$cleanerTmp->getId()][$customerTmp->getName()]['id'] = $customerTmp->getId();
+//                }
+//            }
+//        }
         /** @var Operation $operation */
         foreach ($operations as $operation) {
+            $operationGroups[$operation->getDay()][$operation->getCleaner()->getId()][$operation->getCustomer()->getName()]['id'] = $operation->getCustomer()->getId();
             $operationGroups[$operation->getDay()][$operation->getCleaner()->getId()][$operation->getCustomer()->getName()][] = $operation;
         }
 

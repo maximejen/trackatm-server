@@ -21,7 +21,7 @@
                         <label>Customer</label>
                         <div class="select is-primary is-medium">
                             <select id="js-customer-choice" name="customer">
-                                <option value="">Customer</option>
+                                <option value="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</option>
                                 {% for customer in customers %}
                                     <option value="{{ customer.id }}"
                                             {% if selectedCustomer is not null and selectedCustomer.id == customer.id %}selected{% endif %}>
@@ -35,7 +35,7 @@
                         <label>Cleaner</label>
                         <div class="select is-primary is-medium">
                             <select id="js-cleaner-choice" name="cleaner">
-                                <option value="">Cleaner</option>
+                                <option value="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</option>
                                 {% for cleaner in cleaners %}
                                     <option value="{{ cleaner.id }}"
                                             {% if selectedCleaner is not null and selectedCleaner.id == cleaner.id %}selected{% endif %}>
@@ -49,7 +49,7 @@
                         <label>Day of the week</label>
                         <div class="select is-primary is-medium">
                             <select id="js-day-choice" name="day">
-                                <option value="">Day</option>
+                                <option value="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</option>
                                 <option value="Monday"
                                         {% if selectedDay is not null and selectedDay == "Monday" %}selected{% endif %}>
                                     Monday
