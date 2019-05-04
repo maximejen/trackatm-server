@@ -63,10 +63,10 @@ class OperationGroupsController extends HomeController {
 
         $operationGroups = ["Monday" => [], "Tuesday" => [], "Wednesday" => [], "Thursday" => [], "Friday" => [], "Saturday" => [], "Sunday" => []];
         foreach ($operationGroups as &$day) {
-            foreach ($cleaners as $cleaner) {
-                $day[$cleaner->getId()] = [];
-                foreach ($customers as $customer) {
-                    $day[$cleaner->getId()][$customer->getName()]['id'] = $customer->getId();
+            foreach ($cleaners as $cleanerTmp) {
+                $day[$cleanerTmp->getId()] = [];
+                foreach ($customers as $customerTmp) {
+                    $day[$cleanerTmp->getId()][$customerTmp->getName()]['id'] = $customerTmp->getId();
                 }
             }
         }
