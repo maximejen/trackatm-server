@@ -76,9 +76,6 @@ class OperationController extends ApiController
 
     private function hasBeenDoneLastSevenDays($histories, $planning)
     {
-        // TODO : count how much a place need to be done in the Last 7 Days
-        // TODO : count how much the place has been done last 7 days
-        // TODO : set oldest operations dones
         $nbTimesToBeDone = [];
         $nbTimesDone = [];
         foreach ($planning as $date) {
@@ -97,7 +94,7 @@ class OperationController extends ApiController
         }
         foreach ($planning as &$date) {
             /** @var Operation $operation */
-            foreach ($date as $operation) {
+            foreach ($date as &$operation) {
                 if (array_key_exists($operation->getPlace()->getName(), $nbTimesDone) && $nbTimesDone[$operation->getPlace()->getName()] > 0) {
                     $operation->setDone(true);
                     $nbTimesDone[$operation->getPlace()->getName()]--;
@@ -125,7 +122,7 @@ class OperationController extends ApiController
 
         $today = new\DateTime();
         $weekAgo = new \DateTime();
-        $weekAgo->modify('-6 days');
+        $weekAgo->modify('-7 days');
 
         $em = $this->getDoctrine()->getManager();
         $cleaner = $em->getRepository('AppBundle:Cleaner')->findOneBy(['user' => $user]);
