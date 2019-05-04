@@ -136,9 +136,8 @@ class MailController extends ApiController
         if (!$this->checkUserIsConnected($request))
             return new JsonResponse(['message' => "you need to be connected"], 403);
 
-        $mail = $this->container->get('mail.send');
-        $task = new OurThread($request, $operationHistory, $mail);
-        $task->start() && $task->join();
+//        $mail = $this->container->get('mail.send');
+        $this->generatePdfAndSendMail($request, $operationHistory);
 
         return new Response(json_encode(array(
             'success' => 'true'
