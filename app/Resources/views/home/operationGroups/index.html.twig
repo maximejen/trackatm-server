@@ -1,0 +1,140 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div>
+        <section class="hero is-light">
+            <div class="hero-body">
+                <div class="container">
+                    <h1 class="title">
+                        Operation Groups
+                    </h1>
+                    <h2 class="subtitle">
+                        find the groups of operations
+                    </h2>
+                </div>
+            </div>
+        </section>
+        <section class="is-light operation-groups-toolbar">
+            <form class="columns" action="" method="get">
+                <div class="columns">
+                    <div class="column is-2">
+                        <label>Customer</label>
+                        <div class="select is-primary is-medium">
+                            <select id="js-customer-choice" name="customer">
+                                <option value="">Customer</option>
+                                {% for customer in customers %}
+                                    <option value="{{ customer.id }}"
+                                            {% if selectedCustomer is not null and selectedCustomer.id == customer.id %}selected{% endif %}>
+                                        {{ customer.name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="column is-2">
+                        <label>Cleaner</label>
+                        <div class="select is-primary is-medium">
+                            <select id="js-cleaner-choice" name="cleaner">
+                                <option value="">Cleaner</option>
+                                {% for cleaner in cleaners %}
+                                    <option value="{{ cleaner.id }}"
+                                            {% if selectedCleaner is not null and selectedCleaner.id == cleaner.id %}selected{% endif %}>
+                                        Cleaner #{{ cleaner.id }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="column is-2">
+                        <label>Day of the week</label>
+                        <div class="select is-primary is-medium">
+                            <select id="js-day-choice" name="day">
+                                <option value="">Day</option>
+                                <option value="Monday"
+                                        {% if selectedDay is not null and selectedDay == "Monday" %}selected{% endif %}>
+                                    Monday
+                                </option>
+                                <option value="Tuesday"
+                                        {% if selectedDay is not null and selectedDay == "Tuesday" %}selected{% endif %}>
+                                    Tuesday
+                                </option>
+                                <option value="Wednesday"
+                                        {% if selectedDay is not null and selectedDay == "Wednesday" %}selected{% endif %}>
+                                    Wednesday
+                                </option>
+                                <option value="Thursday"
+                                        {% if selectedDay is not null and selectedDay == "Thursday" %}selected{% endif %}>
+                                    Thursday
+                                </option>
+                                <option value="Friday"
+                                        {% if selectedDay is not null and selectedDay == "Friday" %}selected{% endif %}>
+                                    Friday
+                                </option>
+                                <option value="Saturday"
+                                        {% if selectedDay is not null and selectedDay == "Saturday" %}selected{% endif %}>
+                                    Saturday
+                                </option>
+                                <option value="Sunday"
+                                        {% if selectedDay is not null and selectedDay == "Sunday" %}selected{% endif %}>
+                                    Sunday
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="column is-2">
+                        <label>&nbsp;</label>
+                        <div>
+                            <button class="button is-medium is-primary" type="submit">
+                                <span>Search</span>
+                                <span class="icon is-small">
+                                  <i class="fas fa-search"></i>
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="column is-2">
+                        <label>&nbsp;</label>
+                        <div>
+                            <a href="{{ path('operation_groups') }}" class="button is-medium is-danger is-outlined">
+                                <span>Reset filters</span>
+                                <span class="icon is-small">
+                                  <i class="fas fa-undo"></i>
+                                </span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </section>
+        <section class="container tiles-container">
+            <span class="title">Total groups {{ nbOperationGroups }}</span>
+            <div class="tile is-ancestor columns is-multiline">
+                {% for day, cleaners in operationGroups %}
+                    {% for cleaner, customers in cleaners %}
+                        {% for customer, operations in customers %}
+                                <div class="column is-3">
+                                    <a href="{{ path('operation_group', {"cleaner": cleaner, "day": day, "customer": operations[0].customer.id}) }}">
+                                    <div class="tile is-parent">
+                                        <article class="tile is-child notification is-primary">
+                                            <p class="subtitle">{{ day ~ " - Cleaner#" ~ cleaner ~ " - " ~ customer }}</p>
+                                            <p>{{ operations|length }} Operation(s)</p>
+                                        </article>
+                                    </div>
+                                    </a>
+                                </div>
+
+                        {% endfor %}
+                    {% endfor %}
+                {% endfor %}
+            </div>
+        </section>
+    </div>
+{% endblock %}
+
+{% block stylesheets %}
+    <style>
+        .operation-groups-toolbar {
+            margin: 2em 3em;
+        }
+    </style>
+{% endblock %}

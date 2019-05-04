@@ -46,9 +46,9 @@ class PlanningController extends HomeController {
             $places = $em->getRepository('AppBundle:Place')->findAll();
         $customers = $em->getRepository('AppBundle:Customer')->findAll();
 
+
         $operation = new Operation();
         $form = $this->createForm(OperationType::class, $operation);
-
         $isConnected = !$this->getUser() == NULL;
 
         if ($request->isMethod('POST')) {

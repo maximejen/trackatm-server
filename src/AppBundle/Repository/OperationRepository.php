@@ -20,4 +20,20 @@ class OperationRepository extends \Doctrine\ORM\EntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    public function getOperationsByGroup($day, $customer, $cleaner)
+    {
+        return $this->_em->getRepository("AppBundle:Operation")->createQueryBuilder('o')
+            ->where('customer.id LIKE :customer')
+            ->andWhere("o.day LIKE :day")
+            ->andWhere("cleaner.id = :cleaner")
+            ->join("o.cleaner", "cleaner")
+            ->join("o.place", "place")
+            ->join("place.customer", "customer")
+            ->setParameter('customer', $customer)
+            ->setParameter("cleaner", $cleaner)
+            ->setParameter("day", $day)
+            ->getQuery()
+            ->getResult();
+    }
 }

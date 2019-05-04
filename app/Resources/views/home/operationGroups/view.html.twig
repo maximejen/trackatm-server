@@ -1,0 +1,61 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div>
+        <section class="hero is-light">
+            <div class="hero-body">
+                <div class="container">
+                    <h1 class="title">
+                        {{ day ~ " - " ~ cleaner ~ " - " ~ customer }}
+                    </h1>
+                    <h2 class="subtitle">
+                        {{ operations|length }} Operation(s)
+                    </h2>
+                </div>
+            </div>
+        </section>
+        <section class="container content-container">
+            <table class="table is-fullwidth is-hoverable">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Place</th>
+                    <th>Name</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for operation in operations %}
+                    <tr>
+                        <th>JOB - {{ operation.id }}</th>
+                        <td>{{ operation.place.name }}</td>
+                        <td>{{ operation.name }}</td>
+                        <td>
+                            <a class="button is-primary" href="
+                            {{ path('operation_edit', {"id": operation.id}) }}
+                            ">
+                                <i class="fa fa-pen"></i>
+                            </a>
+                            <a class="button is-primary" href="#">
+                                <i class="fa fa-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </section>
+    </div>
+{% endblock %}
+
+{% block stylesheets %}
+    <style>
+        .operation-groups-toolbar {
+            margin: 2em 3em;
+        }
+
+        .content-container {
+            margin: 2em 3em;
+        }
+    </style>
+{% endblock %}

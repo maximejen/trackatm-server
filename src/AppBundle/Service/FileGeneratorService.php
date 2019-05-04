@@ -275,7 +275,11 @@ class FileGeneratorService
 
         foreach ($lines as $key => $line) {
             $line = explode(";", $line);
-            $placeName = '[' . $line[$columns['id']] . '] ' . $line[$columns['name']];
+            if (array_key_exists("id", $columns)) {
+                $placeName = '[' . $line[$columns['id']] . '] ' . $line[$columns['name']];
+            } else {
+                $placeName = $line[$columns['name']];
+            }
             $lat = $line[$columns['lat']];
             $lon = $line[$columns['lon']];
             $customerName = $line[$columns['customer']];

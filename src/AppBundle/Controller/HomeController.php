@@ -41,6 +41,10 @@ class HomeController extends Controller
                     "path" => "planningpage"
                 ],
                 1 => [
+                    "text" => "OperationsGroups",
+                    "path" => "operation_groups"
+                ],
+                2 => [
                     "text" => "Operation History",
                     "path" => "operationhistorypage"
                 ],

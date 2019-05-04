@@ -115,8 +115,6 @@ class PlaceController extends ParametersController
 
         if ($form->isValid() && $form->isSubmitted()) {
             $em = $this->get('doctrine.orm.entity_manager');
-
-            $em->persist($place);
             $em->flush();
 
             return $this->redirect($this->generateUrl('parameters_places_page'));

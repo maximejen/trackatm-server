@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div>
+        <section class="hero is-light">
+            <div class="hero-body">
+                <div class="container">
+                    <h1 class="title">
+                        Edit
+                    </h1>
+                    <h2 class="subtitle">
+                        Operation
+                    </h2>
+                </div>
+            </div>
+        </section>
+        <section class="container">
+            {{ form_start(form) }}
+            {% include(':home/planning/operation:form.html.twig') %}
+            <div class="form-element">
+                <button class="button is-primary is-medium" type="submit">Update operation</button>
+            </div>
+            {{ form_end(form) }}
+        </section>
+    </div>
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .form-element {
+            padding-top: 2.5em;
+        }
+
+        .form-element > button {
+            width: 100%;
+        }
+
+        div.form-label {
+            margin-bottom: 0.5em;
+        }
+
+        .container {
+            padding-bottom: 2em;
+        }
+    </style>
+{% endblock %}
