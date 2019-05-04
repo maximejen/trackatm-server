@@ -67,7 +67,7 @@ class MailController extends ApiController
         }
         $timeSpent = $operationHistory->getEndingDate()->diff($operationHistory->getBeginningDate());
         $subject = $operationHistory->getPlace();
-        $attachment = $this->generatorPdf($request, $operationHistory);
+//        $attachment = $this->generatorPdf($request, $operationHistory);
 
         $arrivingDate = $operationHistory->getBeginningDate();
         $arrivingDate->setTimezone(new \DateTimezone("Asia/Kuwait"));
@@ -86,7 +86,7 @@ class MailController extends ApiController
         ];
 
         $mail = $this->container->get('mail.send');
-        $mail->sendMail($sendTo, $subject, $params, "mail/job.html.twig", $attachment);
+        $mail->sendMail($sendTo, $subject, $params, "mail/job.html.twig", null);
     }
 
     private function generatorPdf(Request $request, OperationHistory $history) {

@@ -28,15 +28,26 @@ class MailerService
     public function sendMail($sendTo, $subject, $params, $templateName, $attachment)
     {
         $message = new \Swift_Message();
-        $message
-            ->setSubject($subject)
-            ->setFrom($this->container->getParameter('mailer_user'))
-            ->setTo($sendTo)
-            ->setBody($this->twig->render(
-                $templateName,
-                $params
-            ), 'text/html')
-            ->attach(\Swift_Attachment::fromPath($attachment));
+        if ($attachment != null) {
+            $message
+                ->setSubject($subject)
+                ->setFrom($this->container->getParameter('mailer_user'))
+                ->setTo($sendTo)
+                ->setBody($this->twig->render(
+                    $templateName,
+                    $params
+                ), 'text/html')
+                ->attach(\Swift_Attachment::fromPath($attachment));
+        } else {
+            $message
+                ->setSubject($subject)
+                ->setFrom($this->container->getParameter('mailer_user'))
+                ->setTo($sendTo)
+                ->setBody($this->twig->render(
+                    $templateName,
+                    $params
+                ), 'text/html');
+        }
         $this->mailer->send($message);
     }
 }
