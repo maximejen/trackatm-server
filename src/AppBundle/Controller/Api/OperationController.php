@@ -99,6 +99,10 @@ class OperationController extends ApiController
         $operations = $em->getRepository('AppBundle:Operation')->findBy(['cleaner' => $cleaner]);
         $histories = $em->getRepository('AppBundle:OperationHistory')->findOperationHistoriesByCleanerAndBetweenTwoDates($cleaner, $weekAgo, $today);
 
+
+        foreach ($operations as $operation)
+            var_dump($operation->getId());
+
         $week = $this->getWeek($operations);
         $planning = $this->getOperationsPlanning($weekAgo, $today, $week);
 
