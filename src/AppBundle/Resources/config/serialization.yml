@@ -47,7 +47,7 @@ AppBundle\Entity\Cleaner:
     id:
       groups: ['cleaner', 'place', 'operation']
     history:
-      groups: ['cleaner', 'place', 'operation']
+      groups: ['cleaner', 'place']
     operations:
       groups: ['cleaner', 'place']
     user:

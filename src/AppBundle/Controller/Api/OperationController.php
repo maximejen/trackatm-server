@@ -74,6 +74,39 @@ class OperationController extends ApiController
         return $newArray;
     }
 
+    private function hasBeenDoneLastSevenDays($histories, $planning)
+    {
+        // TODO : count how much a place need to be done in the Last 7 Days
+        // TODO : count how much the place has been done last 7 days
+        // TODO : set oldest operations dones
+        $nbTimesToBeDone = [];
+        $nbTimesDone = [];
+        foreach ($planning as $date) {
+            /** @var Operation $operation */
+            foreach ($date as $operation) {
+                if (!array_key_exists($operation->getPlace()->getName(), $nbTimesToBeDone))
+                    $nbTimesToBeDone[$operation->getPlace()->getName()] = 0;
+                $nbTimesToBeDone[$operation->getPlace()->getName()]++;
+            }
+        }
+        /** @var OperationHistory $history */
+        foreach ($histories as $history) {
+            if (!array_key_exists($history->getPlace(), $nbTimesDone))
+                $nbTimesDone[$history->getPlace()] = 0;
+            $nbTimesDone[$history->getPlace()]++;
+        }
+        foreach ($planning as &$date) {
+            /** @var Operation $operation */
+            foreach ($date as $operation) {
+                if (array_key_exists($operation->getPlace()->getName(), $nbTimesDone) && $nbTimesDone[$operation->getPlace()->getName()] > 0) {
+                    $operation->setDone(true);
+                    $nbTimesDone[$operation->getPlace()->getName()]--;
+                } else
+                    $operation->setDone(false);
+            }
+        }
+    }
+
     /**
      * @Rest\View(serializerGroups={"operation"})
      * @Rest\Get("/api/cleaner/operations/")
@@ -92,7 +125,7 @@ class OperationController extends ApiController
 
         $today = new\DateTime();
         $weekAgo = new \DateTime();
-        $weekAgo->modify('-7 days');
+        $weekAgo->modify('-6 days');
 
         $em = $this->getDoctrine()->getManager();
         $cleaner = $em->getRepository('AppBundle:Cleaner')->findOneBy(['user' => $user]);
@@ -101,6 +134,7 @@ class OperationController extends ApiController
 
         $week = $this->getWeek($operations);
         $planning = $this->getOperationsPlanning($weekAgo, $today, $week);
+//        var_dump($planning);
 
         /** @var OperationHistory $history */
 //        foreach ($histories as $history) {
@@ -114,9 +148,11 @@ class OperationController extends ApiController
 //
 //            }
 //        }
+        $this->hasBeenDoneLastSevenDays($histories, $planning);
         $operations = $this->fromPlanningToFlat($planning);
-        foreach ($operations as $operation)
-            $operation->setDone(false);
+//        foreach ($operations as $operation)
+//            var_dump($operation->getDay() . " / " . $operation->getPlace() . " : " . $operation->isDone());
+//            $operation->setDone(false);
         return new Response($serializer->serialize($operations, 'json', ['groups' => ['operation']]));
     }
 
