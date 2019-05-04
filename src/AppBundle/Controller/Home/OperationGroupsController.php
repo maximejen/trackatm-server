@@ -61,7 +61,15 @@ class OperationGroupsController extends HomeController {
 
         $nbOperationGroups = count($customers) * count($cleaners) * 7;
 
-        $operationGroups = [];
+        $operationGroups = ["Monday" => [], "Tuesday" => [], "Wednesday" => [], "Thursday" => [], "Friday" => [], "Saturday" => [], "Sunday" => []];
+        foreach ($operationGroups as &$day) {
+            foreach ($cleaners as $cleaner) {
+                $day[$cleaner->getId()] = [];
+                foreach ($customers as $customer) {
+                    $day[$cleaner->getId()][$customer->getName()]['id'] = $customer->getId();
+                }
+            }
+        }
         /** @var Operation $operation */
         foreach ($operations as $operation) {
             $operationGroups[$operation->getDay()][$operation->getCleaner()->getId()][$operation->getCustomer()->getName()][] = $operation;

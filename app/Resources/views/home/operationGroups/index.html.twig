@@ -113,11 +113,11 @@
                     {% for cleaner, customers in cleaners %}
                         {% for customer, operations in customers %}
                                 <div class="column is-3">
-                                    <a href="{{ path('operation_group', {"cleaner": cleaner, "day": day, "customer": operations[0].customer.id}) }}">
+                                    <a href="{{ path('operation_group', {"cleaner": cleaner, "day": day, "customer": operations['id']}) }}">
                                     <div class="tile is-parent">
                                         <article class="tile is-child notification is-primary">
                                             <p class="subtitle">{{ day ~ " - Cleaner#" ~ cleaner ~ " - " ~ customer }}</p>
-                                            <p>{{ operations|length }} Operation(s)</p>
+                                            <p>{{ operations|length - 1 }} Operation(s)</p>
                                         </article>
                                     </div>
                                     </a>
