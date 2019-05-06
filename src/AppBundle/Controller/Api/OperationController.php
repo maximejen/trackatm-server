@@ -122,7 +122,7 @@ class OperationController extends ApiController
 
         $today = new\DateTime();
         $weekAgo = new \DateTime();
-        $weekAgo->modify('-7 days');
+        $weekAgo->modify('-6 days');
 
         $em = $this->getDoctrine()->getManager();
         $cleaner = $em->getRepository('AppBundle:Cleaner')->findOneBy(['user' => $user]);
