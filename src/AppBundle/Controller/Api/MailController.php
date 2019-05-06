@@ -62,7 +62,7 @@ class MailController extends ApiController
         $now = new \DateTime();
         $file = "/home/apache/log/tmp.log";
         $current = file_get_contents($file);
-        $current .= "=== SEND MAIL REQUEST BEGIN AT : " . $now->format("Y-m-d H:i:s") . "===\n";
+        $current .= "\n=== SEND MAIL REQUEST BEGIN AT : " . $now->format("Y-m-d H:i:s") . "===\n";
 
         foreach ($sendTo as $email) {
             $current .= "sending mail to : '" . $email . "'\n";
