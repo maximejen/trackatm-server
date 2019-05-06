@@ -59,9 +59,10 @@ class MailController extends ApiController
             ->findOneBy(['name' => $operationHistory->getCustomer()]);
         array_push($sendTo, $customer->getEmail());
 
+        $now = new \DateTime();
         $file = "/home/apache/log/tmp.log";
         $current = file_get_contents($file);
-        $current .= "=== SEND MAIL REQUEST BEGIN ===\n";
+        $current .= "=== SEND MAIL REQUEST BEGIN AT : " . $now->format("Y-m-d H:i:s") . "===\n";
 
         foreach ($sendTo as $email) {
             $current .= "sending mail to : '" . $email . "'\n";
