@@ -110,6 +110,9 @@ class MailController extends ApiController
         if ($operationHistory->getLastTimeSent() == null || $now->getTimestamp() > $in15min->getTimestamp()) {
             $operationHistory->setLastTimeSent($now);
             $this->getDoctrine()->getManager()->flush();
+            $current = file_get_contents($file);
+            $current .= "mail sent\n";
+            file_put_contents($file, $current);
             $mail->sendMail($sendTo, $subject, $params, "mail/job.html.twig", null);
         } else {
             $current = file_get_contents($file);
@@ -171,7 +174,7 @@ class MailController extends ApiController
         } catch (Exception $e) {
             $file = "/home/apache/log/tmp.log";
             $current = file_get_contents($file);
-            $current .= $e->getMessage() . "\n";
+            $current .= "ERROR : " . $e->getMessage() . "\n";
             file_put_contents($file, $current);
         }
 
