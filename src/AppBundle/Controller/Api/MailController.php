@@ -106,7 +106,7 @@ class MailController extends ApiController
 
         $in15min = $operationHistory->getLastTimeSent();
         $in15min->modify("+15 min");
-        if ($now->getTimestamp() > $in15min->getTimestamp()) {
+        if ($operationHistory->getLastTimeSent() == null || $now->getTimestamp() > $in15min->getTimestamp()) {
             $operationHistory->setLastTimeSent($now);
             $this->getDoctrine()->getManager()->flush();
             $mail->sendMail($sendTo, $subject, $params, "mail/job.html.twig", null);
