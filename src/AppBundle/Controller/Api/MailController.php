@@ -59,6 +59,15 @@ class MailController extends ApiController
             ->findOneBy(['name' => $operationHistory->getCustomer()]);
         array_push($sendTo, $customer->getEmail());
 
+        $file = "/home/apache/log/tmp.log";
+        $current = file_get_contents($file);
+        $current .= "=== SEND MAIL REQUEST BEGIN ===\n";
+
+        foreach ($sendTo as $email) {
+            $current .= "sending mail to : '" . $email . "'\n";
+        }
+        file_put_contents("/home/apache/log/tmp.log", $current);
+
         $admin = $entityManager
             ->getRepository('AppBundle:User')
             ->findBy(['admin' => true]);
@@ -86,6 +95,12 @@ class MailController extends ApiController
         ];
 
         $mail = $this->container->get('mail.send');
+
+        $file = "/home/apache/log/tmp.log";
+        $current = file_get_contents($file);
+        $current .= "sending mail for OH : '" . $operationHistory->getId() . "'\n";
+        file_put_contents("/home/apache/log/tmp.log", $current);
+
         $mail->sendMail($sendTo, $subject, $params, "mail/job.html.twig", null);
     }
 
