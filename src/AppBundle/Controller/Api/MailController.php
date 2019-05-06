@@ -67,15 +67,15 @@ class MailController extends ApiController
             array_push($sendTo, $item->getEmail());
         }
 
+        $file = "./tmp.log";
         $now = new \DateTime();
-        $file = "/home/apache/log/tmp.log";
         $current = file_get_contents($file);
         $current .= "\n=== SEND MAIL REQUEST BEGIN AT : " . $now->format("Y-m-d H:i:s") . "===\n";
 
         foreach ($sendTo as $email) {
             $current .= "sending mail to : '" . $email . "'\n";
         }
-        file_put_contents("/home/apache/log/tmp.log", $current);
+        file_put_contents($file, $current);
 
         $timeSpent = $operationHistory->getEndingDate()->diff($operationHistory->getBeginningDate());
         $subject = $operationHistory->getPlace();
@@ -99,15 +99,22 @@ class MailController extends ApiController
 
         $mail = $this->container->get('mail.send');
 
-        $file = "/home/apache/log/tmp.log";
         $current = file_get_contents($file);
         $current .= "sending mail for OH : '" . $operationHistory->getId() . "'\n";
-        file_put_contents("/home/apache/log/tmp.log", $current);
+        file_put_contents($file, $current);
 
-        $operationHistory->setLastTimeSent($now);
-        $this->getDoctrine()->getManager()->flush();
 
-        $mail->sendMail($sendTo, $subject, $params, "mail/job.html.twig", null);
+        $in15min = $operationHistory->getLastTimeSent();
+        $in15min->modify("+15 min");
+        if ($now->getTimestamp() > $in15min->getTimestamp()) {
+            $operationHistory->setLastTimeSent($now);
+            $this->getDoctrine()->getManager()->flush();
+            $mail->sendMail($sendTo, $subject, $params, "mail/job.html.twig", null);
+        } else {
+            $current = file_get_contents($file);
+            $current .= "mail has not been sent, it was less than 15min from last mail sent\n";
+            file_put_contents($file, $current);
+        }
     }
 
     private function generatorPdf(Request $request, OperationHistory $history) {
