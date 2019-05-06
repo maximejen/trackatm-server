@@ -106,7 +106,8 @@ class MailController extends ApiController
 
 
         $in15min = $operationHistory->getLastTimeSent();
-        $in15min->modify("+15 min");
+        if ($in15min)
+            $in15min->modify("+15 min");
         if ($operationHistory->getLastTimeSent() == null || $now->getTimestamp() > $in15min->getTimestamp()) {
             $operationHistory->setLastTimeSent($now);
             $this->getDoctrine()->getManager()->flush();
