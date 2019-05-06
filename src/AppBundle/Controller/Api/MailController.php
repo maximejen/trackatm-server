@@ -4,6 +4,7 @@ namespace AppBundle\Controller\Api;
 use AppBundle\Entity\Customer;
 use AppBundle\Entity\OperationHistory;
 use FOS\RestBundle\Controller\Annotations as Rest;
+use mysql_xdevapi\Exception;
 use OurThread;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -67,7 +68,7 @@ class MailController extends ApiController
             array_push($sendTo, $item->getEmail());
         }
 
-        $file = "./tmp.log";
+        $file = "/home/apache/logs/tmp.log";
         $now = new \DateTime();
         $current = file_get_contents($file);
         $current .= "\n=== SEND MAIL REQUEST BEGIN AT : " . $now->format("Y-m-d H:i:s") . "===\n";
@@ -165,7 +166,15 @@ class MailController extends ApiController
             return new JsonResponse(['message' => "you need to be connected"], 403);
 
 //        $mail = $this->container->get('mail.send');
-        $this->generatePdfAndSendMail($request, $operationHistory);
+        try {
+            $this->generatePdfAndSendMail($request, $operationHistory);
+        } catch (Exception $e) {
+            $file = "/home/apache/logs/tmp.log";
+            $current = file_get_contents($file);
+            $current .= $e->getMessage() . "\n";
+            file_put_contents($file, $current);
+        }
+
 
         return new Response(json_encode(array(
             'success' => 'true'
