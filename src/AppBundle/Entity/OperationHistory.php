@@ -99,7 +99,7 @@ class OperationHistory
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="last_time_sent", type="datetime")
+     * @ORM\Column(name="last_time_sent", type="datetime", nullable=true)
      */
     protected $lastTimeSent;
 
