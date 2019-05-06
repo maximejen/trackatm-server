@@ -59,6 +59,14 @@ class MailController extends ApiController
             ->findOneBy(['name' => $operationHistory->getCustomer()]);
         array_push($sendTo, $customer->getEmail());
 
+
+        $admin = $entityManager
+            ->getRepository('AppBundle:User')
+            ->findBy(['admin' => true]);
+        foreach ($admin as $item) {
+            array_push($sendTo, $item->getEmail());
+        }
+
         $now = new \DateTime();
         $file = "/home/apache/log/tmp.log";
         $current = file_get_contents($file);
@@ -69,12 +77,6 @@ class MailController extends ApiController
         }
         file_put_contents("/home/apache/log/tmp.log", $current);
 
-        $admin = $entityManager
-            ->getRepository('AppBundle:User')
-            ->findBy(['admin' => true]);
-        foreach ($admin as $item) {
-            array_push($sendTo, $item->getEmail());
-        }
         $timeSpent = $operationHistory->getEndingDate()->diff($operationHistory->getBeginningDate());
         $subject = $operationHistory->getPlace();
 //        $attachment = $this->generatorPdf($request, $operationHistory);
