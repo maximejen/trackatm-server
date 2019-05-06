@@ -97,6 +97,13 @@ class OperationHistory
     protected $initialDate;
 
     /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="last_time_sent", type="datetime")
+     */
+    protected $lastTimeSent;
+
+    /**
      * Get id.
      *
      * @return int
@@ -365,5 +372,29 @@ class OperationHistory
     public function getInitialDate()
     {
         return $this->initialDate;
+    }
+
+    /**
+     * Set lastTimeSent.
+     *
+     * @param \DateTime $lastTimeSent
+     *
+     * @return OperationHistory
+     */
+    public function setLastTimeSent($lastTimeSent)
+    {
+        $this->lastTimeSent = $lastTimeSent;
+
+        return $this;
+    }
+
+    /**
+     * Get lastTimeSent.
+     *
+     * @return \DateTime
+     */
+    public function getLastTimeSent()
+    {
+        return $this->lastTimeSent;
     }
 }

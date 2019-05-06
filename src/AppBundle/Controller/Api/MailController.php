@@ -104,6 +104,9 @@ class MailController extends ApiController
         $current .= "sending mail for OH : '" . $operationHistory->getId() . "'\n";
         file_put_contents("/home/apache/log/tmp.log", $current);
 
+        $operationHistory->setLastTimeSent($now);
+        $this->getDoctrine()->getManager()->flush();
+
         $mail->sendMail($sendTo, $subject, $params, "mail/job.html.twig", null);
     }
 
