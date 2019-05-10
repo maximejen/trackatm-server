@@ -34,8 +34,8 @@
         </div>
     </div>
 
-    {% for task in history.tasks %}
-        <div class="columns is-full sub-elements is-multiline">
+    <div class="columns is-multiline is-mobile" style="margin: 1em">
+        {% for task in history.tasks %}
             {% if task.image|length > 0 %}
                 <div class="column is-4">
                     <span>{{ task.name }}</span>
@@ -48,8 +48,8 @@
                     </div>
                 </div>
             {% endif %}
-        </div>
-    {% endfor %}
+        {% endfor %}
+    </div>
 
     <div class="container operations-container">
         <div class="columns is-multiline is-mobile is-centered">
@@ -67,22 +67,14 @@
                                 </span>
                                 <span class="todo__text column is-11">{{ task.name }}</span>
                             </label>
-                            <div class="column is-full sub-elements">
-                                {% if task.textInput is defined and task.textInput is not null and task.textInput != "" %}
+
+                            {% if task.textInput is defined and task.textInput is not null and task.textInput != "" %}
+                                <div class="column is-full sub-elements">
                                     <div class="cleaner-comment">
                                         {{ task.textInput }}
                                     </div>
-                                {% endif %}
-{#                                {% if task.image|length > 0 %}#}
-{#                                    <div class="columns is-multiline">#}
-{#                                        {% for image in task.image %}#}
-{#                                            <img class="column is-4"#}
-{#                                                 src="{{ app.request.getSchemeAndHttpHost() ~ "/images/oh/" ~ image.imageName }}"#}
-{#                                                 alt="image"/>#}
-{#                                        {% endfor %}#}
-{#                                    </div>#}
-{#                                {% endif %}#}
-                            </div>
+                                </div>
+                            {% endif %}
                         </div>
                     </li>
                 {% endfor %}
