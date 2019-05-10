@@ -34,16 +34,18 @@
         </div>
     </div>
 
-    <div class="columns is-multiline is-mobile" style="margin: 1em;">
+    <div class="columns is-multiline" style="margin: 1em">
         {% for task in history.tasks %}
             {% if task.image|length > 0 %}
-                <div class="column columns is-multiline is-4">
-                    <div class="column is-full subtitle" style="color: black !important;">{{ task.name }}</div>
-                    <div class="column is-full columns is-multiline">
+                <div class="column is-4">
+                    <span>{{ task.name }}</span>
+                    <div class="columns is-multiline is-mobile">
                         {% for image in task.image %}
-                            <img class="column is-4"
-                                 src="{{ app.request.getSchemeAndHttpHost() ~ "/images/oh/" ~ image.imageName }}"
-                                 alt="image"/>
+                            <img
+                                    class="column is-4"
+                                    src="{{ app.request.getSchemeAndHttpHost() ~ "/images/oh/" ~ image.imageName }}"
+                                    alt="image"
+                            />
                         {% endfor %}
                     </div>
                 </div>
