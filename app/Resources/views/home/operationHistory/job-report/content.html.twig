@@ -37,7 +37,7 @@
     <div class="columns is-multiline" style="margin: 1em">
         {% for task in history.tasks %}
             {% if task.image|length > 0 %}
-                <div class="column is-4">
+                <div class="column is-4 task-pictures">
                     <span>{{ task.name }}</span>
                     <div class="columns is-multiline is-mobile">
                         {% for image in task.image %}
@@ -88,6 +88,13 @@
     Copyright © All rights reserved
 </div>
 <style>
+    .task-pictures {
+        border: grey 1px solid;
+        box-shadow: 2.5px 2.5px 2.5px lightgrey;
+        margin: 0.2em;
+        border-radius: 10px;
+    }
+
     img {
         height: 100%;
     }
