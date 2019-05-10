@@ -35,15 +35,17 @@
     </div>
 
     {% for task in history.tasks %}
-        <div class="column is-full sub-elements">
+        <div class="columns is-full sub-elements is-multiline">
             {% if task.image|length > 0 %}
-                <span>{{ task.name }}</span>
-                <div class="columns is-multiline">
-                    {% for image in task.image %}
-                        <img class="column is-4"
-                             src="{{ app.request.getSchemeAndHttpHost() ~ "/images/oh/" ~ image.imageName }}"
-                             alt="image"/>
-                    {% endfor %}
+                <div class="column is-4">
+                    <span>{{ task.name }}</span>
+                    <div class="columns is-multiline">
+                        {% for image in task.image %}
+                            <img class="column is-4"
+                                 src="{{ app.request.getSchemeAndHttpHost() ~ "/images/oh/" ~ image.imageName }}"
+                                 alt="image"/>
+                        {% endfor %}
+                    </div>
                 </div>
             {% endif %}
         </div>
