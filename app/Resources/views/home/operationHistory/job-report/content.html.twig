@@ -33,6 +33,22 @@
             </div>
         </div>
     </div>
+
+    {% for task in history.tasks %}
+        <div class="column is-full sub-elements">
+            {% if task.image|length > 0 %}
+                <span>{{ task.name }}</span>
+                <div class="columns is-multiline">
+                    {% for image in task.image %}
+                        <img class="column is-4"
+                             src="{{ app.request.getSchemeAndHttpHost() ~ "/images/oh/" ~ image.imageName }}"
+                             alt="image"/>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    {% endfor %}
+
     <div class="container operations-container">
         <div class="columns is-multiline is-mobile is-centered">
             <ul class="column is-full columns is-mobile is-multiline is-centered is-half">
@@ -50,18 +66,20 @@
                                 <span class="todo__text column is-11">{{ task.name }}</span>
                             </label>
                             <div class="column is-full sub-elements">
-                                <div class="cleaner-comment">
-                                    {{ task.textInput }}
-                                </div>
-                                {% if task.image|length > 0 %}
-                                    <div class="columns is-multiline">
-                                        {% for image in task.image %}
-                                            <img class="column is-4"
-                                                 src="{{ app.request.getSchemeAndHttpHost() ~ "/images/oh/" ~ image.imageName }}"
-                                                 alt="image"/>
-                                        {% endfor %}
+                                {% if task.textInput is defined and task.textInput is not null and task.textInput != "" %}
+                                    <div class="cleaner-comment">
+                                        {{ task.textInput }}
                                     </div>
                                 {% endif %}
+{#                                {% if task.image|length > 0 %}#}
+{#                                    <div class="columns is-multiline">#}
+{#                                        {% for image in task.image %}#}
+{#                                            <img class="column is-4"#}
+{#                                                 src="{{ app.request.getSchemeAndHttpHost() ~ "/images/oh/" ~ image.imageName }}"#}
+{#                                                 alt="image"/>#}
+{#                                        {% endfor %}#}
+{#                                    </div>#}
+{#                                {% endif %}#}
                             </div>
                         </div>
                     </li>
@@ -114,9 +132,9 @@
     .todo-list {
         text-align: center;
         background: #FFF;
-        font-size: 20px;
+        font-size: 15px;
         margin: auto;
-        padding: 0.5em 1em;
+        /*padding: 0.5em 1em;*/
         /*width: 50%;*/
         box-shadow: 0 5px 30px rgba(0, 0, 0, 0.2);
     }
@@ -124,7 +142,7 @@
     .todo {
         display: block;
         position: relative;
-        margin: 0 auto;
+        /*margin: 0 auto;*/
         cursor: pointer;
         padding: 1em 1em 1em 16%;
     }
