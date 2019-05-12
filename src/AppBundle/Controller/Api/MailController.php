@@ -80,7 +80,7 @@ class MailController extends ApiController
 
         $timeSpent = $operationHistory->getEndingDate()->diff($operationHistory->getBeginningDate());
         $subject = $operationHistory->getPlace();
-        $attachment = $this->generatorPdf($request, $operationHistory);
+//        $attachment = $this->generatorPdf($request, $operationHistory);
 
         $arrivingDate = $operationHistory->getBeginningDate();
         $arrivingDate->setTimezone(new \DateTimezone("Asia/Kuwait"));
@@ -114,7 +114,7 @@ class MailController extends ApiController
             $current = file_get_contents($file);
             $current .= "mail sent\n";
             file_put_contents($file, $current);
-            $mail->sendMail($sendTo, $subject, $params, "mail/job.html.twig", $attachment);
+            $mail->sendMail($sendTo, $subject, $params, "mail/job.html.twig", null);
         } else {
             $current = file_get_contents($file);
             $current .= "mail has not been sent, it was less than 15min from last mail sent\n";
