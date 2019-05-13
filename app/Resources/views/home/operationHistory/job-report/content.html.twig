@@ -62,9 +62,9 @@
                             <label class="todo column is-full columns">
                                 <span class="icon is-large column is-1">
                                 {% if task.status == true %}
-                                    <i class="fas fa-check"></i>
+                                    <i class="fas fa-check" style="color: green;"></i>
                                 {% else %}
-                                    <i class="fas fa-times"></i>
+                                    <i class="fas fa-times" style="color: red;"></i>
                                 {% endif %}
                                 </span>
                                 <span class="todo__text column is-11">{{ task.name }}</span>
