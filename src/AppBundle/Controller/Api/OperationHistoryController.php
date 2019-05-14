@@ -195,10 +195,11 @@ class OperationHistoryController extends ApiController
             $hour->setTimezone(new \DateTimezone("Asia/Kuwait"));
         }
 //        $hour = $hour->format("Y-m-d H:i:s");
-        $hour = $hour->format("l jS M Y : H:i");
 
-        $watermark->withText($hour, $request->server->get('DOCUMENT_ROOT') . $request->getBasePath() . '/images/oh/' . $image->getImageName());
-        $watermark1->withText($operationTaskHistory->getOperation()->getPLace(), $request->server->get('DOCUMENT_ROOT') . $request->getBasePath() . '/images/oh/' . $image->getImageName());
+        $watermark->withText($hour->format("H:i "), $request->server->get('DOCUMENT_ROOT') . $request->getBasePath() . '/images/oh/' . $image->getImageName());
+        $watermark->setPosition(Watermark::POSITION_BOTTOM_LEFT);
+        $watermark->withText($hour->format(" l jS M Y"), $request->server->get('DOCUMENT_ROOT') . $request->getBasePath() . '/images/oh/' . $image->getImageName());
+        $watermark1->withText($operationTaskHistory->getOperation()->getPLace() . " ", $request->server->get('DOCUMENT_ROOT') . $request->getBasePath() . '/images/oh/' . $image->getImageName());
 
         return new Response(json_encode(array(
             'success' => 'true')));
