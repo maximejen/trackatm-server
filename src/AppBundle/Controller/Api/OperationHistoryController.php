@@ -157,9 +157,9 @@ class OperationHistoryController extends ApiController
         $watermark1 = new Watermark($request->server->get('DOCUMENT_ROOT') . $request->getBasePath() . '/images/oh/' . $image->getImageName());
 
 
-        $watermark->setFontSize(100)
+        $watermark->setFontSize(40)
             ->setFont('Arial')
-            ->setOffset(0, 25)
+            ->setOffset(0, 60)
             ->setStyle(Watermark::STYLE_TEXT_DARK)
             ->setPosition(Watermark::POSITION_BOTTOM_RIGHT)
             ->setOpacity(1);
@@ -194,7 +194,8 @@ class OperationHistoryController extends ApiController
             $hour->setTimezone(new \DateTimezone("UTC"));
             $hour->setTimezone(new \DateTimezone("Asia/Kuwait"));
         }
-        $hour = $hour->format("Y-m-d H:i:s");
+//        $hour = $hour->format("Y-m-d H:i:s");
+        $hour = $hour->format("l jS M Y : H:i");
 
         $watermark->withText($hour, $request->server->get('DOCUMENT_ROOT') . $request->getBasePath() . '/images/oh/' . $image->getImageName());
         $watermark1->withText($operationTaskHistory->getOperation()->getPLace(), $request->server->get('DOCUMENT_ROOT') . $request->getBasePath() . '/images/oh/' . $image->getImageName());
