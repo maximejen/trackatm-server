@@ -17,16 +17,33 @@
         <section class="is-light content-container">
             <div class="columns">
                 <div class="column">
-                    <a class="button is-primary" href="{{ path('operation_create', {'cleaner': cleaner.id, 'day': day}) }}">
+                    <a class="button is-primary"
+                       href="{{ path('operation_create', {'cleaner': cleaner.id, 'day': day}) }}">
                         <i class="fa fa-plus"></i>
                     </a>
                 </div>
+                <div class="column">
+                    <a class="button is-primary js-bulk-edit"
+                       href="{{ path('operations_edit', {'cleaner': cleaner.id, 'day': day}) }}">
+                        <i class="fa fa-pen"></i>
+                    </a>
+                </div>
+                <div class="column">
+                    <a class="button is-danger js-bulk-delete"
+                       href="{{ path('operations_delete') }}">
+                        <i class="fa fa-trash"></i>
+                    </a>
+                </div>
+                <div class="column is-full"></div>
             </div>
         </section>
         <section class="container content-container">
             <table class="table is-fullwidth is-hoverable">
                 <thead>
                 <tr>
+                    <th>
+                        <input type="checkbox" class="js-check-all"/>
+                    </th>
                     <th>ID</th>
                     <th>Place</th>
                     <th>Name</th>
@@ -36,6 +53,9 @@
                 <tbody>
                 {% for operation in operations %}
                     <tr>
+                        <th>
+                            <input type="checkbox" class="js-checkbox" value="{{ operation.id }}"/>
+                        </th>
                         <th>JOB - {{ operation.id }}</th>
                         <td>{{ operation.place.name }}</td>
                         <td>{{ operation.name }}</td>
@@ -45,7 +65,7 @@
                             ">
                                 <i class="fa fa-pen"></i>
                             </a>
-                            <a class="button is-primary" href="{{ path('operation_delete', {'id': operation.id}) }}">
+                            <a class="button is-danger" href="{{ path('operation_delete', {'id': operation.id}) }}">
                                 <i class="fa fa-trash"></i>
                             </a>
                         </td>
@@ -67,4 +87,46 @@
             margin: 2em 3em;
         }
     </style>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    <script>
+        $(document).ready(() => {
+            $('.js-check-all').on('change', (e) => {
+                const checked = e.target.checked;
+                $('.js-checkbox').each((index, element) => {
+                    element.checked = checked;
+                })
+            });
+
+            $('.js-bulk-edit').on('click', (e) => {
+                e.preventDefault();
+                const ids = handleIdsAndRedirect();
+                window.location.href = e.currentTarget.pathname + ids;
+            });
+
+            $('.js-bulk-delete').on('click', (e) => {
+                e.preventDefault();
+                const ids = handleIdsAndRedirect();
+                window.location.href = e.currentTarget.pathname + ids;
+            });
+        });
+
+        function handleIdsAndRedirect() {
+            let ids = "?ids=";
+            let count = 0;
+
+            $('.js-checkbox').each((index, element) => {
+                if (element.checked) {
+                    ids += element.value;
+                    ids += ",";
+                    count++;
+                }
+            });
+            ids = ids.substr(0, ids.length -1);
+            return count > 0 ? ids : undefined;
+        }
+    </script>
 {% endblock %}

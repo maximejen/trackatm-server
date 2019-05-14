@@ -1,4 +1,4 @@
-<div class="form-element">
+<div class="form-element" {% if bulkEdit is defined %}style="display: none;"{% endif %}>
     <div class="subtitle form-label">
         {{ form_label(form.place) }}
     </div>

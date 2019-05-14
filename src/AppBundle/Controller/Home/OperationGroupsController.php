@@ -7,6 +7,7 @@ use AppBundle\Controller\HomeController;
 use AppBundle\Entity\Operation;
 use AppBundle\Form\OperationType;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -134,7 +135,7 @@ class OperationGroupsController extends HomeController {
      * @Route("/operation/edit/{id}", name="operation_edit", methods={"GET", "POST"})
      * @param Request $request
      * @param Operation $operation
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
+     * @return RedirectResponse|Response
      */
     public function editAction(Request $request, Operation $operation)
     {
@@ -162,10 +163,53 @@ class OperationGroupsController extends HomeController {
     }
 
     /**
-     * @Route("/operation/edit/{id}", name="operation_delete", methods={"GET", "POST"})
+     * @Route("/operations/edit", name="operations_edit", methods={"GET", "POST"})
+     * @param Request $request
+     * @return RedirectResponse|Response
+     */
+    public function bulkEditAction(Request $request)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $ids = $request->query->get('ids');
+        $ids = explode(",", $ids);
+        if (count($ids) > 0) {
+            $operation = $em->getRepository('AppBundle:Operation')->find($ids[0]);
+        }
+        $form = $this->createForm(OperationType::class, $operation);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted()) {
+
+            foreach ($ids as $id) {
+                $ope = $em->getRepository('AppBundle:Operation')->find($id);
+                $ope->setDay($operation->getDay());
+                $ope->setCleaner($operation->getCleaner());
+            }
+
+            $em->flush();
+            return $this->redirectToRoute('operation_group', [
+                'day' => $operation->getDay(),
+                'customer' => $operation->getPlace()->getCustomer()->getId(),
+                'cleaner' => $operation->getCleaner()->getId()
+            ]);
+        }
+
+        $generalParams = [
+            'menuElements' => $this->getMenuParameters(),
+            'menuMode' => "home",
+            "isConnected" => !$this->getUser() == NULL,
+        ];
+        return $this->render(":home/operationGroups:edit.html.twig", array_merge($generalParams, [
+            'form' => $form->createView(),
+            'bulkEdit' => true
+        ]));
+    }
+
+    /**
+     * @Route("/operation/delete/{id}", name="operation_delete", methods={"GET", "POST"})
      * @param Request $request
      * @param Operation $operation
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
+     * @return RedirectResponse|Response
      */
     public function removeAction(Request $request, Operation $operation)
     {
@@ -176,10 +220,29 @@ class OperationGroupsController extends HomeController {
     }
 
     /**
+     * @Route("/operations/delete", name="operations_delete", methods={"GET", "POST"})
+     * @param Request $request
+     * @return RedirectResponse|Response
+     */
+    public function multipleRemoveAction(Request $request)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $ids = $request->query->get('ids');
+        $ids = explode(",", $ids);
+        foreach ($ids as $id) {
+            $operation = $em->getRepository('AppBundle:Operation')->find($id);
+            $em->remove($operation);
+        }
+        $em->flush();
+        return $this->redirectToRoute('operation_groups');
+    }
+
+    /**
      * @Route("/operation/create", name="operation_create", methods={"GET", "POST"})
      * @param Request $request
      * @param Operation $operation
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
+     * @return RedirectResponse|Response
      */
     public function createAction(Request $request)
     {
