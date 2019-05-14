@@ -154,20 +154,35 @@ class OperationHistoryController extends ApiController
         $entityManager->flush();
 
         $watermark = new Watermark($request->server->get('DOCUMENT_ROOT') . $request->getBasePath() . '/images/oh/' . $image->getImageName());
+        $watermark1 = new Watermark($request->server->get('DOCUMENT_ROOT') . $request->getBasePath() . '/images/oh/' . $image->getImageName());
 
 
         $watermark->setFontSize(100)
             ->setFont('Arial')
             ->setOffset(0, 25)
-            ->setStyle(Watermark::STYLE_TEXT_LIGHT)
+            ->setStyle(Watermark::STYLE_TEXT_DARK)
             ->setPosition(Watermark::POSITION_BOTTOM_RIGHT)
             ->setOpacity(1);
 
+        $watermark1->setFontSize(50)
+            ->setFont('Arial')
+            ->setOffset(0, -25)
+            ->setStyle(Watermark::STYLE_TEXT_DARK)
+            ->setPosition(Watermark::POSITION_TOP_RIGHT)
+            ->setOpacity(1);
+
         $imageMark = new Watermark($request->server->get('DOCUMENT_ROOT') . $request->getBasePath() . '/images/oh/' . $image->getImageName());
+        $imageMark1 = new Watermark($request->server->get('DOCUMENT_ROOT') . $request->getBasePath() . '/images/oh/' . $image->getImageName());
+
         $imageMark
             ->setPosition(Watermark::POSITION_BOTTOM_RIGHT)
             ->setOpacity(0.8)
             ->setOffset(0, 35)
+            ->withImage($request->server->get('DOCUMENT_ROOT') . $request->getBasePath() . '/images/white.png');
+        $imageMark1
+            ->setPosition(Watermark::POSITION_TOP_RIGHT)
+            ->setOpacity(0.8)
+            ->setOffset(0, -35)
             ->withImage($request->server->get('DOCUMENT_ROOT') . $request->getBasePath() . '/images/white.png');
 
         if ($time == null) {
@@ -182,6 +197,7 @@ class OperationHistoryController extends ApiController
         $hour = $hour->format("Y-m-d H:i:s");
 
         $watermark->withText($hour, $request->server->get('DOCUMENT_ROOT') . $request->getBasePath() . '/images/oh/' . $image->getImageName());
+        $watermark1->withText($operationTaskHistory->getOperation()->getName(), $request->server->get('DOCUMENT_ROOT') . $request->getBasePath() . '/images/oh/' . $image->getImageName());
 
         return new Response(json_encode(array(
             'success' => 'true')));
