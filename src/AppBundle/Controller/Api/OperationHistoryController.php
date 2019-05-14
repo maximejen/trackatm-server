@@ -196,10 +196,14 @@ class OperationHistoryController extends ApiController
         }
 //        $hour = $hour->format("Y-m-d H:i:s");
 
-        $watermark->withText($hour->format("H:i "), $request->server->get('DOCUMENT_ROOT') . $request->getBasePath() . '/images/oh/' . $image->getImageName());
+        $placeName = strtoupper($operationTaskHistory->getOperation()->getPLace() . " ");
+        $date = strtoupper($hour->format(" l jS M Y"));
+        $hour = strtoupper($hour->format("H:i "));
+
+        $watermark->withText($hour, $request->server->get('DOCUMENT_ROOT') . $request->getBasePath() . '/images/oh/' . $image->getImageName());
         $watermark->setPosition(Watermark::POSITION_BOTTOM_LEFT);
-        $watermark->withText($hour->format(" l jS M Y"), $request->server->get('DOCUMENT_ROOT') . $request->getBasePath() . '/images/oh/' . $image->getImageName());
-        $watermark1->withText($operationTaskHistory->getOperation()->getPLace() . " ", $request->server->get('DOCUMENT_ROOT') . $request->getBasePath() . '/images/oh/' . $image->getImageName());
+        $watermark->withText($date, $request->server->get('DOCUMENT_ROOT') . $request->getBasePath() . '/images/oh/' . $image->getImageName());
+        $watermark1->withText($placeName, $request->server->get('DOCUMENT_ROOT') . $request->getBasePath() . '/images/oh/' . $image->getImageName());
 
         return new Response(json_encode(array(
             'success' => 'true')));
