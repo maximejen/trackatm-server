@@ -166,7 +166,7 @@ class OperationHistoryController extends ApiController
 
         $watermark1->setFontSize(50)
             ->setFont('Arial')
-            ->setOffset(0, 25)
+            ->setOffset(0, 30)
             ->setStyle(Watermark::STYLE_TEXT_DARK)
             ->setPosition(Watermark::POSITION_TOP_RIGHT)
             ->setOpacity(1);
@@ -197,7 +197,7 @@ class OperationHistoryController extends ApiController
         $hour = $hour->format("Y-m-d H:i:s");
 
         $watermark->withText($hour, $request->server->get('DOCUMENT_ROOT') . $request->getBasePath() . '/images/oh/' . $image->getImageName());
-        $watermark1->withText($operationTaskHistory->getOperation()->getName(), $request->server->get('DOCUMENT_ROOT') . $request->getBasePath() . '/images/oh/' . $image->getImageName());
+        $watermark1->withText($operationTaskHistory->getOperation()->getPLace(), $request->server->get('DOCUMENT_ROOT') . $request->getBasePath() . '/images/oh/' . $image->getImageName());
 
         return new Response(json_encode(array(
             'success' => 'true')));
