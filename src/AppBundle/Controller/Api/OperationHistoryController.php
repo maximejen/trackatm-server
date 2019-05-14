@@ -166,7 +166,7 @@ class OperationHistoryController extends ApiController
 
         $watermark1->setFontSize(50)
             ->setFont('Arial')
-            ->setOffset(0, -25)
+            ->setOffset(0, 25)
             ->setStyle(Watermark::STYLE_TEXT_DARK)
             ->setPosition(Watermark::POSITION_TOP_RIGHT)
             ->setOpacity(1);
@@ -182,7 +182,7 @@ class OperationHistoryController extends ApiController
         $imageMark1
             ->setPosition(Watermark::POSITION_TOP_RIGHT)
             ->setOpacity(0.8)
-            ->setOffset(0, -35)
+            ->setOffset(0, 35)
             ->withImage($request->server->get('DOCUMENT_ROOT') . $request->getBasePath() . '/images/white.png');
 
         if ($time == null) {
