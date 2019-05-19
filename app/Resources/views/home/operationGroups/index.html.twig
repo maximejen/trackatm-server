@@ -15,13 +15,12 @@
             </div>
         </section>
         <section class="is-light operation-groups-toolbar">
-            <form class="columns" action="" method="get">
-                <div class="columns">
-                    <div class="column is-2">
-                        <label>Customer</label>
+            <form class="columns is-mobile" action="" method="get">
+                <div class="columns is-multiline">
+                    <div class="column">
                         <div class="select is-primary is-medium">
                             <select id="js-customer-choice" name="customer">
-                                <option value="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</option>
+                                <option value="">Customer</option>
                                 {% for customer in customers %}
                                     <option value="{{ customer.id }}"
                                             {% if selectedCustomer is not null and selectedCustomer.id == customer.id %}selected{% endif %}>
@@ -31,11 +30,10 @@
                             </select>
                         </div>
                     </div>
-                    <div class="column is-2">
-                        <label>Cleaner</label>
+                    <div class="column">
                         <div class="select is-primary is-medium">
                             <select id="js-cleaner-choice" name="cleaner">
-                                <option value="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</option>
+                                <option value="">Cleaner</option>
                                 {% for cleaner in cleaners %}
                                     <option value="{{ cleaner.id }}"
                                             {% if selectedCleaner is not null and selectedCleaner.id == cleaner.id %}selected{% endif %}>
@@ -45,11 +43,10 @@
                             </select>
                         </div>
                     </div>
-                    <div class="column is-2">
-                        <label>Day of the week</label>
+                    <div class="column">
                         <div class="select is-primary is-medium">
                             <select id="js-day-choice" name="day">
-                                <option value="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</option>
+                                <option value="">Day of the week</option>
                                 <option value="Monday"
                                         {% if selectedDay is not null and selectedDay == "Monday" %}selected{% endif %}>
                                     Monday
@@ -81,26 +78,33 @@
                             </select>
                         </div>
                     </div>
-                    <div class="column is-2">
-                        <label>&nbsp;</label>
-                        <div>
-                            <button class="button is-medium is-primary" type="submit">
-                                <span>Search</span>
+                    <div class="column columns is-mobile">
+                        <div class="column">
+                            <div>
+                                <button class="button is-medium is-primary" type="submit">
                                 <span class="icon is-small">
                                   <i class="fas fa-search"></i>
                                 </span>
-                            </button>
+                                </button>
+                            </div>
                         </div>
-                    </div>
-                    <div class="column is-2">
-                        <label>&nbsp;</label>
-                        <div>
-                            <a href="{{ path('operation_groups') }}" class="button is-medium is-danger is-outlined">
-                                <span>Reset filters</span>
+                        <div class="column">
+                            <div>
+                                <a href="{{ path('operation_groups') }}" class="button is-medium is-danger is-outlined">
                                 <span class="icon is-small">
                                   <i class="fas fa-undo"></i>
                                 </span>
-                            </a>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="column">
+                            <div>
+                                <a href="{{ path('operation_create') }}" class="button is-medium is-primary">
+                                <span class="icon is-small">
+                                  <i class="fas fa-plus"></i>
+                                </span>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -112,17 +116,16 @@
                 {% for day, cleaners in operationGroups %}
                     {% for cleaner, customers in cleaners %}
                         {% for customer, operations in customers %}
-                                <div class="column is-3">
-                                    <a href="{{ path('operation_group', {"cleaner": cleaner, "day": day, "customer": operations['id']}) }}">
-{#                                    <a href="{{ path('operation_group', {"cleaner": cleaner, "day": day, "customer": operations[0].customer.id}) }}">#}
+                            <div class="column is-3">
+                                <a href="{{ path('operation_group', {"cleaner": cleaner, "day": day, "customer": operations['id']}) }}">
                                     <div class="tile is-parent">
                                         <article class="tile is-child notification is-primary">
-                                            <p class="subtitle">{{ day ~ " - Cleaner#" ~ cleaner ~ " - " ~ customer }}</p>
+                                            <p class="subtitle">{{ customer ~ " - Cleaner#" ~ cleaner ~ " - " ~ day }}</p>
                                             <p>{{ operations|length - 1 }} Operation(s)</p>
                                         </article>
                                     </div>
-                                    </a>
-                                </div>
+                                </a>
+                            </div>
 
                         {% endfor %}
                     {% endfor %}

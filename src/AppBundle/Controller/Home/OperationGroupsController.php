@@ -79,6 +79,13 @@ class OperationGroupsController extends HomeController {
             $operationGroups[$operation->getDay()][$operation->getCleaner()->getId()][$operation->getCustomer()->getName()][] = $operation;
         }
 
+        $nbOperationGroups = 0;
+        foreach ($operationGroups as $cleanersInArray) {
+            foreach ($cleanersInArray as $cleanerInArray) {
+                $nbOperationGroups += count($cleanerInArray);
+            }
+        }
+
         $generalParams = [
             'menuElements' => $this->getMenuParameters(),
             'menuMode' => "home",
