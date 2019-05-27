@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\SerializerInterface;
 
 /**
  * @Route("/operation-groups")
@@ -248,34 +249,46 @@ class OperationGroupsController extends HomeController {
     /**
      * @Route("/operation/create", name="operation_create", methods={"GET", "POST"})
      * @param Request $request
-     * @param Operation $operation
+     * @param SerializerInterface $serializer
      * @return RedirectResponse|Response
+     * @throws \Doctrine\ORM\ORMException
+     * @throws \Doctrine\ORM\OptimisticLockException
      */
-    public function createAction(Request $request)
+    public function createAction(Request $request, SerializerInterface $serializer)
     {
         $em = $this->getDoctrine()->getManager();
+        $search = $request->get('search');
+        $customerId = $request->get('customer');
+
+        $cleaners = $em->getRepository('AppBundle:Cleaner')->findAll();
+        if ($search != null && $customerId == null)
+            $places = $em->getRepository('AppBundle:Place')->findPlaceByName($search);
+        else if ($search != null && $customerId != null)
+            $places = $em->getRepository('AppBundle:Place')->findPlaceByCustomerAndName($customerId, $search);
+        else if ($customerId != null && $search == null)
+            $places = $em->getRepository('AppBundle:Place')->findPlaceByCustomer($customerId);
+        else
+            $places = $em->getRepository('AppBundle:Place')->findAll();
+        $customers = $em->getRepository('AppBundle:Customer')->findAll();
+
+
         $operation = new Operation();
-
-        $day = $request->query->get('day');
-        if ($day)
-            $operation->setDay($day);
-        $cleanerId = $request->query->get('cleaner');
-        if ($cleanerId) {
-            $cleaner = $em->getRepository("AppBundle:Cleaner")->find($cleanerId);
-            $operation->setCleaner($cleaner);
-        }
-
         $form = $this->createForm(OperationType::class, $operation);
-        $form->handleRequest($request);
+        $isConnected = !$this->getUser() == NULL;
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $em->persist($operation);
-            $em->flush();
-            return $this->redirectToRoute('operation_group', [
-                'day' => $operation->getDay(),
-                'customer' => $operation->getPlace()->getCustomer()->getId(),
-                'cleaner' => $operation->getCleaner()->getId()
-            ]);
+        if ($request->isMethod('POST')) {
+            if (!$isConnected)
+                return new JsonResponse(['message' => "you need to be connected"], 403);
+            $form->handleRequest($request);
+            if ($form->isSubmitted() && $form->isValid()) {
+                $em = $this->get('doctrine.orm.entity_manager');
+
+                $em->persist($operation);
+                $em->flush();
+
+                return new Response($serializer->serialize($operation, 'json', ['groups' => ['operation']]));
+            }
+            return new JsonResponse(['message' => "form is not valid"]);
         }
 
         $generalParams = [
@@ -284,7 +297,13 @@ class OperationGroupsController extends HomeController {
             "isConnected" => !$this->getUser() == NULL,
         ];
         return $this->render(":home/operationGroups:create.html.twig", array_merge($generalParams, [
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'places' => $places,
+            'customerId' => $customerId,
+            'customers' => $customers,
+            'search' => $search,
+            'userToken' => $this->getUser()->getToken(),
+            'cleaners' => $cleaners
         ]));
     }
 }

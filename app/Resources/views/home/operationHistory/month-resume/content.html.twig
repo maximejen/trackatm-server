@@ -21,32 +21,40 @@
         </tr>
         </thead>
         <tbody class="">
-        {% for key, line in month.content %}
-            {% if key != "columns" %}
+        {% for lineName, line in month.content %}
+            {% if lineName != "columns" %}
                 <tr>
                     {% for key, cell in line %}
-                        <td nowrap="nowrap">
-                            {% if cell is null %}
-                                &nbsp;
-                            {% else %}
-                                {% set link = cell is iterable %}
-                                {% if link %}
-                                    {% for key, elem in cell %}
-                                        {% if pdf is defined and pdf == true %}
+                        {% if lineName == "TOTALS" and cell > 0 and key == "TOTAL" %}
+                            <td nowrap="nowrap" class="total-atm-global">
+                        {% elseif lineName == "TOTALS" and cell > 0 %}
+                            <td nowrap="nowrap" class="total-atm-day">
+                        {% elseif key == "TOTAL" %}
+                            <td nowrap="nowrap" class="total-atm">
+                        {% else %}
+                            <td nowrap="nowrap">
+                        {% endif %}
+                        {% if cell is null %}
+                            &nbsp;
+                        {% else %}
+                            {% set link = cell is iterable %}
+                            {% if link %}
+                                {% for key, elem in cell %}
+                                    {% if pdf is defined and pdf == true %}
+                                        {{ elem.endingDate.format('H:i') }}
+                                    {% else %}
+                                        <a href="{{ path('operationhistory_view', {'id': elem.id}) }}">
                                             {{ elem.endingDate.format('H:i') }}
-                                        {% else %}
-                                            <a href="{{ path('operationhistory_view', {'id': elem.id}) }}">
-                                                {{ elem.endingDate.format('H:i') }}
-                                            </a>
-                                        {% endif %}
-                                        {% if key != (cell|length - 1) %}
-                                            {{ "/" }}
-                                        {% endif %}
-                                    {% endfor %}
-                                {% else %}
-                                    {{ cell }}
-                                {% endif %}
+                                        </a>
+                                    {% endif %}
+                                    {% if key != (cell|length - 1) %}
+                                        {{ "/" }}
+                                    {% endif %}
+                                {% endfor %}
+                            {% else %}
+                                {{ cell }}
                             {% endif %}
+                        {% endif %}
                         </td>
                     {% endfor %}
                 </tr>
@@ -56,15 +64,30 @@
     </table>
 {% endfor %}
 <style>
+    .total-atm-day {
+        background-color: red;
+        color: white;
+    }
+
+    .total-atm-global {
+        color: white;
+        background-color: forestgreen;
+    }
+
+    .total-atm {
+        color: white;
+        background-color: orange;
+    }
+
     th {
         white-space: nowrap;
-        {% if color is defined and color is not null %} background: {{ color }} !important;
+    {% if color is defined and color is not null %} background: {{ color }} !important;
     {% endif %} {% if pdf is defined and pdf == true %} font-size: 0.8em !important;
     {% endif %}
     }
 
     td {
-        {% if pdf is defined and pdf == true %} font-size: 0.8em !important;
+    {% if pdf is defined and pdf == true %} font-size: 0.8em !important;
     {% endif %}
     }
 

@@ -14,34 +14,127 @@
                 </div>
             </div>
         </section>
-        <section class="container">
-            {{ form_start(form) }}
-            {% include(':home/planning/operation:form.html.twig') %}
-            <div class="form-element">
-                <button class="button is-primary is-medium" type="submit">Create operation</button>
+        <section class="columns is-centered" style="margin-top: 1em;">
+            <div class="column is-10">
+                <form action="" method="get">
+                    <div class="columns is-multiline is-mobile is-1">
+                        <input type="number" name="customer" style="display: none" value="{{ customerId }}">
+                        <div class="select is-primary is-medium is-fullwidth">
+                            <select id="js-cleaner-choice">
+                                <option value="">Select a cleaner</option>
+                                {% for cleaner in cleaners %}
+                                    <option id="{{ 'js-cleaner' ~ cleaner.id }}"
+                                            value="{{ cleaner.id }}">{{ "Cleaner #" ~cleaner.id }}</option>s
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="column is-10">
+                            <p class="control has-icons-left">
+                                <input class="input is-medium" placeholder="Search" name="search"
+                                       value="{{ search }}">
+                                <span class="icon is-small is-left">
+                                      <i class="fas fa-search"></i>
+                                    </span>
+                            </p>
+                        </div>
+                        <div class="column is-2">
+                            <button class="button is-medium is-primary is-fullwidth" type="submit">
+                                    <span class="icon is-small">
+                                      <i class="fas fa-search"></i>
+                                    </span>
+                            </button>
+                        </div>
+                        <div class="column is-full"></div>
+                    </div>
+                </form>
+                <nav class="panel">
+                    <p class="panel-heading">
+                        Places
+                    </p>
+                    <p class="panel-tabs" style="padding-bottom: 1em">
+                        <a
+                                href="{{ path('operation_create', {'search': search}) }}"
+                                {% if customerId is null or customerId == "" %}class="is-active"{% endif %}
+                        >
+                            all
+                        </a>
+                        {% for customer in customers %}
+                            <a
+                                    href="{{ path('operation_create', {'search': search, 'customer': customer.id}) }}"
+                                    {% if customer.id == customerId %}class="is-active"{% endif %}
+                            >
+                                {{ customer.name }}
+                            </a>
+                        {% endfor %}
+                    </p>
+                    <p class="places-list">
+                        {% for place in places %}
+                            <a class="panel-block js-place-choice" data-id="{{ place.id }}" data-name="{{ place.name }}"
+                               data-customer-name="{{ place.customer.name }}">
+                                <span class="panel-icon"><i class="fas fa-map-marker" aria-hidden="true"></i></span>
+                                {{ place.customer.name ~ " - " ~ place.name }}
+                            </a>
+                        {% endfor %}
+                    </p>
+                    <div class="panel-block">
+                        <a href="{{ path('operation_create') }}"
+                           class="button is-fullwidth is-medium is-danger is-outlined">
+                            <span>Reset filters</span>
+                            <span class="icon is-small">
+                                  <i class="fas fa-undo"></i>
+                                </span>
+                        </a>
+                    </div>
+                </nav>
             </div>
-            {{ form_end(form) }}
         </section>
+        <div class="modal">
+            <div class="js-modal-close modal-background"></div>
+            <div class="modal-card">
+                {{ form_start(form, {
+                    'attr': {
+                        'id': 'js-operation-form',
+                        'action': "/api/operations",
+                        'data-api-token': userToken
+                    }
+                }) }}
+                <header class="modal-card-head">
+                    <p class="modal-card-title">Add a new Operation to a cleaner</p>
+                    <span class="delete js-modal-close" aria-label="close"></span>
+                </header>
+                <section class="modal-card-body js-modal-card-body">
+                    {% include(':home/planning/operation:form.html.twig') %}
+                </section>
+                <footer class="modal-card-foot">
+                    <button class="button is-success js-modal-add-operation">Add operation</button>
+                    <span class="button js-modal-close">Cancel</span>
+                </footer>
+                {{ form_end(form) }}
+            </div>
+            <button class="modal-close js-modal-close is-large" type="submit" aria-label="close"></button>
+        </div>
     </div>
 {% endblock %}
 
 {% block stylesheets %}
     {{ parent() }}
     <style>
-        .form-element {
-            padding-top: 2.5em;
+        .places-list {
+            overflow-y: scroll;
+            height: 500px;
         }
 
         .form-element > button {
             width: 100%;
         }
 
-        div.form-label {
-            margin-bottom: 0.5em;
-        }
-
         .container {
             padding-bottom: 2em;
         }
     </style>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('js/planning/index.js') }}"></script>
 {% endblock %}

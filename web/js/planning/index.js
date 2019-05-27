@@ -32,7 +32,7 @@ $(document).ready(async () => {
 
     $('.js-modal-close').click(() => {
         $('.modal').removeClass('is-active');
-    })
+    });
 
     form.submit(async (e) => {
         e.preventDefault();

@@ -104,13 +104,15 @@
             $('.js-bulk-edit').on('click', (e) => {
                 e.preventDefault();
                 const ids = handleIdsAndRedirect();
-                window.location.href = e.currentTarget.pathname + ids;
+                if (ids)
+                    window.location.href = e.currentTarget.pathname + ids;
             });
 
             $('.js-bulk-delete').on('click', (e) => {
                 e.preventDefault();
                 const ids = handleIdsAndRedirect();
-                window.location.href = e.currentTarget.pathname + ids;
+                if (ids)
+                    window.location.href = e.currentTarget.pathname + ids;
             });
         });
 
