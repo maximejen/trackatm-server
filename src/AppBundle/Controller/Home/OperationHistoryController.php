@@ -261,7 +261,7 @@ class OperationHistoryController extends HomeController
 
         $fileGeneratorService = $this->container->get('file_genertor');
 
-        $htmlCode = $this->renderView('home/operationHistory/month-resume/content.html.twig', [
+        $htmlCode = $this->renderView('home/operationHistory/month-resume/month-resume.html.twig', [
             "firstDate" => $dates[0],
             "secondDate" => $dates[1],
             "planning" => $fileGeneratorService->getPlanningPerMonths($dates[0], $dates[1], $histories, $operations),
@@ -282,25 +282,25 @@ class OperationHistoryController extends HomeController
             "Content-Length: " . strlen($post)
         ];
 
-//        $ch = curl_init("https://api.sejda.com/v1/tasks");
-//        curl_setopt($ch, CURLOPT_POST, true);
-//        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-//
-//        curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
-//        curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
-        $fileName = $today->getTimestamp() . ' - generated.pdf';
-//        file_put_contents(
-//            $request->server->get('DOCUMENT_ROOT') . $request->getBasePath() . '/pdf/' . $fileName,
-//            curl_exec($ch)
-//        );
-//        curl_close($ch);
+        $ch = curl_init("https://api.sejda.com/v1/tasks");
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
-        $html2pdf = $this->container->get('app.html2pdf');
-        $html2pdf->create('L', 'A3', 'fr', true, 'UTF-8', [10, 15, 10 ,15]);
-        return $html2pdf->generatePdf($htmlCode, $fileName);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
+        $fileName = $today->getTimestamp() . ' - generated.pdf';
+        file_put_contents(
+            $request->server->get('DOCUMENT_ROOT') . $request->getBasePath() . '/pdf/' . $fileName,
+            curl_exec($ch)
+        );
+        curl_close($ch);
 
         $file = $this->file($fileGenerator->returnFile("/../web/pdf/", $fileName));
         return $file;
+
+//        $html2pdf = $this->container->get('app.html2pdf');
+//        $html2pdf->create('L', 'A3', 'fr', true, 'UTF-8', [10, 15, 10 ,15]);
+//        return $html2pdf->generatePdf($htmlCode, $fileName);
     }
 
     /**

@@ -3,22 +3,3 @@
 {% block body %}
     {% include ':home/operationHistory/month-resume:content.html.twig' %}
 {% endblock %}
-
-{#{% block javascripts %}#}
-{#    {{ parent() }}#}
-{#    <script src="{{ asset('bower_components/html2pdf.js/dist/html2pdf.bundle.min.js') }}"></script>#}
-{#    <script>#}
-{#        #}{#console.log("{{ asset('bower_components/html2pdf.js/dist/html2pdf.bundle.min.js') }}");#}
-{#        let element = document.getElementById("toRenderInPdf");#}
-{#        let opt = {#}
-{#            margin:       1,#}
-{#            filename:     'myfile.pdf',#}
-{#            image:        { type: 'jpeg', quality: 0.98 },#}
-{#            html2canvas:  { scale: 2 },#}
-{#            jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }#}
-{#        };#}
-
-{#        // New Promise-based usage:#}
-{#        html2pdf().set(opt).from(element).save();#}
-{#    </script>#}
-{#{% endblock %}#}
