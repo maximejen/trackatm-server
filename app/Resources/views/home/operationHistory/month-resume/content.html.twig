@@ -8,7 +8,7 @@
             </div>
         </div>
     </div>
-    <table class="column is-full table is-hoverable is-fullwidth is-bordered month-view">
+    <table class="table-month-resume column is-full table is-hoverable is-fullwidth is-bordered month-view">
         <thead class="">
         <tr class="is-primary is-selected">
             {% for key, table in month.content['columns'] %}
@@ -64,6 +64,10 @@
     </table>
 {% endfor %}
 <style>
+    .table-month-resume {
+        font-size: 13px;
+    }
+
     .total-atm-day {
         background-color: red;
         color: white;
