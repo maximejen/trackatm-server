@@ -42,3 +42,7 @@ services:
         class: AppBundle\Service\FileGeneratorService
         arguments: ['@kernel']
         public: true
+
+    app.html2pdf:
+        class: AppBundle\Service\HTML2PDF
+        public: true
