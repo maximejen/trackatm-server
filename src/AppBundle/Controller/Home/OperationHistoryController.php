@@ -269,6 +269,22 @@ class OperationHistoryController extends HomeController
             "pdf" => true
         ]);
 
+        $search = array(
+            '/\>[^\S ]+/s',     // strip whitespaces after tags, except space
+            '/[^\S ]+\</s',     // strip whitespaces before tags, except space
+            '/(\s)+/s',         // shorten multiple whitespace sequences
+            '/<!--(.|\s)*?-->/' // Remove HTML comments
+        );
+
+        $replace = array(
+            '>',
+            '<',
+            '\\1',
+            ''
+        );
+
+        $htmlCode = preg_replace($search, $replace, $htmlCode);
+
         $today = new \DateTime();
         $fileGenerator = $this->container->get('file_genertor');
 
