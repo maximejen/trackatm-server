@@ -54,6 +54,13 @@ class Operation
      */
     protected $done;
 
+    /**
+     * @var OperationTaskHistory[]
+     *
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\OperationTaskHistory", cascade={"PERSIST", "REMOVE"}, mappedBy="operation")
+     */
+    protected $tasks;
+
     public function setDone($done)
     {
         $this->done = $done;
@@ -240,5 +247,31 @@ class Operation
     public function getCustomer()
     {
         return $this->getPlace()->getCustomer();
+    }
+
+    /**
+     * Add task.
+     *
+     * @param \AppBundle\Entity\OperationTaskHistory $task
+     *
+     * @return Operation
+     */
+    public function addTask(\AppBundle\Entity\OperationTaskHistory $task)
+    {
+        $this->tasks[] = $task;
+
+        return $this;
+    }
+
+    /**
+     * Remove task.
+     *
+     * @param \AppBundle\Entity\OperationTaskHistory $task
+     *
+     * @return boolean TRUE if this collection contained the specified element, FALSE otherwise.
+     */
+    public function removeTask(\AppBundle\Entity\OperationTaskHistory $task)
+    {
+        return $this->tasks->removeElement($task);
     }
 }

@@ -20,6 +20,98 @@ use Symfony\Component\Serializer\SerializerInterface;
  */
 class OperationHistoryController extends ApiController
 {
+
+    /**
+     * @Rest\View(serializerGroups={"cleaner"})
+     * @Rest\Post("/api/operation/history/create/{id}")
+     *
+     * @param Request $request
+     * @param Cleaner $cleaner
+     * @param SerializerInterface $serializer
+     * @return Response
+     * @throws \Doctrine\ORM\ORMException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     */
+    public function createOperationHistoryAction(Request $request, Cleaner $cleaner, SerializerInterface $serializer)
+    {
+        if (!$this->checkUserIsConnected($request))
+            return new JsonResponse(['message' => "you need to be connected"], 403);
+        $params = array();
+        $content = $request->getContent(); //  $this->get("request")->getContent();
+        if (!empty($content)) {
+            $params = json_decode($content, true); // 2nd param to get as array
+        }
+
+
+        if (!array_key_exists('beginningDate', $params) || !array_key_exists('endingDate', $params)
+            || !array_key_exists('operationId', $params)
+            || !array_key_exists('operationTemplateId', $params)) {
+            $response = new Response();
+            $response->setStatusCode('400');
+            $response->setContent(json_encode(array(
+                'success' => false,
+                'message' => 'Invalid request')));
+            return $response;
+        }
+
+        $entityManager = $this->get('doctrine.orm.entity_manager');
+        $operation = $entityManager
+            ->getRepository('AppBundle:Operation')
+            ->findOneBy(['id' => $params['operationId']]);
+
+        $operationTemplate = $entityManager
+            ->getRepository('AppBundle:OperationTemplate')
+            ->findOneBy(['id' => $params['operationTemplateId']]);
+
+        $place = $operation->getPlace();
+        $customer = $place->getCustomer();
+        if (!$operation || !$operationTemplate)
+            return new JsonResponse(['message' => "Operation not found"], 404);
+
+        $history = new OperationHistory();
+        $history->setName($operationTemplate->getName());
+        $history->setPlace($place->getName());
+        $history->setCustomer($customer->getName());
+        $history->setGeoCoords($place->getGeoCoords());
+        $history->setCleaner($cleaner);
+        $history->setDone(true);
+        $history->setInitialDate(new \DateTime($params['initialDate'] . " this week"));
+
+        foreach ($params['tasks'] as $key => $param) {
+            $task = new OperationTaskHistory();
+            $task->setName($param["key"]);
+            $task->setComment($param["comment"] ? $param["comment"] : "");
+            $task->setStatus($param["checked"]);
+            $task->setImagesForced($param["imageForced"]);
+            $task->setTextInput($param["text"]);
+            $task->setPosition($key);
+            $history->addTask($task);
+        }
+
+        $date = new \DateTime();
+        $date->setTimestamp($params['beginningDate']);
+        $history->setBeginningDate($date);
+        $date1 = new \DateTime();
+        $date1->setTimestamp($params['endingDate']);
+        $history->setEndingDate($date1);
+
+        $entityManager->persist($history);
+        $entityManager->flush();
+        $id = $history->getId();
+        $tasksIds = [];
+        foreach ($history->getTasks() as $task) {
+            $tasksIds[] = $task->getId();
+        }
+        return new Response(json_encode(array(
+            'success' => 'true',
+            'historyId' => $id,
+            "tasksIds" => $tasksIds
+        )));
+    }
+
+
+
+
     /**
      * @Rest\View(serializerGroups={"cleaner"})
      * @Rest\Post("/api/operation/history/{id}")
