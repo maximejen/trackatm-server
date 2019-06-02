@@ -38,14 +38,13 @@
                                 <td nowrap="nowrap">
                             {% endif %}
                             {% if cell is null %}
-                                &nbsp;10:00
+                                &nbsp;
                             {% else %}
                                 {% set link = cell is iterable %}
                                 {% if link %}
                                     {% for key, elem in cell %}
                                         {% if pdf is defined and pdf == true %}
                                             {{ elem.endingDate.format('H:i') }}
-                                            10:00
                                         {% else %}
                                             <a href="{{ path('operationhistory_view', {'id': elem.id}) }}">
                                                 {{ elem.endingDate.format('H:i') }}
