@@ -68,7 +68,7 @@ class MailController extends ApiController
             array_push($sendTo, $item->getEmail());
         }
 
-        $file = "tmp.log";
+        $file = "/home/apache/log/tmp.log";
         $now = new \DateTime();
         $current = file_get_contents($file);
         $current .= "\n=== SEND MAIL REQUEST BEGIN AT : " . $now->format("Y-m-d H:i:s") . "===\n";
@@ -173,7 +173,7 @@ class MailController extends ApiController
         try {
             $this->generatePdfAndSendMail($request, $operationHistory);
         } catch (Exception $e) {
-            $file = "tmp.log";
+            $file = "/home/apache/log/tmp.log";
             $current = file_get_contents($file);
             $current .= "ERROR : " . $e->getMessage() . "\n";
             file_put_contents($file, $current);
