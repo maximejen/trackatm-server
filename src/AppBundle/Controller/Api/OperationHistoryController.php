@@ -98,9 +98,29 @@ class OperationHistoryController extends ApiController
         $entityManager->persist($history);
         $entityManager->flush();
         $id = $history->getId();
+
+
+        $file = "oh.log";
+        if (!file_exists($file))
+            fopen($file, "w");
+        $current = file_get_contents($file);
+        $current .= "\n=== Creating OH ===\n";
+        file_put_contents($file, $current);
+        $now = new \DateTime();
+        $current = file_get_contents($file);
+        $current .= "OH ID : " . $history->getId() . "\n" . "Place : " . $history->getPlace() . "\n";
+        $current .= "CL : " . $cleaner->getId() . "\n" . "DATE : " . $now->format("Y-m-d H:i:s\n");
+        file_put_contents($file, $current);
+
         $tasksIds = [];
+        $current = file_get_contents($file);
+        $current .= "=== Add tasks to OH " . $history->getId() .  " ===\n";
+        file_put_contents($file, $current);
         foreach ($history->getTasks() as $task) {
             $tasksIds[] = $task->getId();
+            $current = file_get_contents($file);
+            $current .= "Task : " . $task->getName() . "\nTask ID :" . $task->getId() . "\n";
+            file_put_contents($file, $current);
         }
         return new Response(json_encode(array(
             'success' => 'true',
@@ -142,6 +162,13 @@ class OperationHistoryController extends ApiController
             return $response;
         }
 
+        $file = "oh.log";
+        if (!file_exists($file))
+            fopen($file, "w");
+        $current = file_get_contents($file);
+        $current .= "\n=== Creating OH ===\n";
+        file_put_contents($file, $current);
+
         $entityManager = $this->get('doctrine.orm.entity_manager');
         $operation = $entityManager
             ->getRepository('AppBundle:Operation')
@@ -175,6 +202,12 @@ class OperationHistoryController extends ApiController
         $entityManager->persist($history);
         $entityManager->flush();
         $id = $history->getId();
+
+        $now = new \DateTime();
+        $current = file_get_contents($file);
+        $current .= "OH ID : " . $history->getId() . "\n" . "Place : " . $history->getPlace() . "\n";
+        $current .= "CL : " . $cleaner->getId() . "\n" . "DATE : " . $now->format("Y-m-d H:i:s\n");
+        file_put_contents($file, $current);
         return new Response(json_encode(array(
             'success' => 'true',
             'historyId' => $id)));
@@ -209,6 +242,14 @@ class OperationHistoryController extends ApiController
         $entityManager->persist($operationHistory);
         $entityManager->flush();
         $id = $task->getId();
+
+        $file = "oh.log";
+        if (!file_exists($file))
+            fopen($file, "w");
+        $current = file_get_contents($file);
+        $current .= "\n=== Add task to OH " . $operationHistory->getId() .  " ===\n";
+        $current .= "Task : " . $task->getName() . "\n";
+        file_put_contents($file, $current);
 
         return new Response(json_encode(array(
             'success' => 'true',
@@ -296,6 +337,16 @@ class OperationHistoryController extends ApiController
         $watermark->setPosition(Watermark::POSITION_BOTTOM_LEFT);
         $watermark->withText($date, $request->server->get('DOCUMENT_ROOT') . $request->getBasePath() . '/images/oh/' . $image->getImageName());
         $watermark1->withText($placeName, $request->server->get('DOCUMENT_ROOT') . $request->getBasePath() . '/images/oh/' . $image->getImageName());
+
+        $file = "oh.log";
+        if (!file_exists($file))
+            fopen($file, "w");
+        $current = file_get_contents($file);
+        $current .= "\n=== Add image to Task " . $operationTaskHistory->getId() . "#" . $operationTaskHistory->getPosition() . " for OH " . $operationTaskHistory->getOperation()->getId() .  " ===\n";
+        $current .= "Task : " . $operationTaskHistory->getName() . "\n";
+        $current .= "Image : " . $image->getImageName() . "\n";
+        $current .= "Link : " . "https://track-atm.com/images/oh/" . $image->getImageName() . "\n";
+        file_put_contents($file, $current);
 
         return new Response(json_encode(array(
             'success' => 'true')));
