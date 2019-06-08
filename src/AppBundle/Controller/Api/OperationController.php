@@ -145,7 +145,7 @@ class OperationController extends ApiController
 //
 //            }
 //        }
-        $this->hasBeenDoneLastSevenDays($histories, $planning);
+//        $this->hasBeenDoneLastSevenDays($histories, $planning);
         $operations = $this->fromPlanningToFlat($planning);
 //        foreach ($operations as $operation)
 //            var_dump($operation->getDay() . " / " . $operation->getPlace() . " : " . $operation->isDone());
