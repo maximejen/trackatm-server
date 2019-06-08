@@ -52,7 +52,7 @@ class OperationController extends ApiController
         $period = new DatePeriod(
             $date1,
             new DateInterval('P1D'),
-            $date2
+            $date2->modify("+ 1 days")
         );
         $planning = [];
         foreach ($period as $key => $value) {
