@@ -7,6 +7,7 @@ use AppBundle\Entity\CleanerPlanningDay;
 use AppBundle\Entity\User;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -152,9 +153,28 @@ class ApiController extends Controller
         if (!$token || $token == null)
             return false;
         $em = $this->getDoctrine()->getManager();
-        $user = $em->getRepository("AppBundle:User")->findBy(['token' => $token]);
+        $user = $em->getRepository("AppBundle:User")->findOneBy(['token' => $token]);
         if (!$user || $user == null)
             return false;
         return $user;
+    }
+
+    /**
+     * @Rest\Get("/api/upload-app-version")
+     *
+     * @param Request $request
+     *
+     * @return Response
+     * @throws \Exception
+     */
+    public function uploadAppVersion(Request $request) {
+        /** @var User $user */
+        $user = $this->checkUserIsConnected($request);
+        if (!$user)
+            return new JsonResponse(['message' => "you need to be connected"], 403);
+        $version = $request->query->get("version");
+        $user->setAppVersion($version);
+        $this->getDoctrine()->getManager()->flush();
+        return new JsonResponse(['message' => "ok"], 200);
     }
 }

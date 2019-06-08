@@ -259,6 +259,7 @@ class OperationGroupsController extends HomeController {
         $em = $this->getDoctrine()->getManager();
         $search = $request->get('search');
         $customerId = $request->get('customer');
+        $day = $request->query->get('day');
 
         $cleaners = $em->getRepository('AppBundle:Cleaner')->findAll();
         if ($search != null && $customerId == null)
@@ -273,6 +274,9 @@ class OperationGroupsController extends HomeController {
 
 
         $operation = new Operation();
+        if ($day) {
+            $operation->setDay($day);
+        }
         $form = $this->createForm(OperationType::class, $operation);
         $isConnected = !$this->getUser() == NULL;
 

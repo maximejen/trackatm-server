@@ -277,6 +277,8 @@ class OperationHistoryController extends ApiController
         $imageFile = $request->files->get("image");
         $mTime = $imageFile->getMTime();
 
+        $version = $request->query->get("version");
+
         $time = $request->query->get('timestamp');
 
         $image = new Image();
@@ -286,37 +288,42 @@ class OperationHistoryController extends ApiController
         $entityManager->persist($operationTaskHistory);
         $entityManager->flush();
 
-        $watermark = new Watermark($request->server->get('DOCUMENT_ROOT') . $request->getBasePath() . '/images/oh/' . $image->getImageName());
-        $watermark1 = new Watermark($request->server->get('DOCUMENT_ROOT') . $request->getBasePath() . '/images/oh/' . $image->getImageName());
+        $imageName = $image->getImageName();
+        $watermark = new Watermark($request->server->get('DOCUMENT_ROOT') . $request->getBasePath() . '/images/oh/' . $imageName);
+        $watermark1 = new Watermark($request->server->get('DOCUMENT_ROOT') . $request->getBasePath() . '/images/oh/' . $imageName);
 
+        $fontSize = $version ? 10 : 35;
+        $offset = $version ? 42 : 65;
 
-        $watermark->setFontSize(35)
+        $watermark->setFontSize($fontSize)
             ->setFont('Arial')
-            ->setOffset(0, 65)
+            ->setOffset(0, $offset)
             ->setStyle(Watermark::STYLE_TEXT_DARK)
             ->setPosition(Watermark::POSITION_BOTTOM_RIGHT)
             ->setOpacity(1);
 
-        $watermark1->setFontSize(35)
+        $watermark1->setFontSize($fontSize)
             ->setFont('Arial')
-            ->setOffset(0, 65)
+            ->setOffset(0, $offset)
             ->setStyle(Watermark::STYLE_TEXT_DARK)
             ->setPosition(Watermark::POSITION_TOP_RIGHT)
             ->setOpacity(1);
 
-        $imageMark = new Watermark($request->server->get('DOCUMENT_ROOT') . $request->getBasePath() . '/images/oh/' . $image->getImageName());
-        $imageMark1 = new Watermark($request->server->get('DOCUMENT_ROOT') . $request->getBasePath() . '/images/oh/' . $image->getImageName());
+        $imageMark = new Watermark($request->server->get('DOCUMENT_ROOT') . $request->getBasePath() . '/images/oh/' . $imageName);
+        $imageMark1 = new Watermark($request->server->get('DOCUMENT_ROOT') . $request->getBasePath() . '/images/oh/' . $imageName);
+
+        $whiteImageName = $version ? "/images/white1.png" : "/images/white.png";
 
         $imageMark
             ->setPosition(Watermark::POSITION_BOTTOM_RIGHT)
             ->setOpacity(0.8)
             ->setOffset(0, 35)
-            ->withImage($request->server->get('DOCUMENT_ROOT') . $request->getBasePath() . '/images/white.png');
+            ->withImage($request->server->get('DOCUMENT_ROOT') . $request->getBasePath() . $whiteImageName);
         $imageMark1
             ->setPosition(Watermark::POSITION_TOP_RIGHT)
             ->setOpacity(0.8)
             ->setOffset(0, 35)
-            ->withImage($request->server->get('DOCUMENT_ROOT') . $request->getBasePath() . '/images/white.png');
+            ->withImage($request->server->get('DOCUMENT_ROOT') . $request->getBasePath() . $whiteImageName);
 
         if ($time == null) {
             $hour = new \DateTime(gmdate("Y-m-d\ H:i:s \G\M\T", $mTime));
@@ -333,10 +340,10 @@ class OperationHistoryController extends ApiController
         $date = strtoupper($hour->format(" l jS M Y"));
         $hour = strtoupper($hour->format("H:i "));
 
-        $watermark->withText($hour, $request->server->get('DOCUMENT_ROOT') . $request->getBasePath() . '/images/oh/' . $image->getImageName());
+        $watermark->withText($hour, $request->server->get('DOCUMENT_ROOT') . $request->getBasePath() . '/images/oh/' . $imageName);
         $watermark->setPosition(Watermark::POSITION_BOTTOM_LEFT);
-        $watermark->withText($date, $request->server->get('DOCUMENT_ROOT') . $request->getBasePath() . '/images/oh/' . $image->getImageName());
-        $watermark1->withText($placeName, $request->server->get('DOCUMENT_ROOT') . $request->getBasePath() . '/images/oh/' . $image->getImageName());
+        $watermark->withText($date, $request->server->get('DOCUMENT_ROOT') . $request->getBasePath() . '/images/oh/' . $imageName);
+        $watermark1->withText($placeName, $request->server->get('DOCUMENT_ROOT') . $request->getBasePath() . '/images/oh/' . $imageName);
 
         $file = "oh.log";
         if (!file_exists($file))
@@ -344,8 +351,10 @@ class OperationHistoryController extends ApiController
         $current = file_get_contents($file);
         $current .= "\n=== Add image to Task " . $operationTaskHistory->getId() . "#" . $operationTaskHistory->getPosition() . " for OH " . $operationTaskHistory->getOperation()->getId() .  " ===\n";
         $current .= "Task : " . $operationTaskHistory->getName() . "\n";
-        $current .= "Image : " . $image->getImageName() . "\n";
-        $current .= "Link : " . "https://track-atm.com/images/oh/" . $image->getImageName() . "\n";
+        $current .= "Image : " . $imageName . "\n";
+        $current .= "Link : " . "https://track-atm.com/images/oh/" . $imageName . "\n";
+        $current .= "Version : " . $version . "\n";
+        $current .= "Image Path : " . $request->server->get('DOCUMENT_ROOT') . $request->getBasePath() . $whiteImageName . "\n";
         file_put_contents($file, $current);
 
         return new Response(json_encode(array(

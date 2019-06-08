@@ -37,6 +37,13 @@ class User extends BaseUser
      */
     protected $admin;
 
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="app_version", type="string", nullable=true)
+     */
+    protected $appVersion;
+
     public function __construct()
     {
         parent::__construct();
@@ -98,5 +105,29 @@ class User extends BaseUser
     public function getAdmin()
     {
         return $this->admin;
+    }
+
+    /**
+     * Set appVersion.
+     *
+     * @param string $appVersion
+     *
+     * @return User
+     */
+    public function setAppVersion($appVersion)
+    {
+        $this->appVersion = $appVersion;
+
+        return $this;
+    }
+
+    /**
+     * Get appVersion.
+     *
+     * @return string
+     */
+    public function getAppVersion()
+    {
+        return $this->appVersion;
     }
 }

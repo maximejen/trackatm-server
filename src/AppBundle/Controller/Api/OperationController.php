@@ -52,7 +52,7 @@ class OperationController extends ApiController
         $period = new DatePeriod(
             $date1,
             new DateInterval('P1D'),
-            $date2->modify('+1 days')
+            $date2
         );
         $planning = [];
         foreach ($period as $key => $value) {
@@ -131,21 +131,7 @@ class OperationController extends ApiController
 
         $week = $this->getWeek($operations);
         $planning = $this->getOperationsPlanning($weekAgo, $today, $week);
-//        var_dump($planning);
-
-        /** @var OperationHistory $history */
-//        foreach ($histories as $history) {
-//            $date = $history->getInitialDate()->format('Y-m-d');
-//            /** @var Operation $operation */
-//            foreach ($planning[$date] as &$operation) {
-//                if ($history->getDone() && $history->getPlace() == $operation->getPlace()->getName())
-//                    $operation->setDone(true);
-//                else
-//                    $operation->setDone(false);
-//
-//            }
-//        }
-//        $this->hasBeenDoneLastSevenDays($histories, $planning);
+        $this->hasBeenDoneLastSevenDays($histories, $planning);
         $operations = $this->fromPlanningToFlat($planning);
 //        foreach ($operations as $operation)
 //            var_dump($operation->getDay() . " / " . $operation->getPlace() . " : " . $operation->isDone());
