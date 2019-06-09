@@ -78,6 +78,12 @@ class OperationController extends ApiController
     {
         $nbTimesToBeDone = [];
         $nbTimesDone = [];
+        /** @var OperationHistory $history */
+        foreach ($histories as $history) {
+            if (!array_key_exists($history->getPlace(), $nbTimesDone))
+                $nbTimesDone[$history->getPlace()] = 0;
+            $nbTimesDone[$history->getPlace()]++;
+        }
         foreach ($planning as $date) {
             /** @var Operation $operation */
             foreach ($date as $operation) {
@@ -85,12 +91,6 @@ class OperationController extends ApiController
                     $nbTimesToBeDone[$operation->getPlace()->getName()] = 0;
                 $nbTimesToBeDone[$operation->getPlace()->getName()]++;
             }
-        }
-        /** @var OperationHistory $history */
-        foreach ($histories as $history) {
-            if (!array_key_exists($history->getPlace(), $nbTimesDone))
-                $nbTimesDone[$history->getPlace()] = 0;
-            $nbTimesDone[$history->getPlace()]++;
         }
         foreach ($planning as &$date) {
             /** @var Operation $operation */
@@ -131,7 +131,7 @@ class OperationController extends ApiController
 
         $week = $this->getWeek($operations);
         $planning = $this->getOperationsPlanning($weekAgo, $today, $week);
-//        $this->hasBeenDoneLastSevenDays($histories, $planning);
+        $this->hasBeenDoneLastSevenDays($histories, $planning);
         $operations = $this->fromPlanningToFlat($planning);
 //        foreach ($operations as $operation)
 //            var_dump($operation->getDay() . " / " . $operation->getPlace() . " : " . $operation->isDone());
