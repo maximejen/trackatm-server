@@ -132,60 +132,6 @@
                 {% include ':home/operationHistory/month-resume:content.html.twig' %}
             </div>
         </section>
-        <section class="container operations-container">
-            <div class="columns is-multiline is-mobile is-centered">
-                {% for key, operations in operationsPlanned %}
-                    <div class="column is-12 operation-histories-container">
-                        <div class="columns">
-                            <div class="column title white">{{ key }}</div>
-                        </div>
-                        {% for operation in operations %}
-                            {% if operation is not empty %}
-                                {% set link = operation.done is defined and operation.done is not null %}
-                                {% if link %}
-                                    <a href="{{ path('operationhistory_view', {'id': operation.id}) }}">
-                                {% endif %}
-                                <div class="card">
-                                    <div class="card-content">
-                                        <div class="media">
-                                            <div class="media-content">
-                                                <p class="title is-4">
-                                                    {{ operation.customer ~ " - " ~ operation.place }}
-                                                    <span class="subtitle jobId">JOB - {{ operation.id }}</span>
-                                                </p>
-                                                <p class="subtitle is-6"><b>{{ operation.name }}</b></p>
-                                            </div>
-                                            <div class="media-right">
-                                                {% if operation.done is defined and operation.done == true %}
-                                                    <span class="done title">COMPLETED</span>
-                                                {% elseif operation.done is defined and operation.done is null %}
-                                                    <span class="planned title">PLANNED</span>
-                                                {% else %}
-                                                    <span class="notdone title">OVERDUE</span>
-                                                {% endif %}
-                                            </div>
-                                        </div>
-                                        <div class="content">
-                                            <ul>
-                                                <li>Cleaner #{{ operation.cleaner.id }}</li>
-                                                {% if operation.beginningDate is defined %}
-                                                    <li>
-                                                        <time datetime="{{ key }}">{{ operation.beginningDate.format('l jS F Y - g:ia') }}</time>
-                                                    </li>
-                                                {% endif %}
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                                {% if link %}
-                                    </a>
-                                {% endif %}
-                            {% endif %}
-                        {% endfor %}
-                    </div>
-                {% endfor %}
-            </div>
-        </section>
     </div>
 {% endblock %}
 

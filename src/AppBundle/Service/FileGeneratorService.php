@@ -57,7 +57,7 @@ class FileGeneratorService
         return $planning;
     }
 
-    private function generateEmptyTable(\DateTime $date1, \DateTime $date2, $operations)
+    private function generateEmptyTable(\DateTime $date1, \DateTime $date2, $operations, $histories)
     {
         $cols = ["customer" => 0, "place" => 1, "lat" => 2, "lon" => 3];
         $places = $this->getAllPlacesConcerned($operations);
@@ -69,6 +69,13 @@ class FileGeneratorService
             $content[$placeName]["place"] = $place->getName();
             $content[$placeName]["lat"] = $place->getGeoCoords()->getLat();
             $content[$placeName]["lon"] = $place->getGeoCoords()->getLon();
+        }
+        foreach ($histories as $history) {
+            $placeName = $history->getPlace();
+            $content[$placeName]["customer"] = $history->getCustomer();
+            $content[$placeName]["place"] = $history->getPlace();
+            $content[$placeName]["lat"] = !array_key_exists("lat", $content[$placeName]) ? "/" : $content[$placeName]["lat"];
+            $content[$placeName]["lon"] = !array_key_exists("lon", $content[$placeName]) ? "/" : $content[$placeName]["lon"];
         }
 
         $period = $this->getInterval($date1, $date2);
@@ -123,6 +130,8 @@ class FileGeneratorService
 
             $index = intval($date->format('d'));
             $content[$place][$index][] = $history;
+            if (!array_key_exists("TOTAL", $content[$place]))
+                $content[$place]["TOTAL"] = 0;
             $content[$place]["TOTAL"]++;
         }
         return $content;
@@ -173,7 +182,7 @@ class FileGeneratorService
             else
                 $lastDay->modify("last day of this month");
 
-            $content = $this->generateEmptyTable($firstDay, $lastDay, $operations);
+            $content = $this->generateEmptyTable($firstDay, $lastDay, $operations, $histories);
             $content = $this->mapHistoriesToTable($content, $histories, $month);
             $content = $this->addTotalCountLine($content);
 

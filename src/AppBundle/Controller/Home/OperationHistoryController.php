@@ -4,7 +4,9 @@ namespace AppBundle\Controller\Home;
 
 use AppBundle\Controller\HomeController;
 
+use AppBundle\Entity\Image;
 use AppBundle\Entity\OperationHistory;
+use AppBundle\Entity\OperationTaskHistory;
 use daandesmedt\PHPHeadlessChrome\HeadlessChrome;
 use \DateInterval;
 use DatePeriod;
@@ -326,14 +328,34 @@ class OperationHistoryController extends HomeController
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function viewOperationHistory(OperationHistory $history)
+    public function viewOperationHistory(Request $request, OperationHistory $history)
     {
         $args = array_merge([
             'menuElements' => $this->getMenuParameters(),
             'menuMode' => "home",
             "isConnected" => !$this->getUser() == NULL,
+            'id' => $history->getId()
         ], $this->generateArguments($history)
         );
+
+        $delete = $request->query->get('delete');
+        if ($delete == "1") {
+            /** @var OperationTaskHistory $task */
+            foreach ($history->getTasks() as $task) {
+                $images = $task->getImage();
+                if (!$images->isEmpty()) {
+                    /** @var Image $image */
+                    foreach ($images->getValues() as $image) {
+                        unlink($request->server->get('DOCUMENT_ROOT') . $request->getBasePath() . '/images/oh/' . $image->getImageName());
+                    }
+                 }
+            }
+
+            $em = $this->getDoctrine()->getManager();
+            $em->remove($history);
+            $em->flush();
+            return $this->redirectToRoute("operationhistorypage");
+        }
 
         return $this->render('home/operationHistory/view.html.twig', $args);
     }

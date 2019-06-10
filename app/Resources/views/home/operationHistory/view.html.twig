@@ -1,6 +1,19 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
+    <div class="column columns is-mobile">
+        <div class="column">
+            <div>
+                <a href="{{ path('operationhistory_view', {id: id, delete: true}) }}">
+                    <button class="button is-medium is-danger">
+                        <span class="icon is-small">
+                          <i class="fas fa-trash"></i>
+                        </span>
+                    </button>
+                </a>
+            </div>
+        </div>
+    </div>
     <div id="toRenderInPdf">
         {% include ':home/operationHistory/job-report:content.html.twig' %}
     </div>
