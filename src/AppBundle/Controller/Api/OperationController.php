@@ -129,14 +129,36 @@ class OperationController extends ApiController
         $operations = $em->getRepository('AppBundle:Operation')->findBy(['cleaner' => $cleaner]);
         $histories = $em->getRepository('AppBundle:OperationHistory')->findOperationHistoriesByCleanerAndBetweenTwoDates($cleaner, $weekAgo, $today);
 
+
         $week = $this->getWeek($operations);
+
+        $flat = $request->query->get('flat') == null ? "true" : $request->query->get('flat');
+
+        // 1.0.8
+        $nextWeek = new \DateTime();
+        $nextWeek->modify('+6 days');
+        $week1 = [];
+        foreach ($week as $day => $elements) {
+            !array_key_exists($day, $week1) && $week1[$day] = [];
+            foreach ($elements as $element) $week1[$day][] = clone $element;
+        }
+        $nextPlanning = $this->getOperationsPlanning($today, $nextWeek, $week1);
+        /** @var Operation $operation */
+        foreach ($nextPlanning as $date) foreach ($date as $operation) {
+            $operation->setDone(false);
+        }
+        // 1.0.8
+
         $planning = $this->getOperationsPlanning($weekAgo, $today, $week);
-//        $this->hasBeenDoneLastSevenDays($histories, $planning);
-        $operations = $this->fromPlanningToFlat($planning);
-//        foreach ($operations as $operation)
-//            var_dump($operation->getDay() . " / " . $operation->getPlace() . " : " . $operation->isDone());
-//            $operation->setDone(false);
-        return new Response($serializer->serialize($operations, 'json', ['groups' => ['operation']]));
+        if ($flat == "true") {
+            foreach ($operations as $operation) $operation->setDone(false); // all operations are on false when it's flat for compatibility reasons.
+            $operations = $this->fromPlanningToFlat($planning);
+            return new Response($serializer->serialize($operations, 'json', ['groups' => ['operation']]));
+        } else {
+            $this->hasBeenDoneLastSevenDays($histories, $planning);
+            $planning = array_merge($planning, $nextPlanning);
+            return new Response($serializer->serialize($planning, 'json', ['groups' => ['operation']]));
+        }
     }
 
     /**
