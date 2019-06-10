@@ -131,7 +131,7 @@ class OperationController extends ApiController
 
         $week = $this->getWeek($operations);
         $planning = $this->getOperationsPlanning($weekAgo, $today, $week);
-        $this->hasBeenDoneLastSevenDays($histories, $planning);
+//        $this->hasBeenDoneLastSevenDays($histories, $planning);
         $operations = $this->fromPlanningToFlat($planning);
 //        foreach ($operations as $operation)
 //            var_dump($operation->getDay() . " / " . $operation->getPlace() . " : " . $operation->isDone());
