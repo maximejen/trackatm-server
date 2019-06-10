@@ -142,7 +142,9 @@ class OperationController extends ApiController
             !array_key_exists($day, $week1) && $week1[$day] = [];
             foreach ($elements as $element) $week1[$day][] = clone $element;
         }
-        $nextPlanning = $this->getOperationsPlanning($today, $nextWeek, $week1);
+        $today1 = new \DateTime();
+        $today1->modify("+1 days");
+        $nextPlanning = $this->getOperationsPlanning($today1, $nextWeek, $week1);
         /** @var Operation $operation */
         foreach ($nextPlanning as $date) foreach ($date as $operation) {
             $operation->setDone(false);
