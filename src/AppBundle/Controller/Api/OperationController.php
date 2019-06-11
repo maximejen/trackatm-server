@@ -151,13 +151,15 @@ class OperationController extends ApiController
         }
         // 1.0.8
 
+//        var_dump($weekAgo->format('Y-m-d'));
+//        var_dump($today->format('Y-m-d'));
         $planning = $this->getOperationsPlanning($weekAgo, $today, $week);
         if ($flat == "true") {
             foreach ($operations as $operation) $operation->setDone(false); // all operations are on false when it's flat for compatibility reasons.
             $operations = $this->fromPlanningToFlat($planning);
             return new Response($serializer->serialize($operations, 'json', ['groups' => ['operation']]));
         } else {
-            $this->hasBeenDoneLastSevenDays($histories, $planning);
+//            $this->hasBeenDoneLastSevenDays($histories, $planning);
             $planning = array_merge($planning, $nextPlanning);
             return new Response($serializer->serialize($planning, 'json', ['groups' => ['operation']]));
         }
