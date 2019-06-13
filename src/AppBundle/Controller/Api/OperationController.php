@@ -162,20 +162,20 @@ class OperationController extends ApiController
             $this->hasBeenDoneLastSevenDays($histories, $planning);
             $planning = array_merge($planning, $nextPlanning);
 
-            $today = new \DateTime();
-            $historiesOfToday = array_filter($histories, function($history) use($today) {
-                if ($history->getBeginningDate()->format('Y-m-d') == $today->format('Y-m-d'))
-                    return true;
-                return false;
-            });
-            array_walk($planning[$today->format('Y-m-d')], function($operation) use($historiesOfToday) {
-                $operation->setDone(false);
-                /** @var OperationHistory $history */
-                foreach ($historiesOfToday as $history) {
-                    if ($operation->getPlace()->getName() == $history->getPlace())
-                        $operation->setDone(true);
-                }
-            });
+//            $today = new \DateTime();
+//            $historiesOfToday = array_filter($histories, function($history) use($today) {
+//                if ($history->getBeginningDate()->format('Y-m-d') == $today->format('Y-m-d'))
+//                    return true;
+//                return false;
+//            });
+//            array_walk($planning[$today->format('Y-m-d')], function($operation) use($historiesOfToday) {
+//                $operation->setDone(false);
+//                /** @var OperationHistory $history */
+//                foreach ($historiesOfToday as $history) {
+//                    if ($operation->getPlace()->getName() == $history->getPlace())
+//                        $operation->setDone(true);
+//                }
+//            });
 
             return new Response($serializer->serialize($planning, 'json', ['groups' => ['operation']]));
         }
