@@ -74,7 +74,7 @@ class OperationController extends ApiController
         return $newArray;
     }
 
-    private function hasBeenDoneLastSevenDays($histories, $planning)
+    private function determineOperationsDone($histories, $planning)
     {
         $nbTimesToBeDone = [];
         $nbTimesDone = [];
@@ -120,66 +120,71 @@ class OperationController extends ApiController
         if (!$user)
             return new JsonResponse(['message' => "you need to be connected"], 403);
 
-        $today = new\DateTime();
-        $weekAgo = new \DateTime();
-        $weekAgo->modify('-6 days');
+        // get actual week limits
+        $weekStart = new \DateTime();
+        $weekEnd = new\DateTime();
+        if ($weekStart->format("l") != "Sunday")
+            $weekStart->modify('last sunday');
+        if ($weekEnd->format("l") != "Saturday")
+            $weekEnd->modify('next saturday');
+
+        // get next week limits
+        $nextWeekStart = new \DateTime();
+        $nextWeekEnd = new \DateTime();
+        $nextWeekStart->modify("next Sunday");
+        $nextWeekEnd->modify("next Sunday");
+        $nextWeekEnd->modify("next Saturday");
 
         $em = $this->getDoctrine()->getManager();
         $cleaner = $em->getRepository('AppBundle:Cleaner')->findOneBy(['user' => $user]);
         $operations = $em->getRepository('AppBundle:Operation')->findBy(['cleaner' => $cleaner]);
-        $histories = $em->getRepository('AppBundle:OperationHistory')->findOperationHistoriesByCleanerAndBetweenTwoDates($cleaner, $weekAgo, $today);
-
+        $historiesActualWeek = $em->getRepository('AppBundle:OperationHistory')->findOperationHistoriesByCleanerAndBetweenTwoDates($cleaner, $weekStart, $weekEnd);
+        $historiesNextWeek = $em->getRepository('AppBundle:OperationHistory')->findOperationHistoriesByCleanerAndBetweenTwoDates($cleaner, $nextWeekStart, $nextWeekEnd);
 
         $week = $this->getWeek($operations);
 
         $flat = $request->query->get('flat') == null ? "true" : $request->query->get('flat');
 
-        // 1.0.8
-        $nextWeek = new \DateTime();
-        $nextWeek->modify('+6 days');
+        $planning = $this->getOperationsPlanning($weekStart, $weekEnd, $week);
+
+
+        // duplicate week so that there is no edit of the Operations of the first week
         $week1 = [];
         foreach ($week as $day => $elements) {
             !array_key_exists($day, $week1) && $week1[$day] = [];
             foreach ($elements as $element) $week1[$day][] = clone $element;
         }
-        $today1 = new \DateTime();
-        $today1->modify("+1 days");
-        $nextPlanning = $this->getOperationsPlanning($today1, $nextWeek, $week1);
-        /** @var Operation $operation */
-        foreach ($nextPlanning as $date) foreach ($date as $operation) {
-            $operation->setDone(false);
-        }
+        $nextPlanning = $this->getOperationsPlanning($nextWeekStart, $nextWeekEnd, $week1);
         // 1.0.8
-
-
-        $planning = $this->getOperationsPlanning($weekAgo, $today, $week);
 
         if ($flat == "true") {
             foreach ($operations as $operation) $operation->setDone(false); // all operations are on false when it's flat for compatibility reasons.
             $operations = $this->fromPlanningToFlat($planning);
             return new Response($serializer->serialize($operations, 'json', ['groups' => ['operation']]));
         } else {
-            $this->hasBeenDoneLastSevenDays($histories, $planning);
+            $this->determineOperationsDone($historiesActualWeek, $planning);
+            $this->determineOperationsDone($historiesNextWeek, $nextPlanning);
             $planning = array_merge($planning, $nextPlanning);
-
-//            $today = new \DateTime();
-//            $historiesOfToday = array_filter($histories, function($history) use($today) {
-//                if ($history->getBeginningDate()->format('Y-m-d') == $today->format('Y-m-d'))
-//                    return true;
-//                return false;
-//            });
-//            array_walk($planning[$today->format('Y-m-d')], function($operation) use($historiesOfToday) {
-//                $operation->setDone(false);
-//                /** @var OperationHistory $history */
-//                foreach ($historiesOfToday as $history) {
-//                    if ($operation->getPlace()->getName() == $history->getPlace())
-//                        $operation->setDone(true);
-//                }
-//            });
 
             return new Response($serializer->serialize($planning, 'json', ['groups' => ['operation']]));
         }
     }
+
+    // this code is to make all the ATM of today available and disappearing if they are done today.
+    //            $today = new \DateTime();
+    //            $historiesOfToday = array_filter($histories, function($history) use($today) {
+    //                if ($history->getBeginningDate()->format('Y-m-d') == $today->format('Y-m-d'))
+    //                    return true;
+    //                return false;
+    //            });
+    //            array_walk($planning[$today->format('Y-m-d')], function($operation) use($historiesOfToday) {
+    //                $operation->setDone(false);
+    //                /** @var OperationHistory $history */
+    //                foreach ($historiesOfToday as $history) {
+    //                    if ($operation->getPlace()->getName() == $history->getPlace())
+    //                        $operation->setDone(true);
+    //                }
+    //            });
 
     /**
      * @Rest\View(serializerGroups={"operation"})

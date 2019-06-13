@@ -75,7 +75,10 @@ class OperationHistoryController extends ApiController
         $history->setGeoCoords($place->getGeoCoords());
         $history->setCleaner($cleaner);
         $history->setDone(true);
-        $history->setInitialDate(new \DateTime($params['initialDate'] . " this week"));
+        $typicalWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+        $isADay = false;
+        foreach ($typicalWeek as $day) !$isADay && $isADay = $params['initialDate'] == $day;
+        $history->setInitialDate(new \DateTime($isADay ? ($params['initialDate'] . " this week") : $params['initialDate']));
 
         foreach ($params['tasks'] as $key => $param) {
             $task = new OperationTaskHistory();
