@@ -78,7 +78,20 @@ class OperationHistoryController extends ApiController
         $typicalWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
         $isADay = false;
         foreach ($typicalWeek as $day) !$isADay && $isADay = $params['initialDate'] == $day;
-        $history->setInitialDate(new \DateTime($isADay ? ($params['initialDate'] . " this week") : $params['initialDate']));
+        if (!$isADay)
+            $date = new \DateTime($params['initialDate']);
+        else {
+            $date = new \DateTime();
+            if ($history->getBeginningDate()->format('l') == "Sunday" && $params['initialDate'] != "Sunday") {
+                $date->modify("+7 days");
+                $date->modify($params['initialDate'] . " this week");
+            }
+            else if ($history->getBeginningDate()->format('l') != "Sunday" && $params['initialDate'] == "Sunday")
+                $date->modify("last sunday");
+            else
+                $date->modify($params['initialDate'] . " this week");
+        }
+        $history->setInitialDate($date);
 
         foreach ($params['tasks'] as $key => $param) {
             $task = new OperationTaskHistory();
