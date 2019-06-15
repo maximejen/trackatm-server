@@ -118,7 +118,7 @@ class OperationHistoryController extends ApiController
 
 
         $entityManager->persist($history);
-//        $entityManager->flush();
+        $entityManager->flush();
         $id = $history->getId();
 
 
