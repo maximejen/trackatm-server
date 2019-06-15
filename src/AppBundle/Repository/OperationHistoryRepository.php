@@ -45,12 +45,14 @@ class OperationHistoryRepository extends \Doctrine\ORM\EntityRepository
 
     public function findOperationHistoriesByCleanerAndBetweenTwoDates(Cleaner $cleaner, $date1, $date2)
     {
+        $date1copied = clone $date1;
+        $date2copied = clone $date2;
         return $this->_em->getRepository("AppBundle:OperationHistory")->createQueryBuilder('ohre')
             ->where('cleaner.id = :cleaner')
             ->andWhere('ohre.initialDate BETWEEN :date1 AND :date2')
             ->join('ohre.cleaner', 'cleaner')
-            ->setParameter('date1', $date1->format("Y-m-d 00:00:00"))
-            ->setParameter('date2', $date2->format("Y-m-d 23:59:59"))
+            ->setParameter('date1', $date1copied->format("Y-m-d 00:00:00"))
+            ->setParameter('date2', $date2copied->format("Y-m-d 23:59:59"))
             ->setParameter('cleaner', $cleaner->getId())
             ->getQuery()
             ->getResult();

@@ -49,16 +49,19 @@ class OperationController extends ApiController
 
     private function getOperationsPlanning($date1, $date2, $week)
     {
+        $copy1 = clone $date1;
+        $copy2 = clone $date2;
+        $copy1->setTime(0, 0, 0);
+        $copy2->setTime(0, 0, 0);
         $period = new DatePeriod(
-            $date1,
+            $copy1,
             new DateInterval('P1D'),
-            $date2->modify("+ 1 days")
+            $copy2->modify("+1 days")
         );
         $planning = [];
         foreach ($period as $key => $value) {
             $planning[$value->format('Y-m-d')] = $week[$value->format("l")];
         }
-
         return $planning;
     }
 
@@ -136,8 +139,8 @@ class OperationController extends ApiController
         $nextWeekEnd->modify("next Saturday");
 
         $em = $this->getDoctrine()->getManager();
-        $cleaner = $em->getRepository('AppBundle:Cleaner')->findOneBy(['user' => $user]);
-        $operations = $em->getRepository('AppBundle:Operation')->findBy(['cleaner' => $cleaner]);
+        $cleaner = $em->getRepository('AppBundle:Cleaner')->findByUser($user);
+        $operations = $em->getRepository('AppBundle:Operation')->findOperationsByCleaner($cleaner);
         $historiesActualWeek = $em->getRepository('AppBundle:OperationHistory')->findOperationHistoriesByCleanerAndBetweenTwoDates($cleaner, $weekStart, $weekEnd);
         $historiesNextWeek = $em->getRepository('AppBundle:OperationHistory')->findOperationHistoriesByCleanerAndBetweenTwoDates($cleaner, $nextWeekStart, $nextWeekEnd);
 
@@ -146,7 +149,6 @@ class OperationController extends ApiController
         $flat = $request->query->get('flat') == null ? "true" : $request->query->get('flat');
 
         $planning = $this->getOperationsPlanning($weekStart, $weekEnd, $week);
-
 
         // duplicate week so that there is no edit of the Operations of the first week
         $week1 = [];

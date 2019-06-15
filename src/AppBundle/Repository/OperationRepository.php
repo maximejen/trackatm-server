@@ -36,4 +36,14 @@ class OperationRepository extends \Doctrine\ORM\EntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    public function findOperationsByCleaner($cleaner)
+    {
+        return $this->_em->getRepository("AppBundle:Operation")->createQueryBuilder('o')
+            ->where("cleaner.id = :cleaner")
+            ->join("o.cleaner", "cleaner")
+            ->setParameter("cleaner", $cleaner->getId())
+            ->getQuery()
+            ->getResult();
+    }
 }

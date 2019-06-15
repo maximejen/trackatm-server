@@ -75,19 +75,31 @@ class OperationHistoryController extends ApiController
         $history->setGeoCoords($place->getGeoCoords());
         $history->setCleaner($cleaner);
         $history->setDone(true);
+        $date = new \DateTime();
+        $date->setTimestamp($params['beginningDate']);
+        $history->setBeginningDate($date);
+        $date1 = new \DateTime();
+        $date1->setTimestamp($params['endingDate']);
+        $history->setEndingDate($date1);
+
         $typicalWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
         $isADay = false;
         foreach ($typicalWeek as $day) !$isADay && $isADay = $params['initialDate'] == $day;
         if (!$isADay)
             $date = new \DateTime($params['initialDate']);
         else {
-            $date = new \DateTime();
+            $date = clone $history->getBeginningDate();
+            $date->setTime(0, 0, 0);
             if ($history->getBeginningDate()->format('l') == "Sunday" && $params['initialDate'] != "Sunday") {
                 $date->modify("+7 days");
                 $date->modify($params['initialDate'] . " this week");
             }
             else if ($history->getBeginningDate()->format('l') != "Sunday" && $params['initialDate'] == "Sunday")
                 $date->modify("last sunday");
+            else if ($history->getBeginningDate()->format('l') == "Sunday" && $params['initialDate'] == "Sunday") {
+                $date = clone $history->getBeginningDate();
+                $date->setTime(0, 0);
+            }
             else
                 $date->modify($params['initialDate'] . " this week");
         }
@@ -104,15 +116,9 @@ class OperationHistoryController extends ApiController
             $history->addTask($task);
         }
 
-        $date = new \DateTime();
-        $date->setTimestamp($params['beginningDate']);
-        $history->setBeginningDate($date);
-        $date1 = new \DateTime();
-        $date1->setTimestamp($params['endingDate']);
-        $history->setEndingDate($date1);
 
         $entityManager->persist($history);
-        $entityManager->flush();
+//        $entityManager->flush();
         $id = $history->getId();
 
 

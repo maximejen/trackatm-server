@@ -10,4 +10,13 @@ namespace AppBundle\Repository;
  */
 class CleanerRepository extends \Doctrine\ORM\EntityRepository
 {
+    public function findByUser($user) {
+        return $this->_em->getRepository("AppBundle:Cleaner")->createQueryBuilder('c')
+            ->where("user.id = :user")
+            ->join("c.user", "user")
+            ->setParameter("user", $user->getId())
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getResult()[0];
+    }
 }
