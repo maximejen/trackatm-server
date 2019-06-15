@@ -81,7 +81,7 @@ class MailController extends ApiController
         file_put_contents($file, $current);
 
         $timeSpent = $operationHistory->getEndingDate()->diff($operationHistory->getBeginningDate());
-        $subject = $operationHistory->getPlace();
+        $subject = $operationHistory->getCustomer() . " - " . $operationHistory->getPlace();
 //        $attachment = $this->generatorPdf($request, $operationHistory);
 
         $arrivingDate = $operationHistory->getBeginningDate();
