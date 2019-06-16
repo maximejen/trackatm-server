@@ -189,5 +189,37 @@ class MailController extends ApiController
         )));
     }
 
+    /**
+     * @Rest\View(serializerGroups={"operation"})
+     * @Rest\Get("/api/mail/backup-send/{id}/")
+     *
+     * @param Request $request
+     * @param OperationHistory $operationHistory
+     * @param SerializerInterface $serializer
+     * @return JsonResponse|Response
+     */
+    public function sendBackupMailAction(Request $request, OperationHistory $operationHistory, SerializerInterface $serializer)
+    {
+        if (!$this->checkUserIsConnected($request))
+            return new JsonResponse(['message' => "you need to be connected"], 403);
+
+//        $mail = $this->container->get('mail.send');
+        try {
+            $this->generatePdfAndSendMail($request, $operationHistory);
+        } catch (Exception $e) {
+            $file = "mail.log";
+            if (!file_exists($file))
+                fopen($file, "w");
+            $current = file_get_contents($file);
+            $current .= "ERROR : " . $e->getMessage() . "\n";
+            file_put_contents($file, $current);
+        }
+
+
+        return new Response(json_encode(array(
+            'success' => 'true'
+        )));
+    }
+
 
 }
