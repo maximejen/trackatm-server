@@ -4,10 +4,12 @@ namespace AppBundle\Controller\Api;
 
 use Ajaxray\PHPWatermark\Watermark;
 use AppBundle\Entity\Cleaner;
+use AppBundle\Entity\Customer;
 use AppBundle\Entity\Image;
 use AppBundle\Entity\OperationHistory;
 use AppBundle\Entity\OperationTaskHistory;
 use FOS\RestBundle\Controller\Annotations as Rest;
+use mysql_xdevapi\Exception;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,6 +22,80 @@ use Symfony\Component\Serializer\SerializerInterface;
  */
 class OperationHistoryController extends ApiController
 {
+
+    private function generatePdfAndSendMail(Request $request, OperationHistory $operationHistory)
+    {
+        $sendTo = [];
+        $entityManager =  $this->get('doctrine.orm.entity_manager');
+        /** @var Customer $customer */
+        $customer = $entityManager
+            ->getRepository('AppBundle:Customer')
+            ->findOneBy(['name' => $operationHistory->getCustomer()]);
+        array_push($sendTo, $customer->getEmail());
+
+
+        $admin = $entityManager
+            ->getRepository('AppBundle:User')
+            ->findBy(['admin' => true]);
+        foreach ($admin as $item) {
+            array_push($sendTo, $item->getEmail());
+        }
+
+        $file = "mail.log";
+        if (!file_exists($file))
+            fopen($file, "w");
+        $now = new \DateTime();
+        $current = file_get_contents($file);
+        $current .= "\n=== SEND MAIL REQUEST BEGIN AT : " . $now->format("Y-m-d H:i:s") . "===\n";
+
+        foreach ($sendTo as $email) {
+            $current .= "sending mail to : '" . $email . "'\n";
+        }
+        file_put_contents($file, $current);
+
+        $timeSpent = $operationHistory->getEndingDate()->diff($operationHistory->getBeginningDate());
+        $subject = $operationHistory->getCustomer() . " - " . $operationHistory->getPlace();
+//        $attachment = $this->generatorPdf($request, $operationHistory);
+
+        $arrivingDate = $operationHistory->getBeginningDate();
+        $arrivingDate->setTimezone(new \DateTimezone("Asia/Kuwait"));
+        $endingDate = $operationHistory->getEndingDate();
+        $endingDate->setTimezone(new \DateTimezone("Asia/Kuwait"));
+
+        $params = [
+            "history" => $operationHistory,
+            "timeSpent" => $timeSpent->h . 'h:' . $timeSpent->i . 'm:' . $timeSpent->s . "s",
+            "completedDate" => $endingDate->format("l jS F Y"),
+            "operationName" => $operationHistory->getCustomer() . ' - ' . $operationHistory->getPlace(),
+            "atmName" => $operationHistory->getPlace(),
+            "arrivedOnSite" => $arrivingDate->format("H:i"),
+            "nbTasks" => $operationHistory->getTasks()->count(),
+            "color" => $customer->getColor()
+        ];
+
+        $mail = $this->container->get('mail.send');
+
+        $current = file_get_contents($file);
+        $current .= "sending mail for OH : '" . $operationHistory->getId() . "'\n";
+        file_put_contents($file, $current);
+
+
+        $in15min = $operationHistory->getLastTimeSent();
+        if ($in15min)
+            $in15min->modify("+15 min");
+        if ($operationHistory->getLastTimeSent() == null || $now->getTimestamp() > $in15min->getTimestamp()) {
+            $operationHistory->setLastTimeSent($now);
+            $this->getDoctrine()->getManager()->flush();
+            $current = file_get_contents($file);
+            $current .= "mail sent\n";
+            file_put_contents($file, $current);
+            $mail->sendMail($sendTo, $subject, $params, "mail/job.html.twig", null);
+        } else {
+            $current = file_get_contents($file);
+            $current .= "mail has not been sent, it was less than 15min from last mail sent\n";
+            file_put_contents($file, $current);
+        }
+    }
 
     /**
      * @Rest\View(serializerGroups={"cleaner"})
@@ -144,6 +220,19 @@ class OperationHistoryController extends ApiController
             $current .= "Task : " . $task->getName() . "\nTask ID :" . $task->getId() . "\n";
             file_put_contents($file, $current);
         }
+
+
+        try {
+            $this->generatePdfAndSendMail($request, $history);
+        } catch (Exception $e) {
+            $file = "mail.log";
+            if (!file_exists($file))
+                fopen($file, "w");
+            $current = file_get_contents($file);
+            $current .= "ERROR : " . $e->getMessage() . "\n";
+            file_put_contents($file, $current);
+        }
+
         return new Response(json_encode(array(
             'success' => 'true',
             'historyId' => $id,
