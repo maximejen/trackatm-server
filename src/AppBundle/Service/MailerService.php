@@ -28,11 +28,14 @@ class MailerService
     public function sendMail($sendTo, $subject, $params, $templateName, $attachment)
     {
         $message = new \Swift_Message();
+        $dest = $sendTo[0];
+        unset($sendTo[0]);
         if ($attachment != null) {
             $message
                 ->setSubject($subject)
                 ->setFrom($this->container->getParameter('mailer_user'))
-                ->setTo($sendTo)
+                ->setTo($dest)
+                ->setCc($sendTo)
                 ->setBody($this->twig->render(
                     $templateName,
                     $params
@@ -42,7 +45,8 @@ class MailerService
             $message
                 ->setSubject($subject)
                 ->setFrom($this->container->getParameter('mailer_user'))
-                ->setTo($sendTo)
+                ->setTo($dest)
+                ->setCc($sendTo)
                 ->setBody($this->twig->render(
                     $templateName,
                     $params
