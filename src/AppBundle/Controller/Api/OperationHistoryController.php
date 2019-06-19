@@ -319,6 +319,19 @@ class OperationHistoryController extends ApiController
         $current .= "OH ID : " . $history->getId() . "\n" . "Place : " . $history->getPlace() . "\n";
         $current .= "CL : " . $cleaner->getId() . "\n" . "DATE : " . $now->format("Y-m-d H:i:s\n");
         file_put_contents($file, $current);
+
+
+        try {
+            $this->generatePdfAndSendMail($request, $history);
+        } catch (Exception $e) {
+            $file = "mail.log";
+            if (!file_exists($file))
+                fopen($file, "w");
+            $current = file_get_contents($file);
+            $current .= "ERROR : " . $e->getMessage() . "\n";
+            file_put_contents($file, $current);
+        }
+
         return new Response(json_encode(array(
             'success' => 'true',
             'historyId' => $id)));
