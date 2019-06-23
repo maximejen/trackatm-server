@@ -11,14 +11,13 @@
     <table class="table-month-resume column is-full table is-hoverable is-fullwidth is-bordered month-view">
         <thead class="">
         <tr class="is-primary is-selected">
-            {% set day = month.date %}
             {% for key, table in month.content['columns'] %}
                 {% if key != "customer" %}
                     {% if key is same as("place") or key is same as("lat") or key is same as("lon") or key is same as("TOTAL") %}
                         <th>{{ " " }}</th>
                     {% else %}
+                        {% set day = month.date.modify(month.date.format("Y-m-") ~ key) %}
                         <th>{{ day.format('D') }}</th>
-                        {% set day = month.date.modify("+1days") %}
                     {% endif %}
                 {% endif %}
             {% endfor %}
