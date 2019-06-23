@@ -21,6 +21,15 @@ class OperationHistoryRepository extends \Doctrine\ORM\EntityRepository
             ->getQuery()
             ->getResult();
     }
+    public function findOperationHistoriesBetweenTwoBeginningDates($date1, $date2)
+    {
+        return $this->_em->getRepository("AppBundle:OperationHistory")->createQueryBuilder('ohre')
+            ->where('ohre.beginningDate BETWEEN :date1 AND :date2')
+            ->setParameter('date1', $date1->format("Y-m-d 00:00:00"))
+            ->setParameter('date2', $date2->format("Y-m-d 23:59:59"))
+            ->getQuery()
+            ->getResult();
+    }
 
     public function findOperationHistoriesByCustomerName($customerName)
     {
@@ -36,6 +45,18 @@ class OperationHistoryRepository extends \Doctrine\ORM\EntityRepository
         return $this->_em->getRepository("AppBundle:OperationHistory")->createQueryBuilder('ohre')
             ->where('ohre.customer LIKE :customer')
             ->andWhere('ohre.initialDate BETWEEN :date1 AND :date2')
+            ->setParameter('date1', $date1->format("Y-m-d 00:00:00"))
+            ->setParameter('date2', $date2->format("Y-m-d 23:59:59"))
+            ->setParameter('customer', $customerName)
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findOperationHistoriesByCustomerNameAndBetweenTwoBeginningDates($customerName, $date1, $date2)
+    {
+        return $this->_em->getRepository("AppBundle:OperationHistory")->createQueryBuilder('ohre')
+            ->where('ohre.customer LIKE :customer')
+            ->andWhere('ohre.beginningDate BETWEEN :date1 AND :date2')
             ->setParameter('date1', $date1->format("Y-m-d 00:00:00"))
             ->setParameter('date2', $date2->format("Y-m-d 23:59:59"))
             ->setParameter('customer', $customerName)

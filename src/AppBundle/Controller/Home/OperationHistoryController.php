@@ -74,9 +74,9 @@ class OperationHistoryController extends HomeController
     {
         $em = $this->getDoctrine()->getManager();
         if ($customer == null)
-            $histories = $em->getRepository('AppBundle:OperationHistory')->findOperationHistoriesBetweenTwoDates($dates[0], $dates[1]);
+            $histories = $em->getRepository('AppBundle:OperationHistory')->findOperationHistoriesBetweenTwoBeginningDates($dates[0], $dates[1]);
         else
-            $histories = $em->getRepository('AppBundle:OperationHistory')->findOperationHistoriesByCustomerNameAndBetweenTwoDates($customer->getName(), $dates[0], $dates[1]);
+            $histories = $em->getRepository('AppBundle:OperationHistory')->findOperationHistoriesByCustomerNameAndBetweenTwoBeginningDates($customer->getName(), $dates[0], $dates[1]);
         return $histories;
     }
 
