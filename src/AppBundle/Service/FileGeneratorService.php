@@ -105,7 +105,7 @@ class FileGeneratorService
 
     private function getMonthsBetweenTwoDates($date1, $date2)
     {
-        $tmpDate = new \DateTime($date1->format("Y-m-d"));
+        $tmpDate = new \DateTime($date1->format("Y-m"));
         $months = [];
         while ($tmpDate->format('Y-m') != $date2->format('Y-m')) {
             $months[] = $tmpDate->format("Y-m");
