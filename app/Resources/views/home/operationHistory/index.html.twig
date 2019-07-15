@@ -111,7 +111,7 @@
                 <h1 class="column has-text-centered title is-full is-info">PLANNED OPERATIONS</h1>
                 <span class="column is-half has-text-centered center-chart">
                     {% include ":home/operationHistory:chart.html.twig" with {
-                        'percentage': (numberOfDone * 100 / numberOfOperations)|number_format(0, '.', ','),
+                        'percentage': (numberOfDone * 100 / (numberOfOperations + 1))|number_format(0, '.', ','),
                         'title': "Completed operations",
                         'subtitle': numberOfDone ~ "/" ~ numberOfOperations,
                         'color': 'green'
@@ -119,7 +119,7 @@
                 </span>
                 <div class="column is-half has-text-centered center-chart">
                     {% include ":home/operationHistory:chart.html.twig" with {
-                        'percentage': (numberOfNotDone * 100 / numberOfOperations)|number_format(0, '.', ','),
+                        'percentage': (numberOfNotDone * 100 / (numberOfOperations + 1))|number_format(0, '.', ','),
                         'title': "Operations overdue",
                         'subtitle': numberOfNotDone ~ "/" ~ numberOfOperations,
                         "color": 'red'
