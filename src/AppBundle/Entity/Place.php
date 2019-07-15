@@ -38,14 +38,14 @@ class Place
     /**
      * @var GeoCoords
      *
-     * @ORM\OneToOne(targetEntity="AppBundle\Entity\GeoCoords", cascade={"PERSIST"}, fetch="LAZY")
+     * @ORM\OneToOne(targetEntity="AppBundle\Entity\GeoCoords", cascade={"PERSIST"}, fetch="EAGER")
      */
     protected $geoCoords;
 
     /**
      * @var Customer
      *
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Customer", inversedBy="places", fetch="LAZY")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Customer", inversedBy="places", fetch="EAGER")
      */
     protected $customer;
 
