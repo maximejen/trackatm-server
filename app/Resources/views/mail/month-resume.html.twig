@@ -116,8 +116,7 @@
                                         <p>Number of Operations done :&#xA0;
                                             &#xA0;<strong>{{ numberOfOperations }}</strong></p>
                                         <p></p>
-                                        <p><strong>See in attachement the PDF
-                                                file of month resume.</strong>
+                                        <p><a href="{{ app.request.getSchemeAndHttpHost() ~ "/pdf/" ~ pdfFile }}"><strong>Click here to see the month Resume</strong></a>
                                         </p></div>
                                 </td>
                             </tr>
