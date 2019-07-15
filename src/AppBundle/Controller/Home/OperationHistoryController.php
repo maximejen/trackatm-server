@@ -446,7 +446,7 @@ class OperationHistoryController extends HomeController
      * @Route("/month-resume/send/", name="month_resume_send")
      *
      * @param Request $request
-     * @return void
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
     public function generatePdfAndSendEmailToCustomerAction(Request $request)
     {
@@ -555,5 +555,6 @@ class OperationHistoryController extends HomeController
 
         $mail = $this->container->get('mail.send');
         $mail->sendMail(["maxime.jenny@epitech.eu"], "TrackATM - Month Resume - From " . $dates[0]->format("Y-m-d") . " to " . $dates[1]->format("Y-m-d"), $params, "mail/month-resume.html.twig", null);
+        return $this->redirectToRoute($this->generateUrl("operationhistorypage"));
     }
 }
