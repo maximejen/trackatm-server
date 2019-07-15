@@ -38,7 +38,7 @@ class Place
     /**
      * @var GeoCoords
      *
-     * @ORM\OneToOne(targetEntity="AppBundle\Entity\GeoCoords", cascade={"PERSIST"})
+     * @ORM\OneToOne(targetEntity="AppBundle\Entity\GeoCoords", cascade={"PERSIST"}, fetch="LAZY")
      */
     protected $geoCoords;
 

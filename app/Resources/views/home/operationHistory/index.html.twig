@@ -15,13 +15,16 @@
             </div>
         </section>
         <section class="is-light operation-history-toolbar">
-            <form class="columns is-mobile is-multiline" action="" method="get">
+            <form class="columns is-mobile is-multiline" action=""
+                  method="get">
                 <div class="column">
-                    <input class="is-medium input is-primary" name="firstDate" type="date"
+                    <input class="is-medium input is-primary" name="firstDate"
+                           type="date"
                            value="{{ firstDate.format("Y-m-d") }}"/>
                 </div>
                 <div class="column">
-                    <input class="is-medium input is-primary" name="secondDate" type="date"
+                    <input class="is-medium input is-primary" name="secondDate"
+                           type="date"
                            value="{{ secondDate.format("Y-m-d") }}"/>
                 </div>
                 <div class="column">
@@ -29,7 +32,8 @@
                         <select id="js-customer-choice" name="customer">
                             <option value="">Select a customer</option>
                             {% for customer in customers %}
-                                <option id="{{ 'js-cleaner' ~ customer.id }}" value="{{ customer.id }}"
+                                <option id="{{ 'js-cleaner' ~ customer.id }}"
+                                        value="{{ customer.id }}"
                                         {% if selectedCustomer is not null and selectedCustomer.id == customer.id %}selected{% endif %}>
                                     {{ customer.name }}
                                 </option>
@@ -40,7 +44,8 @@
                 <div class="column columns is-mobile">
                     <div class="column">
                         <div>
-                            <button class="button is-medium is-primary" type="submit">
+                            <button class="button is-medium is-primary"
+                                    type="submit">
                                 <span class="icon is-small">
                                   <i class="fas fa-search"></i>
                                 </span>
@@ -49,7 +54,8 @@
                     </div>
                     <div class="column">
                         <div>
-                            <a href="{{ path('operationhistorypage') }}" class="button is-medium is-danger is-outlined">
+                            <a href="{{ path('operationhistorypage') }}"
+                               class="button is-medium is-danger is-outlined">
                                 <span class="icon is-small">
                                   <i class="fas fa-undo"></i>
                                 </span>
@@ -64,7 +70,8 @@
                                 {% set customer = null %}
                             {% endif %}
                             <a href="{{ path('operationhistorypage', {'firstDate': firstDate.format("Y-m-d"), 'secondDate': secondDate.format("Y-m-d"), 'customer': customer, 'file': true}) }}"
-                               class="button is-medium is-primary" target="_blank">
+                               class="button is-medium is-primary"
+                               target="_blank">
                                 <span class="icon is-small">
                                   <i class="fas fa-download"></i>
                                 </span>
@@ -87,22 +94,20 @@
                             </a>
                         </div>
                     </div>
-                    <div class="column">
-                        <div>
-                            {% if selectedCustomer is not null %}
-                                {% set customer = selectedCustomer.id %}
-                            {% else %}
-                                {% set customer = null %}
-                            {% endif %}
-                            <a target="_blank"
-                               href="{{ path('month_resume_send', {'firstDate': firstDate.format("Y-m-d"), 'secondDate': secondDate.format("Y-m-d"), 'customer': customer, 'file': true}) }}"
-                               class="button is-medium is-primary">
+                    {% if selectedCustomer is not null %}
+                        {% set customer = selectedCustomer.id %}
+                        <div class="column">
+                            <div>
+                                <a target="_blank"
+                                   href="{{ path('month_resume_send', {'firstDate': firstDate.format("Y-m-d"), 'secondDate': secondDate.format("Y-m-d"), 'customer': customer, 'file': true}) }}"
+                                   class="button is-medium is-primary">
                                 <span class="icon is-small">
                                   <i class="fas fa-envelope"></i>
                                 </span>
-                            </a>
+                                </a>
+                            </div>
                         </div>
-                    </div>
+                    {% endif %}
                 </div>
             </form>
         </section>
@@ -123,25 +128,25 @@
             </nav>
         </section>
         {#<section class="container stats-container">#}
-            {#<div class="columns is-centered is-multiline is-mobile container-history">#}
-                {#<h1 class="column has-text-centered title is-full is-info">PLANNED OPERATIONS</h1>#}
-                {#<span class="column is-half has-text-centered center-chart">#}
-                    {#{% include ":home/operationHistory:chart.html.twig" with {#}
-                        {#'percentage': (numberOfDone * 100 / (numberOfOperations + 1))|number_format(0, '.', ','),#}
-                        {#'title': "Completed operations",#}
-                        {#'subtitle': numberOfDone ~ "/" ~ numberOfOperations,#}
-                        {#'color': 'green'#}
-                    {#} %}#}
-                {#</span>#}
-                {#<div class="column is-half has-text-centered center-chart">#}
-                    {#{% include ":home/operationHistory:chart.html.twig" with {#}
-                        {#'percentage': (numberOfNotDone * 100 / (numberOfOperations + 1))|number_format(0, '.', ','),#}
-                        {#'title': "Operations overdue",#}
-                        {#'subtitle': numberOfNotDone ~ "/" ~ numberOfOperations,#}
-                        {#"color": 'red'#}
-                    {#} %}#}
-                {#</div>#}
-            {#</div>#}
+        {#<div class="columns is-centered is-multiline is-mobile container-history">#}
+        {#<h1 class="column has-text-centered title is-full is-info">PLANNED OPERATIONS</h1>#}
+        {#<span class="column is-half has-text-centered center-chart">#}
+        {#{% include ":home/operationHistory:chart.html.twig" with {#}
+        {#'percentage': (numberOfDone * 100 / (numberOfOperations + 1))|number_format(0, '.', ','),#}
+        {#'title': "Completed operations",#}
+        {#'subtitle': numberOfDone ~ "/" ~ numberOfOperations,#}
+        {#'color': 'green'#}
+        {#} %}#}
+        {#</span>#}
+        {#<div class="column is-half has-text-centered center-chart">#}
+        {#{% include ":home/operationHistory:chart.html.twig" with {#}
+        {#'percentage': (numberOfNotDone * 100 / (numberOfOperations + 1))|number_format(0, '.', ','),#}
+        {#'title': "Operations overdue",#}
+        {#'subtitle': numberOfNotDone ~ "/" ~ numberOfOperations,#}
+        {#"color": 'red'#}
+        {#} %}#}
+        {#</div>#}
+        {#</div>#}
         {#</section>#}
         <section class="container operations-container">
             <div class="columns is-multiline is-mobile is-centered">
