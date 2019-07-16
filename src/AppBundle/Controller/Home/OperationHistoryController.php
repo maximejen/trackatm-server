@@ -536,7 +536,7 @@ class OperationHistoryController extends HomeController
 
         $sendTo = [];
         $entityManager =  $this->get('doctrine.orm.entity_manager');
-        array_push($sendTo, $customer->getEmail());
+//        array_push($sendTo, $customer->getEmail());
 
 
         $admin = $entityManager
@@ -560,7 +560,7 @@ class OperationHistoryController extends HomeController
         ];
 
         $mail = $this->container->get('mail.send');
-        $mail->sendMail(["maxime.jenny@epitech.eu"], "TrackATM - Month Resume - From " . $dates[0]->format("Y-m-d") . " to " . $dates[1]->format("Y-m-d"), $params, "mail/month-resume.html.twig", null);
+        $mail->sendMail($sendTo, "TrackATM - Month Resume - From " . $dates[0]->format("Y-m-d") . " to " . $dates[1]->format("Y-m-d"), $params, "mail/month-resume.html.twig", null);
         return $this->redirectToRoute("operationhistorypage");
     }
 }
