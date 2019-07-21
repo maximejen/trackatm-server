@@ -536,7 +536,7 @@ class OperationHistoryController extends HomeController
 
         $sendTo = [];
         $entityManager =  $this->get('doctrine.orm.entity_manager');
-//        array_push($sendTo, $customer->getEmail());
+        array_push($sendTo, $customer->getEmail());
 
 
         $admin = $entityManager
