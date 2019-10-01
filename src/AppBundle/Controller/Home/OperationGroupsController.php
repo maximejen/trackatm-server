@@ -30,6 +30,7 @@ class OperationGroupsController extends HomeController {
     {
         $em = $this->getDoctrine()->getManager();
 
+        $search = $request->query->get('search');
         $day = $request->query->get('day');
         $customerId = $request->query->get("customer");
         if ($customerId != null && $customerId != '')
@@ -42,7 +43,11 @@ class OperationGroupsController extends HomeController {
         else
             $cleaner = null;
 
-        $operations = $em->getRepository("AppBundle:Operation")->findAll();
+        if ($search) {
+            $operations = $em->getRepository("AppBundle:Operation")->findByName($search);
+        } else {
+            $operations = $em->getRepository("AppBundle:Operation")->findAll();
+        }
 
         $operations = array_filter($operations, function(Operation $a) use ($cleaner, $customer, $day) {
             $result = true;
@@ -94,12 +99,14 @@ class OperationGroupsController extends HomeController {
         ];
         return $this->render("home/operationGroups/index.html.twig", array_merge($generalParams, [
             'operationGroups' => $operationGroups,
+            "operations" => $operations,
             'nbOperationGroups' => $nbOperationGroups,
             'customers' => $customers,
             'cleaners' => $cleaners,
             'selectedCustomer' => $customer,
             'selectedCleaner' => $cleaner,
-            'selectedDay' => $day
+            'selectedDay' => $day,
+            'search' => $search
         ]));
     }
 

@@ -138,11 +138,25 @@ class OperationController extends ApiController
         $nextWeekEnd->modify("next Sunday");
         $nextWeekEnd->modify("next Saturday");
 
+        // get last week limits
+        $lastWeekStart = clone $weekStart;
+        $lastWeekEnd = clone $weekStart;
+        $lastWeekStart->modify("last sunday");
+        $lastWeekEnd->modify("last saturday");
+
+        // get limits of the week before the last one
+        $lastLastWeekStart = clone $lastWeekStart;
+        $lastLastWeekEnd = clone $lastWeekStart;
+        $lastLastWeekStart->modify("last sunday");
+        $lastLastWeekEnd->modify("last saturday");
+
         $em = $this->getDoctrine()->getManager();
         $cleaner = $em->getRepository('AppBundle:Cleaner')->findByUser($user);
         $operations = $em->getRepository('AppBundle:Operation')->findOperationsByCleaner($cleaner);
         $historiesActualWeek = $em->getRepository('AppBundle:OperationHistory')->findOperationHistoriesByCleanerAndBetweenTwoDates($cleaner, $weekStart, $weekEnd);
         $historiesNextWeek = $em->getRepository('AppBundle:OperationHistory')->findOperationHistoriesByCleanerAndBetweenTwoDates($cleaner, $nextWeekStart, $nextWeekEnd);
+        $historiesLastWeek = $em->getRepository('AppBundle:OperationHistory')->findOperationHistoriesByCleanerAndBetweenTwoDates($cleaner, $lastWeekStart, $lastWeekEnd);
+        $historiesLastLastWeek = $em->getRepository('AppBundle:OperationHistory')->findOperationHistoriesByCleanerAndBetweenTwoDates($cleaner, $lastLastWeekStart, $lastLastWeekEnd);
 
         $week = $this->getWeek($operations);
 
@@ -157,6 +171,11 @@ class OperationController extends ApiController
             foreach ($elements as $element) $week1[$day][] = clone $element;
         }
         $nextPlanning = $this->getOperationsPlanning($nextWeekStart, $nextWeekEnd, $week1);
+
+        $lastWeek = $this->getWeek($operations);
+        $lastWeekPlanning = $this->getOperationsPlanning($lastWeekStart, $lastWeekEnd, $lastWeek);
+        $lastLastWeek = $this->getWeek($operations);
+        $lastLastWeekPlanning = $this->getOperationsPlanning($lastLastWeekStart, $lastLastWeekEnd, $lastLastWeek);
         // 1.0.8
 
         if ($flat == "true") {
@@ -164,9 +183,11 @@ class OperationController extends ApiController
             $operations = $this->fromPlanningToFlat($planning);
             return new Response($serializer->serialize($operations, 'json', ['groups' => ['operation']]));
         } else {
+            $this->determineOperationsDone($historiesLastLastWeek, $lastLastWeekPlanning);
+            $this->determineOperationsDone($historiesLastWeek, $lastWeekPlanning);
             $this->determineOperationsDone($historiesActualWeek, $planning);
             $this->determineOperationsDone($historiesNextWeek, $nextPlanning);
-            $planning = array_merge($planning, $nextPlanning);
+            $planning = array_merge($planning, $nextPlanning, $lastWeekPlanning, $lastLastWeekPlanning);
 
             return new Response($serializer->serialize($planning, 'json', ['groups' => ['operation']]));
         }

@@ -15,8 +15,26 @@
             </div>
         </section>
         <section class="is-light operation-groups-toolbar">
-            <form class="columns is-mobile" action="" method="get">
-                <div class="columns is-multiline">
+            <form class="columns is-mobile is-multiline" action="" method="get">
+                <div class="columns column is-multiline is-8">
+                    <div class="column is-10">
+                        <p class="control has-icons-left">
+                            <input class="input is-medium" placeholder="Search" name="search"
+                                   value="{{ search }}">
+                            <span class="icon is-small is-left">
+                                      <i class="fas fa-search"></i>
+                                    </span>
+                        </p>
+                    </div>
+                    <div class="column">
+                        <button class="button is-medium is-primary is-fullwidth" type="submit">
+                                    <span class="icon is-small">
+                                      <i class="fas fa-search"></i>
+                                    </span>
+                        </button>
+                    </div>
+                </div>
+                <div class="columns column is-multiline is-8">
                     <div class="column">
                         <div class="select is-primary is-medium">
                             <select id="js-customer-choice" name="customer">
@@ -111,26 +129,97 @@
             </form>
         </section>
         <section class="container tiles-container">
-            <span class="title">Total groups {{ nbOperationGroups }}</span>
-            <div class="tile is-ancestor columns is-multiline">
+            {% if search is not defined or search is null or search == "" %}
+                <span class="title">Total groups {{ nbOperationGroups }}</span>
+                <div class="tile is-ancestor columns is-multiline">
+                    {% for day, cleaners in operationGroups %}
+                        {% for cleaner, customers in cleaners %}
+                            {% for customer, operations in customers %}
+                                <div class="column is-3">
+                                    <a href="{{ path('operation_group', {"cleaner": cleaner, "day": day, "customer": operations['id']}) }}">
+                                        <div class="tile is-parent">
+                                            <article class="tile is-child notification is-primary">
+                                                <p class="subtitle">{{ customer ~ " - Cleaner#" ~ cleaner ~ " - " ~ day }}</p>
+                                                <p>{{ operations|length - 1 }} Operation(s)</p>
+                                            </article>
+                                        </div>
+                                    </a>
+                                </div>
+                            {% endfor %}
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+            {% else %}
                 {% for day, cleaners in operationGroups %}
                     {% for cleaner, customers in cleaners %}
                         {% for customer, operations in customers %}
-                            <div class="column is-3">
-                                <a href="{{ path('operation_group', {"cleaner": cleaner, "day": day, "customer": operations['id']}) }}">
-                                    <div class="tile is-parent">
-                                        <article class="tile is-child notification is-primary">
-                                            <p class="subtitle">{{ customer ~ " - Cleaner#" ~ cleaner ~ " - " ~ day }}</p>
-                                            <p>{{ operations|length - 1 }} Operation(s)</p>
-                                        </article>
-                                    </div>
-                                </a>
-                            </div>
-
+                            <span class="title">{{ customer ~ " - Cleaner#" ~ cleaner ~ " - " ~ day }}</span>
+                            <table class="table is-fullwidth is-hoverable">
+                                <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Place</th>
+                                    <th>Name</th>
+                                    <th>Actions</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% if operations | length > 1 %}
+                                    {% for key, operation in operations %}
+                                        {% if key matches '/^\\d+$/' %}
+                                            <tr>
+                                                <th>JOB - {{ operation.id }}</th>
+                                                <td>{{ operation.place.name }}</td>
+                                                <td>{{ operation.name }}</td>
+                                                <td>
+                                                    <a class="button is-primary" href="
+                                                            {{ path('operation_edit', {"id": operation.id}) }}
+                                                            ">
+                                                        <i class="fa fa-pen"></i>
+                                                    </a>
+                                                    <a class="button is-danger"
+                                                       href="{{ path('operation_delete', {'id': operation.id}) }}">
+                                                        <i class="fa fa-trash"></i>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endif %}
+                                </tbody>
+                            </table>
                         {% endfor %}
                     {% endfor %}
                 {% endfor %}
-            </div>
+                {#                {% for operation in operations %}#}
+                {#                    <span class="title">{{ operation.customer ~ " - " ~ operation.cleaner ~ " - " ~ operation.day }}</span>#}
+                {#                    <table class="table is-fullwidth is-hoverable">#}
+                {#                        <thead>#}
+                {#                        <tr>#}
+                {#                            <th>ID</th>#}
+                {#                            <th>Place</th>#}
+                {#                            <th>Name</th>#}
+                {#                            <th>Actions</th>#}
+                {#                        </tr>#}
+                {#                        </thead>#}
+                {#                        <tbody>#}
+                {#                        <th>JOB - {{ operation.id }}</th>#}
+                {#                        <td>{{ operation.place.name }}</td>#}
+                {#                        <td>{{ operation.name }}</td>#}
+                {#                        <td>#}
+                {#                            <a class="button is-primary" href="#}
+                {#                            {{ path('operation_edit', {"id": operation.id}) }}#}
+                {#                            ">#}
+                {#                                <i class="fa fa-pen"></i>#}
+                {#                            </a>#}
+                {#                            <a class="button is-danger" href="{{ path('operation_delete', {'id': operation.id}) }}">#}
+                {#                                <i class="fa fa-trash"></i>#}
+                {#                            </a>#}
+                {#                        </td>#}
+                {#                        </tbody>#}
+                {#                    </table>#}
+                {#                {% endfor %}#}
+            {% endif %}
         </section>
     </div>
 {% endblock %}
