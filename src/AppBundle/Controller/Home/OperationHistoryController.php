@@ -11,8 +11,6 @@ use daandesmedt\PHPHeadlessChrome\HeadlessChrome;
 use \DateInterval;
 use DatePeriod;
 use dawood\phpChrome\Chrome;
-use Knp\Bundle\SnappyBundle\Snappy\Response\PdfResponse;
-use Spipu\Html2Pdf\Html2Pdf;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -442,5 +440,127 @@ class OperationHistoryController extends HomeController
 
         $file = $this->file($fileGenerator->returnFile("/../web/pdf/", $fileName));
         return $file;
+    }
+
+    /**
+     * @Route("/month-resume/send/", name="month_resume_send")
+     *
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     */
+    public function generatePdfAndSendEmailToCustomerAction(Request $request)
+    {
+        $customer = $this->getCustomer($request);
+        $dates = $this->getDates($request);
+        $operations = $this->getOperations($customer);
+        $histories = $this->getOperationHistories($customer, $dates);
+        $week = $this->getWeek($operations);
+
+        $numberDone = 0;
+        $numberOverdue = 0;
+        /** @var OperationHistory $history */
+        foreach ($histories as $history) {
+            $history->getDone() ? $numberDone++ : $numberOverdue++;
+        }
+
+        // Get all the dates between firstDate and secondDate
+        $planning = $this->getOperationsPlanning($dates[0], $dates[1], $week);
+        /** @var OperationHistory $history */
+        foreach ($histories as $key => $history)
+            $planning[$history->getBeginningDate()->format("Y-m-d")][] = $history;
+
+        $count = 0;
+        foreach ($planning as $item)
+            $count += count($item);
+
+        uksort($planning, function ($a, $b) {
+            $date1 = new \DateTime($a);
+            $date2 = new \DateTime($b);
+            return $date1 > $date2 ? 1 : -1;
+        });
+
+        $fileGeneratorService = $this->container->get('file_genertor');
+
+        $htmlCode = $this->renderView('home/operationHistory/month-resume/month-resume.html.twig', [
+            "firstDate" => $dates[0],
+            "secondDate" => $dates[1],
+            "planning" => $fileGeneratorService->getPlanningPerMonths($dates[0], $dates[1], $histories, $operations),
+            "color" => $customer != null ? $customer->getColor() : null,
+            "pdf" => true
+        ]);
+
+        $search = array(
+            '/\>[^\S ]+/s',     // strip whitespaces after tags, except space
+            '/[^\S ]+\</s',     // strip whitespaces before tags, except space
+            '/(\s)+/s',         // shorten multiple whitespace sequences
+            '/<!--(.|\s)*?-->/' // Remove HTML comments
+        );
+
+        $replace = array(
+            '>',
+            '<',
+            '\\1',
+            ''
+        );
+
+        $htmlCode = preg_replace($search, $replace, $htmlCode);
+
+        $today = new \DateTime();
+        $fileGenerator = $this->container->get('file_genertor');
+
+        $post = json_encode([
+            "htmlCode" => $htmlCode,
+            "type" => "htmlToPdf"
+        ]);
+
+        $header = [
+            'Content-Type: application/json',
+            "Content-Length: " . strlen($post)
+        ];
+
+        $ch = curl_init("https://api.sejda.com/v1/tasks");
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
+        $fileName = $today->getTimestamp() . ' - generated.pdf';
+        file_put_contents(
+            $request->server->get('DOCUMENT_ROOT') . $request->getBasePath() . '/pdf/' . $fileName,
+            curl_exec($ch)
+        );
+        curl_close($ch);
+
+        $file = $this->file($fileGenerator->returnFile("/../web/pdf/", $fileName));
+        // TODO : send the mail with the file in attachement.
+
+        $sendTo = [];
+        $entityManager =  $this->get('doctrine.orm.entity_manager');
+        array_push($sendTo, $customer->getEmail());
+
+
+        $admin = $entityManager
+            ->getRepository('AppBundle:User')
+            ->findBy(['admin' => true]);
+        foreach ($admin as $item) {
+            array_push($sendTo, $item->getEmail());
+        }
+
+        $numberDone = 0;
+        /** @var OperationHistory $history */
+        foreach ($histories as $history) {
+            $history->getDone() ? $numberDone++ : $numberOverdue++;
+        }
+
+        $params = [
+            "firstDate" => $dates[0],
+            "secondDate" => $dates[1],
+            "numberOfOperations" => $numberDone,
+            "pdfFile" => $fileName
+        ];
+
+        $mail = $this->container->get('mail.send');
+        $mail->sendMail($sendTo, "TrackATM - Month Resume - From " . $dates[0]->format("Y-m-d") . " to " . $dates[1]->format("Y-m-d"), $params, "mail/month-resume.html.twig", null);
+        return $this->redirectToRoute("operationhistorypage");
     }
 }

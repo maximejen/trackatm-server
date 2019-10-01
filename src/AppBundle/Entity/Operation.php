@@ -24,7 +24,7 @@ class Operation
     /**
      * @var Place
      *
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Place", inversedBy="operations", fetch="LAZY")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Place", inversedBy="operations", fetch="EAGER")
      */
     protected $place;
 
@@ -45,7 +45,7 @@ class Operation
     /**
      * @var OperationTemplate
      *
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\OperationTemplate", fetch="LAZY")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\OperationTemplate", fetch="EAGER")
      */
     protected $template; // name, comment, tasks;
 
