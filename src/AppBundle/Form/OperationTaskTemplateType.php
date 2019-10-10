@@ -29,6 +29,11 @@ class OperationTaskTemplateType extends AbstractType
                     'class' => 'checkbox'
                 ]
             ])
+            ->add('warningIfTrue', null, [
+                'attr' => [
+                    'class' => 'checkbox'
+                ]
+            ])
         ;
     }/**
      * {@inheritdoc}

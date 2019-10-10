@@ -3,6 +3,7 @@ namespace AppBundle\Controller\Api;
 
 use AppBundle\Entity\Customer;
 use AppBundle\Entity\OperationHistory;
+use AppBundle\Entity\OperationTaskHistory;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use mysql_xdevapi\Exception;
 use OurThread;
@@ -89,6 +90,15 @@ class MailController extends ApiController
         $endingDate = $operationHistory->getEndingDate();
         $endingDate->setTimezone(new \DateTimezone("Asia/Kuwait"));
 
+        $error = false;
+
+        /** @var OperationTaskHistory $task */
+        foreach ($operationHistory->getTasks() as $task) {
+            if ($task->getWarningIfTrue() && $task->getStatus()) {
+                $error = true;
+            }
+        }
+
         $params = [
             "history" => $operationHistory,
             "timeSpent" => $timeSpent->h . 'h:' . $timeSpent->i . 'm:' . $timeSpent->s . "s",
@@ -97,7 +107,8 @@ class MailController extends ApiController
             "atmName" => $operationHistory->getPlace(),
             "arrivedOnSite" => $arrivingDate->format("H:i"),
             "nbTasks" => $operationHistory->getTasks()->count(),
-            "color" => $customer->getColor()
+            "color" => $customer->getColor(),
+            "error" => $error
         ];
 
         $mail = $this->container->get('mail.send');

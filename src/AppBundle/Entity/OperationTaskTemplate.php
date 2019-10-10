@@ -43,6 +43,13 @@ class OperationTaskTemplate
     protected $imagesForced;
 
     /**
+     * @var bool
+     *
+     * @ORM\Column(name="warning_if_true", type="boolean", options={"default" : 0})
+     */
+    protected $warningIfTrue;
+
+    /**
      * @var OperationTemplate
      *
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\OperationTemplate", inversedBy="tasks")
@@ -154,5 +161,29 @@ class OperationTaskTemplate
     public function getOperation()
     {
         return $this->operation;
+    }
+
+    /**
+     * Set warningIfError.
+     *
+     * @param bool $warningIfTrue
+     *
+     * @return OperationTaskTemplate
+     */
+    public function setWarningIfTrue($warningIfTrue)
+    {
+        $this->warningIfTrue = $warningIfTrue;
+
+        return $this;
+    }
+
+    /**
+     * Get warningIfTrue.
+     *
+     * @return bool
+     */
+    public function getWarningIfTrue()
+    {
+        return $this->warningIfTrue;
     }
 }

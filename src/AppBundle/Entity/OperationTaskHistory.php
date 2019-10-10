@@ -49,6 +49,14 @@ class OperationTaskHistory
      */
     protected $imagesForced;
 
+
+    /**
+     * @var bool
+     *
+     * @ORM\Column(name="warning_if_true", type="boolean", options={"default" : 0})
+     */
+    protected $warningIfTrue;
+
     /**
      * @var OperationHistory
      *
@@ -298,5 +306,29 @@ class OperationTaskHistory
     public function getPosition()
     {
         return $this->position;
+    }
+
+    /**
+     * Set warningIfTrue.
+     *
+     * @param bool $warningIfTrue
+     *
+     * @return OperationTaskHistory
+     */
+    public function setWarningIfTrue($warningIfTrue)
+    {
+        $this->warningIfTrue = $warningIfTrue;
+
+        return $this;
+    }
+
+    /**
+     * Get warningIfTrue.
+     *
+     * @return bool
+     */
+    public function getWarningIfTrue()
+    {
+        return $this->warningIfTrue;
     }
 }
