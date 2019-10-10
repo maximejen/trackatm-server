@@ -81,15 +81,6 @@ class MailController extends ApiController
         }
         file_put_contents($file, $current);
 
-        $timeSpent = $operationHistory->getEndingDate()->diff($operationHistory->getBeginningDate());
-        $subject = $operationHistory->getCustomer() . " - " . $operationHistory->getPlace();
-//        $attachment = $this->generatorPdf($request, $operationHistory);
-
-        $arrivingDate = $operationHistory->getBeginningDate();
-        $arrivingDate->setTimezone(new \DateTimezone("Asia/Kuwait"));
-        $endingDate = $operationHistory->getEndingDate();
-        $endingDate->setTimezone(new \DateTimezone("Asia/Kuwait"));
-
         $error = false;
 
         /** @var OperationTaskHistory $task */
@@ -98,6 +89,19 @@ class MailController extends ApiController
                 $error = true;
             }
         }
+
+        $timeSpent = $operationHistory->getEndingDate()->diff($operationHistory->getBeginningDate());
+        if ($error) {
+            $subject = "[DAMAGES]" . $operationHistory->getCustomer() . " - " . $operationHistory->getPlace();
+        } else {
+            $subject = $operationHistory->getCustomer() . " - " . $operationHistory->getPlace();
+        }
+//        $attachment = $this->generatorPdf($request, $operationHistory);
+
+        $arrivingDate = $operationHistory->getBeginningDate();
+        $arrivingDate->setTimezone(new \DateTimezone("Asia/Kuwait"));
+        $endingDate = $operationHistory->getEndingDate();
+        $endingDate->setTimezone(new \DateTimezone("Asia/Kuwait"));
 
         $params = [
             "history" => $operationHistory,
