@@ -94,7 +94,7 @@ class MailController extends ApiController
 
         /** @var OperationTaskHistory $task */
         foreach ($operationHistory->getTasks() as $task) {
-            if ($task->getWarningIfTrue() && $task->getStatus()) {
+            if ($task->getWarningIfTrue() == true && $task->getStatus() == true) {
                 $error = true;
             }
         }
@@ -108,7 +108,7 @@ class MailController extends ApiController
             "arrivedOnSite" => $arrivingDate->format("H:i"),
             "nbTasks" => $operationHistory->getTasks()->count(),
             "color" => $customer->getColor(),
-            "error" => $error
+            "errorOnTask" => $error
         ];
 
         $mail = $this->container->get('mail.send');
@@ -224,6 +224,10 @@ class MailController extends ApiController
             $current = file_get_contents($file);
             $current .= "ERROR : " . $e->getMessage() . "\n";
             file_put_contents($file, $current);
+            return new Response(json_encode(array(
+                'success' => 'false',
+                'message' => $e->getMessage()
+            )));
         }
 
 

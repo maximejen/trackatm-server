@@ -594,11 +594,11 @@
                                         <tr>
                                             <td style="padding-right: 10px; padding-left: 10px; padding-top: 10px; padding-bottom: 5px; font-family: Tahoma, Verdana, sans-serif">
                                     <![endif]-->
-                                    {% if error == true %}
+                                    {% if errorOnTask is defined and errorOnTask == true %}
                                         <div style="color:red;font-family:'Lato', Tahoma, Verdana, Segoe, sans-serif;line-height:120%;padding-top:10px;padding-right:10px;padding-bottom:5px;padding-left:10px;">
                                             <div style="font-size: 12px; line-height: 14px; font-family: 'Lato', Tahoma, Verdana, Segoe, sans-serif; color: #71777D;">
-                                                <p style="font-size: 20px; line-height: 16px; text-align: center; margin: 0;">
-                                                    There is a damage on this ATM</p>
+                                                <p style="color:red;font-size: 20px; line-height: 16px; text-align: center; margin: 0;">
+                                                    Warning : There is a damage on this ATM (look in the job detail)</p>
                                             </div>
                                         </div>
                                     {% endif %}

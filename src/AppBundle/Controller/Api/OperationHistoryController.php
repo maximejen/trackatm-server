@@ -62,6 +62,17 @@ class OperationHistoryController extends ApiController
         $endingDate = $operationHistory->getEndingDate();
         $endingDate->setTimezone(new \DateTimezone("Asia/Kuwait"));
 
+        $error = false;
+
+        var_dump(count($operationHistory->getTasks()));
+        /** @var OperationTaskHistory $task */
+        foreach ($operationHistory->getTasks() as $task) {
+            if ($task->getWarningIfTrue() == true && $task->getStatus() == true) {
+                var_dump("HEY");
+                $error = true;
+            }
+        }
+
         $params = [
             "history" => $operationHistory,
             "timeSpent" => $timeSpent->h . 'h:' . $timeSpent->i . 'm:' . $timeSpent->s . "s",
@@ -70,7 +81,8 @@ class OperationHistoryController extends ApiController
             "atmName" => $operationHistory->getPlace(),
             "arrivedOnSite" => $arrivingDate->format("H:i"),
             "nbTasks" => $operationHistory->getTasks()->count(),
-            "color" => $customer->getColor()
+            "color" => $customer->getColor(),
+            "errorOnTask" => $error
         ];
 
         $mail = $this->container->get('mail.send');
