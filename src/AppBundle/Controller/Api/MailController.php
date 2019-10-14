@@ -186,17 +186,17 @@ class MailController extends ApiController
         if (!$this->checkUserIsConnected($request))
             return new JsonResponse(['message' => "you need to be connected"], 403);
 
-//        $mail = $this->container->get('mail.send');
-//        try {
-//            $this->generatePdfAndSendMail($request, $operationHistory);
-//        } catch (Exception $e) {
-//            $file = "mail.log";
-//            if (!file_exists($file))
-//                fopen($file, "w");
-//            $current = file_get_contents($file);
-//            $current .= "ERROR : " . $e->getMessage() . "\n";
-//            file_put_contents($file, $current);
-//        }
+        $mail = $this->container->get('mail.send');
+        try {
+            $this->generatePdfAndSendMail($request, $operationHistory);
+        } catch (Exception $e) {
+            $file = "mail.log";
+            if (!file_exists($file))
+                fopen($file, "w");
+            $current = file_get_contents($file);
+            $current .= "ERROR : " . $e->getMessage() . "\n";
+            file_put_contents($file, $current);
+        }
 
 
         return new Response(json_encode(array(
