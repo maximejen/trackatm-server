@@ -8,6 +8,8 @@ use AppBundle\Entity\Customer;
 use AppBundle\Entity\Image;
 use AppBundle\Entity\OperationHistory;
 use AppBundle\Entity\OperationTaskHistory;
+use AppBundle\Entity\OperationTaskTemplate;
+use Doctrine\Common\Collections\ArrayCollection;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use mysql_xdevapi\Exception;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -26,7 +28,7 @@ class OperationHistoryController extends ApiController
     private function generatePdfAndSendMail(Request $request, OperationHistory $operationHistory)
     {
         $sendTo = [];
-        $entityManager =  $this->get('doctrine.orm.entity_manager');
+        $entityManager = $this->get('doctrine.orm.entity_manager');
         /** @var Customer $customer */
         $customer = $entityManager
             ->getRepository('AppBundle:Customer')
@@ -54,24 +56,24 @@ class OperationHistoryController extends ApiController
         file_put_contents($file, $current);
 
         $timeSpent = $operationHistory->getEndingDate()->diff($operationHistory->getBeginningDate());
-        $subject = $operationHistory->getCustomer() . " - " . $operationHistory->getPlace();
+        $error = false;
+        /** @var OperationTaskHistory $task */
+        foreach ($operationHistory->getTasks() as $task) {
+            if ($task->getWarningIfTrue() == true && $task->getStatus() == true) {
+                $error = true;
+            }
+        }
+        if ($error) {
+            $subject = "[DAMAGES] " . $operationHistory->getCustomer() . " - " . $operationHistory->getPlace();
+        } else {
+            $subject = $operationHistory->getCustomer() . " - " . $operationHistory->getPlace();
+        }
 //        $attachment = $this->generatorPdf($request, $operationHistory);
 
         $arrivingDate = $operationHistory->getBeginningDate();
         $arrivingDate->setTimezone(new \DateTimezone("Asia/Kuwait"));
         $endingDate = $operationHistory->getEndingDate();
         $endingDate->setTimezone(new \DateTimezone("Asia/Kuwait"));
-
-        $error = false;
-
-        var_dump(count($operationHistory->getTasks()));
-        /** @var OperationTaskHistory $task */
-        foreach ($operationHistory->getTasks() as $task) {
-            if ($task->getWarningIfTrue() == true && $task->getStatus() == true) {
-                var_dump("HEY");
-                $error = true;
-            }
-        }
 
         $params = [
             "history" => $operationHistory,
@@ -181,17 +183,18 @@ class OperationHistoryController extends ApiController
             if ($history->getBeginningDate()->format('l') == "Sunday" && $params['initialDate'] != "Sunday") {
                 $date->modify("+7 days");
                 $date->modify($params['initialDate'] . " this week");
-            }
-            else if ($history->getBeginningDate()->format('l') != "Sunday" && $params['initialDate'] == "Sunday")
+            } else if ($history->getBeginningDate()->format('l') != "Sunday" && $params['initialDate'] == "Sunday")
                 $date->modify("last sunday");
             else if ($history->getBeginningDate()->format('l') == "Sunday" && $params['initialDate'] == "Sunday") {
                 $date = clone $history->getBeginningDate();
                 $date->setTime(0, 0);
-            }
-            else
+            } else
                 $date->modify($params['initialDate'] . " this week");
         }
         $history->setInitialDate($date);
+
+        /** @var ArrayCollection | OperationTaskTemplate[] $taskTemplates */
+        $taskTemplates = $entityManager->getRepository("AppBundle:OperationTaskTemplate")->findAll();
 
         foreach ($params['tasks'] as $key => $param) {
             $task = new OperationTaskHistory();
@@ -202,6 +205,17 @@ class OperationHistoryController extends ApiController
             $task->setTextInput($param["text"]);
             $task->setPosition($key);
             $history->addTask($task);
+            $taskTemplate = array_filter(
+                $taskTemplates,
+                function ($opTaskTemp) use ($param) {
+                    /** @var OperationTaskTemplate $opTaskTemp */
+                    return $opTaskTemp->getName() == $param["key"];
+                }
+            );
+
+            if (is_array($taskTemplate) && count($taskTemplate) > 0) {
+                $task->setWarningIfTrue($taskTemplate[array_key_first($taskTemplate)]->getWarningIfTrue());
+            }
         }
 
 
@@ -224,7 +238,7 @@ class OperationHistoryController extends ApiController
 
         $tasksIds = [];
         $current = file_get_contents($file);
-        $current .= "=== Add tasks to OH " . $history->getId() .  " ===\n";
+        $current .= "=== Add tasks to OH " . $history->getId() . " ===\n";
         file_put_contents($file, $current);
         foreach ($history->getTasks() as $task) {
             $tasksIds[] = $task->getId();
@@ -251,8 +265,6 @@ class OperationHistoryController extends ApiController
             "tasksIds" => $tasksIds
         )));
     }
-
-
 
 
     /**
@@ -383,7 +395,7 @@ class OperationHistoryController extends ApiController
         if (!file_exists($file))
             fopen($file, "w");
         $current = file_get_contents($file);
-        $current .= "\n=== Add task to OH " . $operationHistory->getId() .  " ===\n";
+        $current .= "\n=== Add task to OH " . $operationHistory->getId() . " ===\n";
         $current .= "Task : " . $task->getName() . "\n";
         file_put_contents($file, $current);
 
@@ -464,8 +476,7 @@ class OperationHistoryController extends ApiController
 
         if ($time == null) {
             $hour = new \DateTime(gmdate("Y-m-d\ H:i:s \G\M\T", $mTime));
-        }
-        else {
+        } else {
             $hour = new \DateTime();
             $hour->setTimestamp(floatval($time));
             $hour->setTimezone(new \DateTimezone("UTC"));
@@ -486,7 +497,7 @@ class OperationHistoryController extends ApiController
         if (!file_exists($file))
             fopen($file, "w");
         $current = file_get_contents($file);
-        $current .= "\n=== Add image to Task " . $operationTaskHistory->getId() . "#" . $operationTaskHistory->getPosition() . " for OH " . $operationTaskHistory->getOperation()->getId() .  " ===\n";
+        $current .= "\n=== Add image to Task " . $operationTaskHistory->getId() . "#" . $operationTaskHistory->getPosition() . " for OH " . $operationTaskHistory->getOperation()->getId() . " ===\n";
         $current .= "Task : " . $operationTaskHistory->getName() . "\n";
         $current .= "Image : " . $imageName . "\n";
         $current .= "Link : " . "https://track-atm.com/images/oh/" . $imageName . "\n";

@@ -55,7 +55,7 @@ class OperationTaskHistory
      *
      * @ORM\Column(name="warning_if_true", type="boolean", options={"default" : 0})
      */
-    protected $warningIfTrue;
+    protected $warningIfTrue = false;
 
     /**
      * @var OperationHistory
