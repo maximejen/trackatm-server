@@ -241,4 +241,9 @@ class Operation
     {
         return $this->getPlace()->getCustomer();
     }
+
+    public function __toString()
+    {
+        return $this->getPlace()->getCustomer()->getName() . " - " . $this->getCleaner() . " - " . $this->getDay() . " - " . $this->getPlace()->getName();
+    }
 }

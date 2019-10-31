@@ -5,12 +5,18 @@ namespace AppBundle\Controller\Home;
 use AppBundle\Controller\HomeController;
 
 use AppBundle\Entity\Image;
+use AppBundle\Entity\Operation;
 use AppBundle\Entity\OperationHistory;
 use AppBundle\Entity\OperationTaskHistory;
+use AppBundle\Form\CleanerType;
+use AppBundle\Form\OperationType;
+use AppBundle\Form\PlaceType;
 use daandesmedt\PHPHeadlessChrome\HeadlessChrome;
 use \DateInterval;
 use DatePeriod;
 use dawood\phpChrome\Chrome;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -346,7 +352,7 @@ class OperationHistoryController extends HomeController
                     foreach ($images->getValues() as $image) {
                         unlink($request->server->get('DOCUMENT_ROOT') . $request->getBasePath() . '/images/oh/' . $image->getImageName());
                     }
-                 }
+                }
             }
 
             $em = $this->getDoctrine()->getManager();
@@ -535,7 +541,7 @@ class OperationHistoryController extends HomeController
         // TODO : send the mail with the file in attachement.
 
         $sendTo = [];
-        $entityManager =  $this->get('doctrine.orm.entity_manager');
+        $entityManager = $this->get('doctrine.orm.entity_manager');
         array_push($sendTo, $customer->getEmail());
 
 
@@ -562,5 +568,88 @@ class OperationHistoryController extends HomeController
         $mail = $this->container->get('mail.send');
         $mail->sendMail($sendTo, "TrackATM - Month Resume - From " . $dates[0]->format("Y-m-d") . " to " . $dates[1]->format("Y-m-d"), $params, "mail/month-resume.html.twig", null);
         return $this->redirectToRoute("operationhistorypage");
+    }
+
+    /**
+     * @Route("/create/{id}", name="operation_history_create", methods={"GET", "POST"})
+     *
+     * @param Request $request
+     * @param Operation $operation
+     *
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     *
+     * @throws \Doctrine\ORM\ORMException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     */
+    public function createOperationHistoryAction(Request $request, Operation $operation)
+    {
+        $oh = new OperationHistory();
+        $form = $this->createFormBuilder()
+            ->add('operation', EntityType::class, [
+                'class' => Operation::class,
+                'data' => $operation
+            ]);
+        $form = $form->getForm();
+        $form->handleRequest($request);
+
+        if ($form->isValid() && $form->isSubmitted()) {
+            $em = $this->get('doctrine.orm.entity_manager');
+
+            /** @var Operation $operation */
+            $operation = $form->getData()['operation'];
+            $place = $operation->getPlace();
+            $cleaner = $operation->getCleaner();
+            $templateName = $operation->getTemplate()->getName();
+            $endingDate = $request->request->get('endingDate');
+            $beginningDate = $request->request->get('beginningDate');
+            $date1 = new \DateTime($beginningDate);
+            $date2 = new \DateTime($endingDate);
+            $oh
+                ->setBeginningDate($date1)
+                ->setEndingDate($date2)
+                ->setCleaner($cleaner)
+                ->setCustomer($place->getCustomer()->getName())
+                ->setPlace($place->getName())
+                ->setName($templateName)
+            ;
+
+            $initialDay = $operation->getDay();
+            $date = clone $oh->getBeginningDate();
+            $date->setTime(0, 0, 0);
+            if ($oh->getBeginningDate()->format('l') == "Sunday" && $initialDay != "Sunday") {
+                $date->modify("+7 days");
+                $date->modify($initialDay . " this week");
+            } else if ($oh->getBeginningDate()->format('l') != "Sunday" && $initialDay == "Sunday")
+                $date->modify("last sunday");
+            else if ($oh->getBeginningDate()->format('l') == "Sunday" && $initialDay == "Sunday") {
+                $date = clone $oh->getBeginningDate();
+                $date->setTime(0, 0);
+            } else
+                $date->modify($initialDay . " this week");
+
+            $oh->setInitialDate($date);
+            $oh->setDone(true);
+
+            $em->persist($oh);
+            $em->flush();
+
+            return $this->redirect($this->generateUrl('operationhistorypage'));
+        }
+
+        $params = [
+            'form' => $form->createView(),
+            'operation' => $operation
+        ];
+
+        $now = new \DateTime();
+
+        return $this->render(':home/operationHistory:create.html.twig', array_merge($params,
+            [
+                'menuElements' => $this->getMenuParameters(),
+                'menuMode' => "home",
+                "isConnected" => !$this->getUser() == NULL,
+                'id' => 1,
+                'now' => $now
+            ]));
     }
 }
