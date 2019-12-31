@@ -657,9 +657,7 @@ class OperationHistoryController extends HomeController
             }
 
             $em->persist($oh);
-            var_dump($oh);
-            //$em->flush();
-            die();
+            $em->flush();
             return $this->redirect($this->generateUrl('operationhistorypage'));
         }
 
