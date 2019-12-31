@@ -659,11 +659,12 @@ class OperationHistoryController extends HomeController
                 $oh->addTask($task);
             }
 
-            var_dump($form->getData()['mail']);
+            if ($form->getData()['mail'] == true) {
+                $this->get('mail.send')->generatePdfAndSendMail($oh);
+            }
 
             $em->persist($oh);
-//            $em->flush();
-            die();
+            $em->flush();
             return $this->redirect($this->generateUrl('operationhistorypage'));
         }
 

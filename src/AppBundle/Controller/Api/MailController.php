@@ -51,7 +51,7 @@ class MailController extends ApiController
         ];
     }
 
-    public function generatePdfAndSendMail(Request $request, OperationHistory $operationHistory)
+    public function generatePdfAndSendMail(OperationHistory $operationHistory)
     {
         $sendTo = [];
         $entityManager = $this->get('doctrine.orm.entity_manager');
