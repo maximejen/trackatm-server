@@ -632,10 +632,32 @@ class OperationHistoryController extends HomeController
             $oh->setInitialDate($date);
             $oh->setDone(true);
 
-            //$em->getRepository("OperationHistory")->addToOperationCompleteSetOfTasks();
+            $args = [
+                ["Take picture before service", "", 1, 1, "", 0, 0],
+                ["Clean ATM Glass shade", "", 1, 0, "", 1, 0],
+                ["Spot removing from ATM Area", "", 1, 0, "", 2, 0],
+                ["Use air blower", "", 1, 0, "", 3, 0],
+                ["Remove any Gums from ATM Area", "", 1, 0, "", 4, 0],
+                ["Clean ATM Keyboard with Polisher", "", 1, 0, "", 5, 0],
+                ["Wipe all ATM with microfiber cloth", "", 1, 0, "", 6, 0],
+                ["Empty waste bin", "", 1, 0, "", 7, 0],
+                ["Take photo for any damage", "", 0, 1, "", 8, 1],
+                ["Take photo after service", "", 1, 1, "", 9, 0],
+            ];
+            foreach ($args as $arg) {
+                $task = new OperationTaskHistory();
+                $task->setName($arg[0]);
+                $task->setComment($arg[1]);
+                $task->setStatus($arg[2]);
+                $task->setImagesForced($arg[3]);
+                $task->setTextInput($arg[4]);
+                $task->setPosition($arg[5]);
+                $task->setWarningIfTrue($arg[6]);
+                $oh->addTask($task);
+            }
 
             $em->persist($oh);
-            var_dump($oh->getId());
+            var_dump($oh);
             //$em->flush();
             die();
             return $this->redirect($this->generateUrl('operationhistorypage'));
