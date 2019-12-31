@@ -68,6 +68,10 @@
                             <a class="button is-danger" href="{{ path('operation_delete', {'id': operation.id}) }}">
                                 <i class="fa fa-trash"></i>
                             </a>
+                            <a class="button is-danger"
+                               href="{{ path('operation_history_create', {'id': operation.id}) }}">
+                                <i class="fa fa-plus"></i>
+                            </a>
                         </td>
                     </tr>
                 {% endfor %}
