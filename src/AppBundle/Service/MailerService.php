@@ -62,7 +62,7 @@ class MailerService
     public function generatePdfAndSendMail(OperationHistory $operationHistory)
     {
         $sendTo = [];
-        $entityManager = $this->em();
+        $entityManager = $this->em;
         /** @var Customer $customer */
         $customer = $entityManager
             ->getRepository('AppBundle:Customer')
