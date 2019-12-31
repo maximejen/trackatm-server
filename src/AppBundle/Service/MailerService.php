@@ -58,7 +58,7 @@ class MailerService
         $this->mailer->send($message);
     }
 
-    public function generatePdfAndSendMail(Request $request, OperationHistory $operationHistory)
+    public function generatePdfAndSendMail(OperationHistory $operationHistory)
     {
         $sendTo = [];
         $entityManager = $this->em();
