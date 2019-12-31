@@ -663,6 +663,7 @@ class OperationHistoryController extends HomeController
 
             $em->persist($oh);
 //            $em->flush();
+            die();
             return $this->redirect($this->generateUrl('operationhistorypage'));
         }
 
