@@ -17,6 +17,7 @@ use DatePeriod;
 use dawood\phpChrome\Chrome;
 use Doctrine\ORM\EntityManager;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -589,7 +590,9 @@ class OperationHistoryController extends HomeController
             ->add('operation', EntityType::class, [
                 'class' => Operation::class,
                 'data' => $operation
-            ]);
+            ])
+            ->add('mail', CheckboxType::class)
+        ;
         $form = $form->getForm();
         $form->handleRequest($request);
 
@@ -656,8 +659,10 @@ class OperationHistoryController extends HomeController
                 $oh->addTask($task);
             }
 
+            var_dump($form->getData()['mail']);
+
             $em->persist($oh);
-            $em->flush();
+//            $em->flush();
             return $this->redirect($this->generateUrl('operationhistorypage'));
         }
 

@@ -25,7 +25,7 @@ use Symfony\Component\Serializer\SerializerInterface;
 class OperationHistoryController extends ApiController
 {
 
-    private function generatePdfAndSendMail(Request $request, OperationHistory $operationHistory)
+    public function generatePdfAndSendMail(Request $request, OperationHistory $operationHistory)
     {
         $sendTo = [];
         $entityManager = $this->get('doctrine.orm.entity_manager');

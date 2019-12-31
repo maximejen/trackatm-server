@@ -51,10 +51,10 @@ class MailController extends ApiController
         ];
     }
 
-    private function generatePdfAndSendMail(Request $request, OperationHistory $operationHistory)
+    public function generatePdfAndSendMail(Request $request, OperationHistory $operationHistory)
     {
         $sendTo = [];
-        $entityManager =  $this->get('doctrine.orm.entity_manager');
+        $entityManager = $this->get('doctrine.orm.entity_manager');
         /** @var Customer $customer */
         $customer = $entityManager
             ->getRepository('AppBundle:Customer')
@@ -81,18 +81,16 @@ class MailController extends ApiController
         }
         file_put_contents($file, $current);
 
+        $timeSpent = $operationHistory->getEndingDate()->diff($operationHistory->getBeginningDate());
         $error = false;
-
         /** @var OperationTaskHistory $task */
         foreach ($operationHistory->getTasks() as $task) {
             if ($task->getWarningIfTrue() == true && $task->getStatus() == true) {
                 $error = true;
             }
         }
-
-        $timeSpent = $operationHistory->getEndingDate()->diff($operationHistory->getBeginningDate());
         if ($error) {
-            $subject = "[DAMAGES]" . $operationHistory->getCustomer() . " - " . $operationHistory->getPlace();
+            $subject = "[DAMAGES] " . $operationHistory->getCustomer() . " - " . $operationHistory->getPlace();
         } else {
             $subject = $operationHistory->getCustomer() . " - " . $operationHistory->getPlace();
         }
