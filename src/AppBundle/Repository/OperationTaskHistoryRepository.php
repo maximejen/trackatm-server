@@ -10,4 +10,40 @@ namespace AppBundle\Repository;
  */
 class OperationTaskHistoryRepository extends \Doctrine\ORM\EntityRepository
 {
+    public function addToOperationCompleteSetOfTasks($operationHistoryId)
+    {
+        $args = [
+          ["Take picture before service", "", 1, 1, "", 0, 0],
+          ["Clean ATM Glass shade", "", 1, 0, "", 1, 0],
+          ["Spot removing from ATM Area", "", 1, 0, "", 2, 0],
+          ["Use air blower", "", 1, 0, "", 3, 0],
+          ["Remove any Gums from ATM Area", "", 1, 0, "", 4, 0],
+          ["Clean ATM Keyboard with Polisher", "", 1, 0, "", 5, 0],
+          ["Wipe all ATM with microfiber cloth", "", 1, 0, "", 6, 0],
+          ["Empty waste bin", "", 1, 0, "", 7, 0],
+          ["Take photo for any damage", "", 0, 1, "", 8, 1],
+          ["Take photo after service", "", 1, 1, "", 9, 0],
+        ];
+
+        $em = $this->getEntityManager();
+        foreach ($args as $arg) {
+            $em
+                ->createQuery('
+                INSERT INTO operation_task_history
+                (operation_id, name, comment, status, images_forced, text_input, position, warning_if_true)
+                VALUES
+                (:operation_id, :name, :comment, :status, :images_forced, :text_input, :position, :warning_if_true)
+            ')
+                ->setParameter("operation_id", $operationHistoryId)
+                ->setParameter("name", $arg[0])
+                ->setParameter("comment", $arg[1])
+                ->setParameter("status", $arg[2])
+                ->setParameter("images_forced", $arg[3])
+                ->setParameter("text_input", $arg[4])
+                ->setParameter("position", $arg[5])
+                ->setParameter("warning_if_true", $arg[6])
+                ->getResult()
+            ;
+        }
+    }
 }

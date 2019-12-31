@@ -15,6 +15,7 @@ use daandesmedt\PHPHeadlessChrome\HeadlessChrome;
 use \DateInterval;
 use DatePeriod;
 use dawood\phpChrome\Chrome;
+use Doctrine\ORM\EntityManager;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -593,6 +594,7 @@ class OperationHistoryController extends HomeController
         $form->handleRequest($request);
 
         if ($form->isValid() && $form->isSubmitted()) {
+            /** @var EntityManager $em */
             $em = $this->get('doctrine.orm.entity_manager');
 
             /** @var Operation $operation */
@@ -630,8 +632,11 @@ class OperationHistoryController extends HomeController
             $oh->setInitialDate($date);
             $oh->setDone(true);
 
+            //$em->getRepository("OperationHistory")->addToOperationCompleteSetOfTasks();
+
             $em->persist($oh);
-            $em->flush();
+            var_dump($oh->getId());
+            //$em->flush();
 
             return $this->redirect($this->generateUrl('operationhistorypage'));
         }
