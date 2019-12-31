@@ -120,8 +120,6 @@ class MailerService
             "errorOnTask" => $error
         ];
 
-        $mail = $this->container->get('mail.send');
-
         $current = file_get_contents($file);
         $current .= "sending mail for OH : '" . $operationHistory->getId() . "'\n";
         file_put_contents($file, $current);
@@ -132,11 +130,11 @@ class MailerService
             $in15min->modify("+15 min");
         if ($operationHistory->getLastTimeSent() == null || $now->getTimestamp() > $in15min->getTimestamp()) {
             $operationHistory->setLastTimeSent($now);
-            $this->getDoctrine()->getManager()->flush();
+            $entityManager->flush();
             $current = file_get_contents($file);
             $current .= "mail sent\n";
             file_put_contents($file, $current);
-            $mail->sendMail($sendTo, $subject, $params, "mail/job.html.twig", null);
+            $this->sendMail($sendTo, $subject, $params, "mail/job.html.twig", null);
         } else {
             $current = file_get_contents($file);
             $current .= "mail has not been sent, it was less than 15min from last mail sent\n";
