@@ -340,7 +340,9 @@ class OperationHistoryController extends HomeController
             'menuElements' => $this->getMenuParameters(),
             'menuMode' => "home",
             "isConnected" => !$this->getUser() == NULL,
-            'id' => $history->getId()
+            'id' => $history->getId(),
+            "oh" => $history,
+            "initialDate" => $history->getInitialDate()->format("Y-m-d")
         ], $this->generateArguments($history)
         );
 

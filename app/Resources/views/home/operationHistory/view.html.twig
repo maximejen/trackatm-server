@@ -2,7 +2,7 @@
 
 {% block body %}
     <div class="column columns is-mobile">
-        <div class="column">
+        <div class="column is-2">
             <div>
                 <a href="{{ path('operationhistory_view', {id: id, delete: true}) }}">
                     <button class="button is-medium is-danger">
@@ -12,6 +12,26 @@
                     </button>
                 </a>
             </div>
+        </div>
+        <div class="column is-10">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Cleaner</th>
+                    <th>Initial date</th>
+                </tr>
+                </thead>
+                <tfoot>
+                <tr>
+                    <th>{{ id }}</th>
+                    <th>{{ oh.name }}</th>
+                    <th>{{ oh.cleaner.id }}</th>
+                    <th>{{ initialDate }}</th>
+                </tr>
+                </tfoot>
+            </table>
         </div>
     </div>
     <div id="toRenderInPdf">
