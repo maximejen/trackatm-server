@@ -186,7 +186,7 @@ class MailController extends ApiController
 
         $mail = $this->container->get('mail.send');
         try {
-            $this->generatePdfAndSendMail($request, $operationHistory);
+            $this->generatePdfAndSendMail($operationHistory);
         } catch (Exception $e) {
             $file = "mail.log";
             if (!file_exists($file))
@@ -218,7 +218,7 @@ class MailController extends ApiController
 
 //        $mail = $this->container->get('mail.send');
         try {
-            $this->generatePdfAndSendMail($request, $operationHistory);
+            $this->generatePdfAndSendMail($operationHistory);
         } catch (Exception $e) {
             $file = "mail.log";
             if (!file_exists($file))
