@@ -343,7 +343,7 @@ class OperationHistoryController extends HomeController
             'id' => $history->getId(),
             "oh" => $history,
             "initialDate" => $history->getInitialDate()->format("Y-m-d"),
-            "lastTimeSent" => $history->getLastTimeSent()->format("Y-m-d")
+            "lastTimeSent" => $history->getLastTimeSent()->format("Y-m-d H:i:s")
         ], $this->generateArguments($history)
         );
 
