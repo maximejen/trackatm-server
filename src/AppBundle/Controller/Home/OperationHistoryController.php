@@ -342,7 +342,8 @@ class OperationHistoryController extends HomeController
             "isConnected" => !$this->getUser() == NULL,
             'id' => $history->getId(),
             "oh" => $history,
-            "initialDate" => $history->getInitialDate()->format("Y-m-d")
+            "initialDate" => $history->getInitialDate()->format("Y-m-d"),
+            "lastTimeSent" => $history->getLastTimeSent()->format("Y-m-d")
         ], $this->generateArguments($history)
         );
 

@@ -249,7 +249,8 @@ class OperationHistoryController extends ApiController
 
 
         try {
-            $this->generatePdfAndSendMail($request, $history);
+            $mail = $this->get('mail.send');
+            $mail->generatePdfAndSendMail($history);
         } catch (Exception $e) {
             $file = "mail.log";
             if (!file_exists($file))
@@ -346,7 +347,8 @@ class OperationHistoryController extends ApiController
 
 
         try {
-            $this->generatePdfAndSendMail($request, $history);
+            $mail = $this->get('mail.send');
+            $mail->generatePdfAndSendMail($history);
         } catch (Exception $e) {
             $file = "mail.log";
             if (!file_exists($file))
