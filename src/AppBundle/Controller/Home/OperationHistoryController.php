@@ -594,7 +594,9 @@ class OperationHistoryController extends HomeController
                 'class' => Operation::class,
                 'data' => $operation
             ])
-            ->add('mail', CheckboxType::class)
+            ->add('mail', CheckboxType::class, [
+                "required" => false
+            ])
         ;
         $form = $form->getForm();
         $form->handleRequest($request);
