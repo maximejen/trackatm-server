@@ -467,12 +467,12 @@ class OperationHistoryController extends ApiController
 
         $imageMark
             ->setPosition(Watermark::POSITION_BOTTOM_RIGHT)
-            ->setOpacity(0.8)
+            ->setOpacity(1)
             ->setOffset(0, 0)
             ->withImage($request->server->get('DOCUMENT_ROOT') . $request->getBasePath() . $whiteImageName);
         $imageMark1
             ->setPosition(Watermark::POSITION_TOP_RIGHT)
-            ->setOpacity(0.8)
+            ->setOpacity(1)
             ->setOffset(0, 0)
             ->withImage($request->server->get('DOCUMENT_ROOT') . $request->getBasePath() . $whiteImageName);
 
