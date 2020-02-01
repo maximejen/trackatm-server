@@ -1,0 +1,68 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div>
+        <section class="hero is-light">
+            <div class="hero-body">
+                <div class="container">
+                    <h1 class="title">
+                        Edit
+                    </h1>
+                    <h2 class="subtitle">
+                        a new operationHistory
+                    </h2>
+                </div>
+            </div>
+        </section>
+        <section class="container">
+            <form action="" method="post">
+                <div class="form-element">
+                    <div class="subtitle form-label">
+                        Beginning Date
+                    </div>
+                    <div class="container is-light">
+                        <input class="is-medium input is-primary" name="beginningDate"
+                               type="datetime-local"
+                               value="{{ beginningDate.format("Y-m-d\\TH:i") }}"
+                        />
+                    </div>
+                </div>
+                <div class="form-element">
+                    <div class="subtitle form-label">
+                        Ending Date
+                    </div>
+                    <div class="container is-light">
+                        <input class="is-medium input is-primary" name="endingDate"
+                               type="datetime-local"
+                               value="{{ endingDate.format("Y-m-d\\TH:i") }}"
+                        />
+                    </div>
+                </div>
+                <div class="form-element">
+                    <button class="button is-primary is-medium" type="submit">Edit operationHistory</button>
+                </div>
+            </form>
+        </section>
+    </div>
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .form-element {
+            padding-top: 2.5em;
+        }
+
+        .form-element > button {
+            width: 100%;
+        }
+
+        div.form-label {
+            margin-bottom: 0.5em;
+        }
+
+        .container {
+            padding-bottom: 2em;
+        }
+    </style>
+{% endblock %}

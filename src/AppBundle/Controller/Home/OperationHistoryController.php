@@ -9,6 +9,7 @@ use AppBundle\Entity\Operation;
 use AppBundle\Entity\OperationHistory;
 use AppBundle\Entity\OperationTaskHistory;
 use AppBundle\Form\CleanerType;
+use AppBundle\Form\OperationHistoryType;
 use AppBundle\Form\OperationType;
 use AppBundle\Form\PlaceType;
 use daandesmedt\PHPHeadlessChrome\HeadlessChrome;
@@ -343,7 +344,7 @@ class OperationHistoryController extends HomeController
             'id' => $history->getId(),
             "oh" => $history,
             "initialDate" => $history->getInitialDate()->format("Y-m-d"),
-            "lastTimeSent" => $history->getLastTimeSent()->format("Y-m-d H:i:s")
+            "lastTimeSent" => $history->getLastTimeSent() ? $history->getLastTimeSent()->format("Y-m-d H:i:s") : "---- -- --"
         ], $this->generateArguments($history)
         );
 
@@ -596,8 +597,7 @@ class OperationHistoryController extends HomeController
             ])
             ->add('mail', CheckboxType::class, [
                 "required" => false
-            ])
-        ;
+            ]);
         $form = $form->getForm();
         $form->handleRequest($request);
 
@@ -620,8 +620,7 @@ class OperationHistoryController extends HomeController
                 ->setCleaner($cleaner)
                 ->setCustomer($place->getCustomer()->getName())
                 ->setPlace($place->getName())
-                ->setName($templateName)
-            ;
+                ->setName($templateName);
 
             $initialDay = $operation->getDay();
             $date = clone $oh->getBeginningDate();
@@ -681,6 +680,57 @@ class OperationHistoryController extends HomeController
         $now = new \DateTime();
 
         return $this->render(':home/operationHistory:create.html.twig', array_merge($params,
+            [
+                'menuElements' => $this->getMenuParameters(),
+                'menuMode' => "home",
+                "isConnected" => !$this->getUser() == NULL,
+                'id' => 1,
+                'now' => $now
+            ]));
+    }
+
+    /**
+     * @Route("/edit/{id}", name="operation_history_edit", methods={"GET", "POST"})
+     *
+     * @param Request $request
+     * @param OperationHistory $oh
+     *
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     *
+     * @throws \Doctrine\ORM\ORMException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     */
+    public function editOperationHistoryAction(Request $request, OperationHistory $oh)
+    {
+        $form = $this->createForm(OperationHistoryType::class, $oh);
+        $form->handleRequest($request);
+
+        $date1 = $oh->getBeginningDate();
+        $date2 = $oh->getEndingDate();
+
+        if ($request->isMethod("POST")) {
+            /** @var EntityManager $em */
+            $em = $this->get('doctrine.orm.entity_manager');
+            $endingDate = $request->request->get('endingDate');
+            $beginningDate = $request->request->get('beginningDate');
+            $date1 = new \DateTime($beginningDate);
+            $date2 = new \DateTime($endingDate);
+            $oh->setBeginningDate($date1);
+            $oh->setEndingDate($date2);
+            $em->persist($oh);
+            $em->flush();
+            return $this->redirect($this->generateUrl('operationhistorypage'));
+        }
+
+        $params = [
+            'form' => $form->createView(),
+            'beginningDate' => $date1,
+            'endingDate' => $date2
+        ];
+
+        $now = new \DateTime();
+
+        return $this->render(':home/operationHistory:edit.html.twig', array_merge($params,
             [
                 'menuElements' => $this->getMenuParameters(),
                 'menuMode' => "home",
