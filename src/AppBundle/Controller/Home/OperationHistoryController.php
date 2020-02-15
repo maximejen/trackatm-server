@@ -719,25 +719,29 @@ class OperationHistoryController extends HomeController
             $oh->setBeginningDate($date1);
             $oh->setEndingDate($date2);
 
-            $watermarkService = $this->get('watermark');
-            $basePath = $request->server->get('DOCUMENT_ROOT') . $request->getBasePath();
-            /** @var OperationTaskHistory $task */
-            foreach ($oh->getTasks() as $task) {
-                /** @var Image $item */
-                foreach ($task->getImage() as $item) {
-                    $bgPath = $basePath . "/images/white1.png";
-                    $imagePath = $basePath . '/images/oh/' . $item->getImageName();
-
-                    $mTime = $item->getImageFile()->getMTime();
-                    $hour = new \DateTime(gmdate("Y-m-d\ H:i:s \G\M\T", $mTime));
-                    $hour->setDate($date1->format("Y"), $date1->format("m"), $date1->format("d"));
-                    $date = strtoupper($hour->format(" l jS M Y"));
-                    $hour = strtoupper($hour->format("H:i "));
-
-                    $watermarkService->putWM($bgPath, $imagePath, $date, Watermark::POSITION_BOTTOM_RIGHT, 10);
-                    $watermarkService->putWM($bgPath, $imagePath, $hour, Watermark::POSITION_BOTTOM_LEFT, 10);
-                }
-            }
+//            $watermarkService = $this->get('watermark');
+//            $basePath = $request->server->get('DOCUMENT_ROOT') . $request->getBasePath();
+//            /** @var OperationTaskHistory $task */
+//            foreach ($oh->getTasks() as $task) {
+//                /** @var Image $item */
+//                foreach ($task->getImage() as $item) {
+//                    $bgPath = $basePath . "/images/white1.png";
+//                    $imagePath = $basePath . '/images/oh/' . $item->getImageName();
+//
+//                    if ($item->getImageFile()) {
+//                        $mTime = $item->getImageFile()->getMTime();
+//                        $hour = new \DateTime(gmdate("Y-m-d\ H:i:s \G\M\T", $mTime));
+//                    } else {
+//                        $hour = new \DateTime($date1->format("Y-m-d H:i:s"));
+//                    }
+//                    $hour->setDate($date1->format("Y"), $date1->format("m"), $date1->format("d"));
+//                    $date = strtoupper($hour->format(" l jS M Y"));
+//                    $hour = strtoupper($hour->format("H:i "));
+//
+//                    $watermarkService->putWM($bgPath, $imagePath, $hour, Watermark::POSITION_BOTTOM_RIGHT, 10);
+//                    $watermarkService->putWM($bgPath, $imagePath, "Tomate", Watermark::POSITION_BOTTOM_LEFT, 10);
+//                }
+//            }
 
             $em->persist($oh);
             $em->flush();

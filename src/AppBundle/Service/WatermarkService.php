@@ -36,8 +36,6 @@ class WatermarkService
         $watermark1 = new Watermark($basePath . $imagePath);
 
         $fontSize = $version ? 10 : 35;
-        $offset = $version ? 42 : 65;
-        $offset = 0;
 
         $watermark->setFontSize($fontSize)
             ->setFont('Arial')
