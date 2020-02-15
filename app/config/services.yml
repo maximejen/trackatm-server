@@ -46,3 +46,7 @@ services:
     app.html2pdf:
         class: AppBundle\Service\HTML2PDF
         public: true
+
+    watermark:
+        class: AppBundle\Service\WatermarkService
+        public: true

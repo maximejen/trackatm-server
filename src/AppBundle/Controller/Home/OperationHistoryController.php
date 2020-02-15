@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller\Home;
 
+use Ajaxray\PHPWatermark\Watermark;
 use AppBundle\Controller\HomeController;
 
 use AppBundle\Entity\Image;
@@ -717,6 +718,27 @@ class OperationHistoryController extends HomeController
             $date2 = new \DateTime($endingDate);
             $oh->setBeginningDate($date1);
             $oh->setEndingDate($date2);
+
+            $watermarkService = $this->get('watermark');
+            $basePath = $request->server->get('DOCUMENT_ROOT') . $request->getBasePath();
+            /** @var OperationTaskHistory $task */
+            foreach ($oh->getTasks() as $task) {
+                /** @var Image $item */
+                foreach ($task->getImage() as $item) {
+                    $bgPath = $basePath . "/images/white1.png";
+                    $imagePath = $basePath . '/images/oh/' . $item->getImageName();
+
+                    $mTime = $item->getImageFile()->getMTime();
+                    $hour = new \DateTime(gmdate("Y-m-d\ H:i:s \G\M\T", $mTime));
+                    $hour->setDate($date1->format("Y"), $date1->format("m"), $date1->format("d"));
+                    $date = strtoupper($hour->format(" l jS M Y"));
+                    $hour = strtoupper($hour->format("H:i "));
+
+                    $watermarkService->putWM($bgPath, $imagePath, $date, Watermark::POSITION_BOTTOM_RIGHT, 10);
+                    $watermarkService->putWM($bgPath, $imagePath, $hour, Watermark::POSITION_BOTTOM_LEFT, 10);
+                }
+            }
+
             $em->persist($oh);
             $em->flush();
             return $this->redirect($this->generateUrl('operationhistorypage'));

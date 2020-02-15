@@ -415,6 +415,8 @@ class OperationHistoryController extends ApiController
      * @param OperationTaskHistory $operationTaskHistory
      * @param SerializerInterface $serializer
      * @return JsonResponse|Response
+     * @throws \Doctrine\ORM\ORMException
+     * @throws \Doctrine\ORM\OptimisticLockException
      */
     public function postImageAction(Request $request, OperationTaskHistory $operationTaskHistory, SerializerInterface $serializer)
     {
@@ -426,10 +428,9 @@ class OperationHistoryController extends ApiController
         /**  @var $image UploadedFile */
         $imageFile = $request->files->get("image");
         $mTime = $imageFile->getMTime();
+        $time = $request->query->get('timestamp');
 
         $version = $request->query->get("version");
-
-        $time = $request->query->get('timestamp');
 
         $image = new Image();
         $image->setImageFile($imageFile);
