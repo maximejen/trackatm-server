@@ -2,17 +2,13 @@
 
 namespace AppBundle\Controller\Home;
 
-use Ajaxray\PHPWatermark\Watermark;
 use AppBundle\Controller\HomeController;
 
 use AppBundle\Entity\Image;
 use AppBundle\Entity\Operation;
 use AppBundle\Entity\OperationHistory;
 use AppBundle\Entity\OperationTaskHistory;
-use AppBundle\Form\CleanerType;
 use AppBundle\Form\OperationHistoryType;
-use AppBundle\Form\OperationType;
-use AppBundle\Form\PlaceType;
 use daandesmedt\PHPHeadlessChrome\HeadlessChrome;
 use \DateInterval;
 use DatePeriod;
@@ -20,7 +16,6 @@ use dawood\phpChrome\Chrome;
 use Doctrine\ORM\EntityManager;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -28,7 +23,7 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * @Route("/operation-history")
  *
- * Class PlanningController
+ * Class OperationHistoryController
  * @package AppBundle\Controller
  */
 class OperationHistoryController extends HomeController
@@ -235,6 +230,7 @@ class OperationHistoryController extends HomeController
      *
      * @param Request $request
      * @return BinaryFileResponse|\Symfony\Component\HttpFoundation\Response
+     * @throws \Exception
      */
     public function generatePdfContentAction(Request $request)
     {
@@ -460,6 +456,7 @@ class OperationHistoryController extends HomeController
      *
      * @param Request $request
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     * @throws \Exception
      */
     public function generatePdfAndSendEmailToCustomerAction(Request $request)
     {
@@ -738,14 +735,13 @@ class OperationHistoryController extends HomeController
 //                    $date = strtoupper($hour->format(" l jS M Y"));
 //                    $hour = strtoupper($hour->format("H:i "));
 //
-//                    $watermarkService->putWM($bgPath, $imagePath, $hour, Watermark::POSITION_BOTTOM_RIGHT, 10);
-//                    $watermarkService->putWM($bgPath, $imagePath, "Tomate", Watermark::POSITION_BOTTOM_LEFT, 10);
+//                    $watermarkService->putWM($bgPath, $imagePath, $date, $hour, 10);
 //                }
 //            }
 
             $em->persist($oh);
             $em->flush();
-            return $this->redirect($this->generateUrl('operationhistorypage'));
+            return $this->redirect($this->generateUrl('operationhistory_view', ["id" => $oh->getId()]));
         }
 
         $params = [

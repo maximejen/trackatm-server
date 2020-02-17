@@ -19,7 +19,12 @@
                 {% include(':parameters/place:form.html.twig') %}
                 <div class="form-element columns">
                     <div class="form-element column">
-                        <button class="button is-warning is-medium" type="submit">Create place</button>
+                        <button name="create" class="button is-warning is-medium" type="submit">Create place</button>
+                    </div>
+                </div>
+                <div class="form-element columns">
+                    <div class="form-element column">
+                        <button name="create_and_redirect" class="button is-primary is-medium" type="submit">Create place and create operation</button>
                     </div>
                 </div>
             {{ form_end(form) }}

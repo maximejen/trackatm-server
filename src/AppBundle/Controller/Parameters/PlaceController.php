@@ -60,6 +60,9 @@ class PlaceController extends ParametersController
             $em->persist($place);
             $em->flush();
 
+            if (isset($_POST['create_and_redirect'])) {
+                return $this->redirect($this->generateUrl('operation_create', ["search" => $place->getName()]));
+            }
             return $this->redirect($this->generateUrl('parameters_places_page'));
         }
 

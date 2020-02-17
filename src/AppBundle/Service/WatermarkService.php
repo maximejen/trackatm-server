@@ -9,22 +9,23 @@ use AppBundle\Entity\OperationTaskHistory;
 
 class WatermarkService
 {
-    public function putWM($bgPath, $imagePath, $text, $position, $fontSize)
+    public function putWM($bgPath, $imagePath, $text, $text1, $fontSize)
     {
         $watermark = new Watermark($imagePath);
         $watermark->setFontSize($fontSize)
             ->setFont('Arial')
             ->setOffset(0, 7)
             ->setStyle(Watermark::STYLE_TEXT_DARK)
-            ->setPosition($position)
+            ->setPosition(Watermark::POSITION_BOTTOM_LEFT)
             ->setOpacity(1);
         $imageMark = new Watermark($imagePath);
         $imageMark
-            ->setPosition($position)
+            ->setPosition(Watermark::POSITION_BOTTOM_LEFT)
             ->setOpacity(1)
             ->setOffset(0, 0)
             ->withImage($bgPath);
         $watermark->withText($text, $imagePath);
+        $watermark->setPosition(Watermark::POSITION_BOTTOM_RIGHT)->withText($text1, $imagePath);
     }
 
     public function addWatermark($basePath, $imagePath, $version, $operationTaskHistory, $imageFile, $time)
