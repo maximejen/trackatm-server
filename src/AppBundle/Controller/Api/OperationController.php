@@ -159,7 +159,14 @@ class OperationController extends ApiController
         $operations = $em->getRepository('AppBundle:Operation')->findOperationsByCleaner($cleaner);
         // Filter all the operations that were already done the number asked when they were created.
         $operations = array_filter($operations, function (Operation $element) use ($operationsThisMonth) {
-            if ((is_int($element->getNumberMaxPerMonth()) && count($operationsThisMonth[$element->getPlace()->getName() . $element->getCleaner()->__toString()]) >= $element->getNumberMaxPerMonth()))
+            $nbFromCustomer = $element->getCustomer()->getNumberMaxOfOperations();
+            $nbFromOperation = $element->getNumberMaxPerMonth();
+            $nbMax = $nbFromCustomer ? $nbFromCustomer : null;
+            $nbMax = $nbMax == null ? $nbFromOperation : $nbMax;
+            if (is_int($nbFromCustomer) && is_int($nbFromOperation)) {
+                $nbMax = $nbFromCustomer > $nbFromOperation ? $nbFromOperation : $nbFromCustomer;
+            }
+            if ((is_int($nbMax) && count($operationsThisMonth[$element->getPlace()->getName() . $element->getCleaner()->__toString()]) >= $nbMax))
                 return (false);
             return (true);
         });
