@@ -36,6 +36,7 @@ class OperationType extends AbstractType
             ->add('template', null, [
                 "required" => true
             ])
+            ->add('numberMaxPerMonth')
         ;
     }/**
      * {@inheritdoc}

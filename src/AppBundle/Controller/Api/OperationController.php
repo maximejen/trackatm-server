@@ -152,8 +152,20 @@ class OperationController extends ApiController
 
         $em = $this->getDoctrine()->getManager();
         $cleaner = $em->getRepository('AppBundle:Cleaner')->findByUser($user);
+
+
+        // get all the operation_history of this month
+        $operationsThisMonth = $em->getRepository('AppBundle:OperationHistory')->findOperationHistoriesByCleanerThisMonth($cleaner);
         $operations = $em->getRepository('AppBundle:Operation')->findOperationsByCleaner($cleaner);
+        // Filter all the operations that were already done the number asked when they were created.
+        $operations = array_filter($operations, function (Operation $element) use ($operationsThisMonth) {
+            if ((is_int($element->getNumberMaxPerMonth()) && count($operationsThisMonth[$element->getPlace()->getName() . $element->getCleaner()->__toString()]) >= $element->getNumberMaxPerMonth()))
+                return (false);
+            return (true);
+        });
         $historiesActualWeek = $em->getRepository('AppBundle:OperationHistory')->findOperationHistoriesByCleanerAndBetweenTwoDates($cleaner, $weekStart, $weekEnd);
+
+
         $historiesNextWeek = $em->getRepository('AppBundle:OperationHistory')->findOperationHistoriesByCleanerAndBetweenTwoDates($cleaner, $nextWeekStart, $nextWeekEnd);
         $historiesLastWeek = $em->getRepository('AppBundle:OperationHistory')->findOperationHistoriesByCleanerAndBetweenTwoDates($cleaner, $lastWeekStart, $lastWeekEnd);
         $historiesLastLastWeek = $em->getRepository('AppBundle:OperationHistory')->findOperationHistoriesByCleanerAndBetweenTwoDates($cleaner, $lastLastWeekStart, $lastLastWeekEnd);

@@ -3,14 +3,12 @@
         {{ form_label(form.name) }}
     </div>
     <div>
-        {{
-        form_widget(form.name, {
+        {{ form_widget(form.name, {
             'attr': {
                 'class': 'input',
                 'placeholder': 'Customer\'s name'
             }
-        })
-        }}
+        }) }}
     </div>
 </div>
 <div class="form-element">
@@ -18,14 +16,12 @@
         {{ form_label(form.email) }}
     </div>
     <div>
-        {{
-        form_widget(form.email, {
+        {{ form_widget(form.email, {
             'attr': {
                 'class': 'input',
                 'placeholder': 'Customer\'s email'
             }
-        })
-        }}
+        }) }}
     </div>
 </div>
 <div class="form-element">
@@ -33,14 +29,24 @@
         {{ form_label(form.color) }}
     </div>
     <div>
-        {{
-        form_widget(form.color, {
+        {{ form_widget(form.color, {
             'type': 'color',
             'attr': {
                 'class': 'input',
                 'placeholder': 'Customer\'s color'
             }
-        })
-        }}
+        }) }}
+    </div>
+</div>
+<div class="form-element">
+    <div class="subtitle form-label">
+        {{ form_label(form.numberMaxOfOperations) }}
+    </div>
+    <div>
+        {{ form_widget(form.numberMaxOfOperations, {
+            'attr': {
+                'class': 'input'
+            }
+        }) }}
     </div>
 </div>

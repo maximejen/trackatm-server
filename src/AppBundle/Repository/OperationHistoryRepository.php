@@ -3,6 +3,7 @@
 namespace AppBundle\Repository;
 
 use AppBundle\Entity\Cleaner;
+use AppBundle\Entity\OperationHistory;
 
 /**
  * OperationHistoryRepository
@@ -77,5 +78,29 @@ class OperationHistoryRepository extends \Doctrine\ORM\EntityRepository
             ->setParameter('cleaner', $cleaner->getId())
             ->getQuery()
             ->getResult();
+    }
+
+    public function findOperationHistoriesByCleanerThisMonth(Cleaner $cleaner)
+    {
+        $date = new \DateTime("first day of this month");
+
+        $ohs = $this->_em->getRepository("AppBundle:OperationHistory")->createQueryBuilder("oh")
+            ->where('cleaner.id = :cleanerId')
+            ->andWhere("DATE_DIFF(oh.beginningDate, :date) >= 0")
+            ->join("oh.cleaner", "cleaner")
+            ->setParameter("date", $date->format("Y-m-d"))
+            ->setParameter('cleanerId', $cleaner->getId())
+            ->getQuery()
+            ->getResult()
+        ;
+        $result = [];
+        /** @var OperationHistory $oh */
+        foreach ($ohs as $oh) {
+            if (!array_key_exists($oh->getPlace(), $result)) {
+                $result[$oh->getPlace() . $oh->getCleaner()->__toString()] = [];
+            }
+            $result[$oh->getPlace()][] = $oh;
+        }
+        return $result;
     }
 }

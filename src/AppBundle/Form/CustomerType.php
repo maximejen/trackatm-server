@@ -17,6 +17,7 @@ class CustomerType extends AbstractType
             ->add('name')
             ->add('email')
             ->add('color')
+            ->add('numberMaxOfOperations')
         ;
     }/**
      * {@inheritdoc}

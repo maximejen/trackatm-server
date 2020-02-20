@@ -50,6 +50,13 @@ class Customer
      */
     protected $color;
 
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="number_max_of_operations", type="integer", nullable=true)
+     */
+    protected $numberMaxOfOperations;
+
 
     /**
      * Get id.
@@ -179,5 +186,29 @@ class Customer
     public function getColor()
     {
         return $this->color;
+    }
+
+    /**
+     * Set numberMaxOfOperations.
+     *
+     * @param int $numberMaxOfOperations
+     *
+     * @return Customer
+     */
+    public function setNumberMaxOfOperations($numberMaxOfOperations)
+    {
+        $this->numberMaxOfOperations = $numberMaxOfOperations;
+
+        return $this;
+    }
+
+    /**
+     * Get numberMaxOfOperations.
+     *
+     * @return int
+     */
+    public function getNumberMaxOfOperations()
+    {
+        return $this->numberMaxOfOperations;
     }
 }

@@ -50,6 +50,13 @@ class Operation
     protected $template; // name, comment, tasks;
 
     /**
+     * @var integer
+     *
+     * @ORM\Column(name="number_max_per_month", type="integer", nullable=true)
+     */
+    protected $numberMaxPerMonth;
+
+    /**
      * @var boolean
      */
     protected $done;
@@ -245,5 +252,29 @@ class Operation
     public function __toString()
     {
         return $this->getPlace()->getCustomer()->getName() . " - " . $this->getCleaner() . " - " . $this->getDay() . " - " . $this->getPlace()->getName();
+    }
+
+    /**
+     * Set numberMaxPerMonth.
+     *
+     * @param int $numberMaxPerMonth
+     *
+     * @return Operation
+     */
+    public function setNumberMaxPerMonth($numberMaxPerMonth)
+    {
+        $this->numberMaxPerMonth = $numberMaxPerMonth;
+
+        return $this;
+    }
+
+    /**
+     * Get numberMaxPerMonth.
+     *
+     * @return int
+     */
+    public function getNumberMaxPerMonth()
+    {
+        return $this->numberMaxPerMonth;
     }
 }

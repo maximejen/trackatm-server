@@ -38,3 +38,15 @@
         </div>
     </div>
 </div>
+<div class="form-element">
+    <div class="subtitle form-label">
+        {{ form_label(form.numberMaxPerMonth) }}
+    </div>
+    <div class="container is-light">
+            {{ form_widget(form.numberMaxPerMonth, {
+                'attr': {
+                    'class': 'input is-primary'
+                }
+            }) }}
+    </div>
+</div>
