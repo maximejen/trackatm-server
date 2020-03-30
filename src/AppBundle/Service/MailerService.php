@@ -98,9 +98,9 @@ class MailerService
             }
         }
         if ($error) {
-            $subject = "[DAMAGES] " . $operationHistory->getCustomer() . " - " . $operationHistory->getPlace();
+            $subject = "[DAMAGES] " . $operationHistory->getCustomer() . " - " . $operationHistory->getName() . " - " . $operationHistory->getPlace();
         } else {
-            $subject = $operationHistory->getCustomer() . " - " . $operationHistory->getPlace();
+            $subject = $operationHistory->getCustomer() . " - " . $operationHistory->getName() . " - " . $operationHistory->getPlace();
         }
 
         $arrivingDate = $operationHistory->getBeginningDate();

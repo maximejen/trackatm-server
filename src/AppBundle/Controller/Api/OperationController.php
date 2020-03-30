@@ -107,6 +107,26 @@ class OperationController extends ApiController
         }
     }
 
+    private function filterOperations($operations, $operationsThisWeek) {
+        // Filter all the operations that were already done the number asked when they were created.
+        return array_filter($operations, function (Operation $element) use ($operationsThisWeek) {
+            $nbFromCustomer = $element->getCustomer()->getNumberMaxOfOperations();
+            $nbFromOperation = $element->getNumberMaxPerMonth();
+            $nbMax = $nbFromCustomer ? $nbFromCustomer : null;
+            $nbMax = $nbMax == null ? ($nbFromOperation ? $nbFromOperation : null) : $nbMax;
+            if (is_int($nbFromCustomer) && is_int($nbFromOperation)) {
+                $nbMax = $nbFromCustomer > $nbFromOperation ? $nbFromOperation : $nbFromCustomer;
+            }
+            if ($nbMax == null)
+                return (true);
+            $index = $element->getPlace()->getName() . $element->getCleaner()->__toString() . $element->getTemplate()->getName();
+            if (is_int($nbMax) && (array_key_exists($index, $operationsThisWeek) && count($operationsThisWeek[$index]) >= $nbMax)) {
+                return (false);
+            }
+            return (true);
+        });
+    }
+
     /**
      * @Rest\View(serializerGroups={"operation"})
      * @Rest\Get("/api/cleaner/operations/")
@@ -131,6 +151,8 @@ class OperationController extends ApiController
         if ($weekEnd->format("l") != "Saturday")
             $weekEnd->modify('next saturday');
 
+
+
         // get next week limits
         $nextWeekStart = new \DateTime();
         $nextWeekEnd = new \DateTime();
@@ -138,63 +160,59 @@ class OperationController extends ApiController
         $nextWeekEnd->modify("next Sunday");
         $nextWeekEnd->modify("next Saturday");
 
+
         // get last week limits
-        $lastWeekStart = clone $weekStart;
-        $lastWeekEnd = clone $weekStart;
-        $lastWeekStart->modify("last sunday");
-        $lastWeekEnd->modify("last saturday");
+        $lastWeekStart = new \DateTime($weekStart->format("Y-m-d"));
+        $lastWeekEnd = new \DateTime($weekEnd->format("Y-m-d"));
+        $lastWeekStart->modify("-7 days");
+        $lastWeekEnd->modify("-7 days");
+
 
         // get limits of the week before the last one
-        $lastLastWeekStart = clone $lastWeekStart;
-        $lastLastWeekEnd = clone $lastWeekStart;
-        $lastLastWeekStart->modify("last sunday");
-        $lastLastWeekEnd->modify("last saturday");
+        $lastLastWeekStart = new \DateTime($lastWeekStart->format("Y-m-d"));
+        $lastLastWeekEnd = new \DateTime($lastWeekEnd->format("Y-m-d"));
+        $lastLastWeekStart->modify("-7 days");
+        $lastLastWeekEnd->modify("-7 days");
 
         $em = $this->getDoctrine()->getManager();
         $cleaner = $em->getRepository('AppBundle:Cleaner')->findByUser($user);
 
+        ///
 
-        // get all the operation_history of this month
-        $operationsThisMonth = $em->getRepository('AppBundle:OperationHistory')->findOperationHistoriesByCleanerThisMonth($cleaner);
-        $operations = $em->getRepository('AppBundle:Operation')->findOperationsByCleaner($cleaner);
-        // Filter all the operations that were already done the number asked when they were created.
-        $operations = array_filter($operations, function (Operation $element) use ($operationsThisMonth) {
-            $nbFromCustomer = $element->getCustomer()->getNumberMaxOfOperations();
-            $nbFromOperation = $element->getNumberMaxPerMonth();
-            $nbMax = $nbFromCustomer ? $nbFromCustomer : null;
-            $nbMax = $nbMax == null ? $nbFromOperation : $nbMax;
-            if (is_int($nbFromCustomer) && is_int($nbFromOperation)) {
-                $nbMax = $nbFromCustomer > $nbFromOperation ? $nbFromOperation : $nbFromCustomer;
-            }
-            if ((is_int($nbMax) && count($operationsThisMonth[$element->getPlace()->getName() . $element->getCleaner()->__toString()]) >= $nbMax))
-                return (false);
-            return (true);
-        });
-        $historiesActualWeek = $em->getRepository('AppBundle:OperationHistory')->findOperationHistoriesByCleanerAndBetweenTwoDates($cleaner, $weekStart, $weekEnd);
+        $operationHistoriesLastLastWeek = $em->getRepository("AppBundle:OperationHistory")->findOperationHistoriesByCleanerThisMonth($cleaner, $lastLastWeekStart, $lastLastWeekEnd);
+        $operationHistoriesLastWeek = $em->getRepository("AppBundle:OperationHistory")->findOperationHistoriesByCleanerThisMonth($cleaner, $lastWeekStart, $lastWeekEnd);
+        $operationHistoriesWeek = $em->getRepository("AppBundle:OperationHistory")->findOperationHistoriesByCleanerThisMonth($cleaner, $weekStart, $weekEnd);
+        $operationHistoriesNextWeek = $em->getRepository("AppBundle:OperationHistory")->findOperationHistoriesByCleanerThisMonth($cleaner, $nextWeekStart, $nextWeekEnd);
 
+        // get the operations that will need to be filtered
+        $allOperations = $em->getRepository('AppBundle:Operation')->findOperationsByCleaner($cleaner);
 
-        $historiesNextWeek = $em->getRepository('AppBundle:OperationHistory')->findOperationHistoriesByCleanerAndBetweenTwoDates($cleaner, $nextWeekStart, $nextWeekEnd);
-        $historiesLastWeek = $em->getRepository('AppBundle:OperationHistory')->findOperationHistoriesByCleanerAndBetweenTwoDates($cleaner, $lastWeekStart, $lastWeekEnd);
+        // Filter all the operations that were already done the number asked when they were created per week
+        $operations = $this->filterOperations($allOperations, $operationHistoriesLastLastWeek);
+        $operations1 = $this->filterOperations($allOperations, $operationHistoriesLastWeek);
+        $operations2 = $this->filterOperations($allOperations, $operationHistoriesWeek);
+        $operations3 = $this->filterOperations($allOperations, $operationHistoriesNextWeek);
+
+        ///
+
         $historiesLastLastWeek = $em->getRepository('AppBundle:OperationHistory')->findOperationHistoriesByCleanerAndBetweenTwoDates($cleaner, $lastLastWeekStart, $lastLastWeekEnd);
-
-        $week = $this->getWeek($operations);
+        $historiesLastWeek = $em->getRepository('AppBundle:OperationHistory')->findOperationHistoriesByCleanerAndBetweenTwoDates($cleaner, $lastWeekStart, $lastWeekEnd);
+        $historiesActualWeek = $em->getRepository('AppBundle:OperationHistory')->findOperationHistoriesByCleanerAndBetweenTwoDates($cleaner, $weekStart, $weekEnd);
+        $historiesNextWeek = $em->getRepository('AppBundle:OperationHistory')->findOperationHistoriesByCleanerAndBetweenTwoDates($cleaner, $nextWeekStart, $nextWeekEnd);
 
         $flat = $request->query->get('flat') == null ? "true" : $request->query->get('flat');
 
-        $planning = $this->getOperationsPlanning($weekStart, $weekEnd, $week);
 
-        // duplicate week so that there is no edit of the Operations of the first week
-        $week1 = [];
-        foreach ($week as $day => $elements) {
-            !array_key_exists($day, $week1) && $week1[$day] = [];
-            foreach ($elements as $element) $week1[$day][] = clone $element;
-        }
-        $nextPlanning = $this->getOperationsPlanning($nextWeekStart, $nextWeekEnd, $week1);
-
-        $lastWeek = $this->getWeek($operations);
-        $lastWeekPlanning = $this->getOperationsPlanning($lastWeekStart, $lastWeekEnd, $lastWeek);
         $lastLastWeek = $this->getWeek($operations);
+        $lastWeek = $this->getWeek($operations1);
+        $week = $this->getWeek($operations2);
+        $nextWeek = $this->getWeek($operations3);
+
         $lastLastWeekPlanning = $this->getOperationsPlanning($lastLastWeekStart, $lastLastWeekEnd, $lastLastWeek);
+        $lastWeekPlanning = $this->getOperationsPlanning($lastWeekStart, $lastWeekEnd, $lastWeek);
+        $planning = $this->getOperationsPlanning($weekStart, $weekEnd, $week);
+        $nextPlanning = $this->getOperationsPlanning($nextWeekStart, $nextWeekEnd, $nextWeek);
+
         // 1.0.8
 
         if ($flat == "true") {
@@ -206,7 +224,7 @@ class OperationController extends ApiController
             $this->determineOperationsDone($historiesLastWeek, $lastWeekPlanning);
             $this->determineOperationsDone($historiesActualWeek, $planning);
             $this->determineOperationsDone($historiesNextWeek, $nextPlanning);
-            $planning = array_merge($planning, $nextPlanning, $lastWeekPlanning, $lastLastWeekPlanning);
+            $planning = array_merge($lastLastWeekPlanning, $lastWeekPlanning, $planning, $nextPlanning);
 
             return new Response($serializer->serialize($planning, 'json', ['groups' => ['operation']]));
         }

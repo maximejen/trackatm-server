@@ -93,28 +93,29 @@ class OperationHistoryRepository extends \Doctrine\ORM\EntityRepository
 
     public function findOperationHistoriesByCleanerAndBetweenTwoDates(Cleaner $cleaner, $date1, $date2)
     {
-        $date1copied = clone $date1;
-        $date2copied = clone $date2;
         return $this->_em->getRepository("AppBundle:OperationHistory")->createQueryBuilder('ohre')
             ->where('cleaner.id = :cleaner')
             ->andWhere('ohre.initialDate BETWEEN :date1 AND :date2')
             ->join('ohre.cleaner', 'cleaner')
-            ->setParameter('date1', $date1copied->format("Y-m-d 00:00:00"))
-            ->setParameter('date2', $date2copied->format("Y-m-d 23:59:59"))
+            ->setParameter('date1', $date1->format("Y-m-d 00:00:00"))
+            ->setParameter('date2', $date2->format("Y-m-d 23:59:59"))
             ->setParameter('cleaner', $cleaner->getId())
             ->getQuery()
             ->getResult();
     }
 
-    public function findOperationHistoriesByCleanerThisMonth(Cleaner $cleaner)
+    public function findOperationHistoriesByCleanerThisMonth(Cleaner $cleaner, \DateTime $date1, \DateTime $date2)
     {
-        $date = new \DateTime("first day of this month");
+        $dateTmp = new \DateTime($date1->format("Y-m-d"));
+        $dateTmp->modify("-3 weeks");
 
         $ohs = $this->_em->getRepository("AppBundle:OperationHistory")->createQueryBuilder("oh")
             ->where('cleaner.id = :cleanerId')
-            ->andWhere("DATE_DIFF(oh.beginningDate, :date) >= 0")
+            ->andWhere("DATE_DIFF(oh.beginningDate, :date1) >= 0")
+            ->andWhere("DATE_DIFF(oh.beginningDate, :date2) <= 0")
             ->join("oh.cleaner", "cleaner")
-            ->setParameter("date", $date->format("Y-m-d"))
+            ->setParameter("date1", $dateTmp->format("Y-m-d"))
+            ->setParameter("date2", $date2->format("Y-m-d"))
             ->setParameter('cleanerId', $cleaner->getId())
             ->getQuery()
             ->getResult()
@@ -122,10 +123,36 @@ class OperationHistoryRepository extends \Doctrine\ORM\EntityRepository
         $result = [];
         /** @var OperationHistory $oh */
         foreach ($ohs as $oh) {
-            if (!array_key_exists($oh->getPlace(), $result)) {
-                $result[$oh->getPlace() . $oh->getCleaner()->__toString()] = [];
+            $index = $oh->getPlace() . $oh->getCleaner()->__toString() . $oh->getName();
+            if (!array_key_exists($index, $result)) {
+                $result[$index] = [];
             }
-            $result[$oh->getPlace()][] = $oh;
+            $result[$index][] = $oh;
+        }
+        return $result;
+    }
+
+    public function findOperationHistoriesByCleanerASpecificWeek(Cleaner $cleaner, $firstDay, $secondDay)
+    {
+        $ohs = $this->_em->getRepository("AppBundle:OperationHistory")->createQueryBuilder("oh")
+            ->where('cleaner.id = :cleanerId')
+            ->andWhere("DATE_DIFF(oh.beginningDate, :date1) >= 0")
+            ->andWhere("DATE_DIFF(oh.beginningDate, :date2) <= 0")
+            ->join("oh.cleaner", "cleaner")
+            ->setParameter("date1", $firstDay->format("Y-m-d"))
+            ->setParameter("date2", $secondDay->format("Y-m-d"))
+            ->setParameter('cleanerId', $cleaner->getId())
+            ->getQuery()
+            ->getResult()
+        ;
+        $result = [];
+        /** @var OperationHistory $oh */
+        foreach ($ohs as $oh) {
+            $index = $oh->getPlace() . $oh->getCleaner()->__toString();
+            if (!array_key_exists($index, $result)) {
+                $result[$index] = [];
+            }
+            $result[$index][] = $oh;
         }
         return $result;
     }
