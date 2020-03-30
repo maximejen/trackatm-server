@@ -20,6 +20,20 @@ class OperationRepository extends \Doctrine\ORM\EntityRepository
             ->getResult();
     }
 
+    public function getOperationsByCustomerAndTemplate($customerId, $templateId)
+    {
+        return $this->_em->getRepository("AppBundle:Operation")->createQueryBuilder('o')
+            ->where('customer.id LIKE :customer')
+            ->andWhere('template.id LIKE :template')
+            ->join("o.place", "place")
+            ->join("place.customer", "customer")
+            ->join("o.template", "template")
+            ->setParameter('template', $templateId)
+            ->setParameter('customer', $customerId)
+            ->getQuery()
+            ->getResult();
+    }
+
     public function getOperationsByCustomer($customerId)
     {
         return $this->_em->getRepository("AppBundle:Operation")->createQueryBuilder('o')
@@ -27,6 +41,16 @@ class OperationRepository extends \Doctrine\ORM\EntityRepository
             ->join("o.place", "place")
             ->join("place.customer", "customer")
             ->setParameter('customer', $customerId)
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function getOperationsByTemplate($templateId)
+    {
+        return $this->_em->getRepository("AppBundle:Operation")->createQueryBuilder('o')
+            ->where('template.id LIKE :template')
+            ->join("o.template", "template")
+            ->setParameter('template', $templateId)
             ->getQuery()
             ->getResult();
     }

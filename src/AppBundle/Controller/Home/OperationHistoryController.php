@@ -39,6 +39,17 @@ class OperationHistoryController extends HomeController
         return $customer;
     }
 
+    private function getTemplate(Request $request)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $templateId = $request->get('template');
+        $template = null;
+        if ($templateId != null) {
+            $template = $em->getRepository('AppBundle:OperationTemplate')->find($templateId);
+        }
+        return $template;
+    }
+
     private function getDates(Request $request)
     {
         $today = new \DateTime();
@@ -63,23 +74,31 @@ class OperationHistoryController extends HomeController
         return $places;
     }
 
-    private function getOperations($customer)
+    private function getOperations($customer, $template)
     {
         $em = $this->getDoctrine()->getManager();
-        if ($customer == null)
+        if ($customer == null && $template == null)
             $operations = $em->getRepository('AppBundle:Operation')->findAll();
-        else
+        else if ($template == null && $customer != null)
             $operations = $em->getRepository('AppBundle:Operation')->getOperationsByCustomer($customer->getId());
+        else if ($customer == null && $template != null)
+            $operations = $em->getRepository('AppBundle:Operation')->getOperationsByTemplate($template->getId());
+        else
+            $operations = $em->getRepository('AppBundle:Operation')->getOperationsByCustomerAndTemplate($customer->getId(), $template->getId());
         return $operations;
     }
 
-    private function getOperationHistories($customer, $dates)
+    private function getOperationHistories($customer, $dates, $template)
     {
         $em = $this->getDoctrine()->getManager();
-        if ($customer == null)
+        if ($customer == null && $template == null)
             $histories = $em->getRepository('AppBundle:OperationHistory')->findOperationHistoriesBetweenTwoBeginningDates($dates[0], $dates[1]);
-        else
+        else if ($template == null && $customer != null)
             $histories = $em->getRepository('AppBundle:OperationHistory')->findOperationHistoriesByCustomerNameAndBetweenTwoBeginningDates($customer->getName(), $dates[0], $dates[1]);
+        else if ($customer == null && $template != null)
+            $histories = $em->getRepository('AppBundle:OperationHistory')->findOperationHistoriesByTemplateNameAndBetweenTwoBeginningDates($template->getName(), $dates[0], $dates[1]);
+        else
+            $histories = $em->getRepository('AppBundle:OperationHistory')->findOperationHistoriesByCustomerNameAndTemplateNameAndBetweenTwoBeginningDates($customer->getName(), $template->getName(), $dates[0], $dates[1]);
         return $histories;
     }
 
@@ -122,10 +141,11 @@ class OperationHistoryController extends HomeController
     {
         $em = $this->getDoctrine()->getManager();
         $customer = $this->getCustomer($request);
+        $template = $this->getTemplate($request);
         $dates = $this->getDates($request);
         $places = $this->getPlaces($customer);
-        $operations = $this->getOperations($customer);
-        $histories = $this->getOperationHistories($customer, $dates);
+        $operations = $this->getOperations($customer, $template);
+        $histories = $this->getOperationHistories($customer, $dates, $template);
         $week = $this->getWeek($operations);
 
         $numberDone = 0;
@@ -164,6 +184,8 @@ class OperationHistoryController extends HomeController
             "numberOfPlaces" => count($places),
             "customers" => $em->getRepository('AppBundle:Customer')->findAll(),
             "selectedCustomer" => $customer,
+            "templates" => $em->getRepository('AppBundle:OperationTemplate')->findAll(),
+            "selectedTemplate" => $template,
             "firstDate" => $dates[0],
             "secondDate" => $dates[1],
             "operationHistories" => $histories,
@@ -630,6 +652,7 @@ class OperationHistoryController extends HomeController
                 $date->modify("last sunday");
             else if ($oh->getBeginningDate()->format('l') == "Sunday" && $initialDay == "Sunday") {
                 $date = clone $oh->getBeginningDate();
+                $date->setTime(0, 0);
                 $date->setTime(0, 0);
             } else
                 $date->modify($initialDay . " this week");

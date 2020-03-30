@@ -53,6 +53,20 @@ class OperationHistoryRepository extends \Doctrine\ORM\EntityRepository
             ->getResult();
     }
 
+    public function findOperationHistoriesByCustomerNameAndTemplateNameAndBetweenTwoBeginningDates($customerName, $templateName, $date1, $date2)
+    {
+        return $this->_em->getRepository("AppBundle:OperationHistory")->createQueryBuilder('ohre')
+            ->where('ohre.customer LIKE :customer')
+            ->andWhere('ohre.name LIKE :template')
+            ->andWhere('ohre.beginningDate BETWEEN :date1 AND :date2')
+            ->setParameter('date1', $date1->format("Y-m-d 00:00:00"))
+            ->setParameter('date2', $date2->format("Y-m-d 23:59:59"))
+            ->setParameter('customer', $customerName)
+            ->setParameter('template', $templateName)
+            ->getQuery()
+            ->getResult();
+    }
+
     public function findOperationHistoriesByCustomerNameAndBetweenTwoBeginningDates($customerName, $date1, $date2)
     {
         return $this->_em->getRepository("AppBundle:OperationHistory")->createQueryBuilder('ohre')
@@ -61,6 +75,18 @@ class OperationHistoryRepository extends \Doctrine\ORM\EntityRepository
             ->setParameter('date1', $date1->format("Y-m-d 00:00:00"))
             ->setParameter('date2', $date2->format("Y-m-d 23:59:59"))
             ->setParameter('customer', $customerName)
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findOperationHistoriesByTemplateNameAndBetweenTwoBeginningDates($templateName, $date1, $date2)
+    {
+        return $this->_em->getRepository("AppBundle:OperationHistory")->createQueryBuilder('ohre')
+            ->where('ohre.name LIKE :template')
+            ->andWhere('ohre.beginningDate BETWEEN :date1 AND :date2')
+            ->setParameter('date1', $date1->format("Y-m-d 00:00:00"))
+            ->setParameter('date2', $date2->format("Y-m-d 23:59:59"))
+            ->setParameter('template', $templateName)
             ->getQuery()
             ->getResult();
     }

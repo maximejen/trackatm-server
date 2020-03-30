@@ -41,6 +41,20 @@
                         </select>
                     </div>
                 </div>
+                <div class="column">
+                    <div class="select is-primary is-medium">
+                        <select id="js-template-choice" name="template">
+                            <option value="">Select a Template</option>
+                            {% for template in templates %}
+                                <option id="{{ 'js-template' ~ template.id }}"
+                                        value="{{ template.id }}"
+                                        {% if selectedTemplate is not null and selectedTemplate.id == template.id %}selected{% endif %}>
+                                    {{ "#" ~ template.id ~ " - " ~ template.name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
                 <div class="column columns is-mobile">
                     <div class="column">
                         <div>
