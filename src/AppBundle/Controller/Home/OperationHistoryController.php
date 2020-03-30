@@ -207,10 +207,11 @@ class OperationHistoryController extends HomeController
     {
         $em = $this->getDoctrine()->getManager();
         $customer = $this->getCustomer($request);
+        $template = $this->getTemplate($request);
         $dates = $this->getDates($request);
         $places = $this->getPlaces($customer);
-        $operations = $this->getOperations($customer);
-        $histories = $this->getOperationHistories($customer, $dates);
+        $operations = $this->getOperations($customer, $template);
+        $histories = $this->getOperationHistories($customer, $dates, $template);
         $week = $this->getWeek($operations);
 
         $numberDone = 0;
@@ -258,10 +259,11 @@ class OperationHistoryController extends HomeController
     {
         $em = $this->getDoctrine()->getManager();
         $customer = $this->getCustomer($request);
+        $template = $this->getTemplate($request);
         $dates = $this->getDates($request);
         $places = $this->getPlaces($customer);
-        $operations = $this->getOperations($customer);
-        $histories = $this->getOperationHistories($customer, $dates);
+        $operations = $this->getOperations($customer, $template);
+        $histories = $this->getOperationHistories($customer, $dates, $template);
         $week = $this->getWeek($operations);
 
         $numberDone = 0;
@@ -483,9 +485,10 @@ class OperationHistoryController extends HomeController
     public function generatePdfAndSendEmailToCustomerAction(Request $request)
     {
         $customer = $this->getCustomer($request);
+        $template = $this->getTemplate($request);
         $dates = $this->getDates($request);
-        $operations = $this->getOperations($customer);
-        $histories = $this->getOperationHistories($customer, $dates);
+        $operations = $this->getOperations($customer, $template);
+        $histories = $this->getOperationHistories($customer, $dates, $template);
         $week = $this->getWeek($operations);
 
         $numberDone = 0;
