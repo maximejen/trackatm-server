@@ -105,6 +105,7 @@ class OperationController extends ApiController
                     $operation->setDone(false);
             }
         }
+        return $planning;
     }
 
     private function filterOperations($operations, $operationsThisWeek) {
@@ -125,6 +126,17 @@ class OperationController extends ApiController
             }
             return (true);
         });
+    }
+
+    function EqualReferences(&$first, &$second){
+        if($first !== $second){
+            return false;
+        }
+        $value_of_first = $first;
+        $first = ($first === true) ? false : true; // modify $first
+        $is_ref = ($first === $second); // after modifying $first, $second will not be equal to $first, unless $second and $first points to the same variable.
+        $first = $value_of_first; // unmodify $first
+        return $is_ref;
     }
 
     /**
@@ -187,20 +199,33 @@ class OperationController extends ApiController
         // get the operations that will need to be filtered
         $allOperations = $em->getRepository('AppBundle:Operation')->findOperationsByCleaner($cleaner);
 
-        // Filter all the operations that were already done the number asked when they were created per week
-        $operations = $this->filterOperations($allOperations, $operationHistoriesLastLastWeek);
-        $operations1 = $this->filterOperations($allOperations, $operationHistoriesLastWeek);
-        $operations2 = $this->filterOperations($allOperations, $operationHistoriesWeek);
-        $operations3 = $this->filterOperations($allOperations, $operationHistoriesNextWeek);
+        $operations = [];
+        foreach ($allOperations as $operation) {
+            $operations[] = clone($operation);
+        }
+        $operations1 = [];
+        foreach ($allOperations as $operation) {
+            $operations1[] = clone($operation);
+        }
+        $operations2 = [];
+        foreach ($allOperations as $operation) {
+            $operations2[] = clone($operation);
+        }
+        $operations3 = [];
+        foreach ($allOperations as $operation) {
+            $operations3[] = clone($operation);
+        }
 
-        ///
+        // Filter all the operations that were already done the number asked when they were created per week
+        $operations = $this->filterOperations($operations, $operationHistoriesLastLastWeek);
+        $operations1 = $this->filterOperations($operations1, $operationHistoriesLastWeek);
+        $operations2 = $this->filterOperations($operations2, $operationHistoriesWeek);
+        $operations3 = $this->filterOperations($operations3, $operationHistoriesNextWeek);
 
         $historiesLastLastWeek = $em->getRepository('AppBundle:OperationHistory')->findOperationHistoriesByCleanerAndBetweenTwoDates($cleaner, $lastLastWeekStart, $lastLastWeekEnd);
         $historiesLastWeek = $em->getRepository('AppBundle:OperationHistory')->findOperationHistoriesByCleanerAndBetweenTwoDates($cleaner, $lastWeekStart, $lastWeekEnd);
         $historiesActualWeek = $em->getRepository('AppBundle:OperationHistory')->findOperationHistoriesByCleanerAndBetweenTwoDates($cleaner, $weekStart, $weekEnd);
         $historiesNextWeek = $em->getRepository('AppBundle:OperationHistory')->findOperationHistoriesByCleanerAndBetweenTwoDates($cleaner, $nextWeekStart, $nextWeekEnd);
-
-        $flat = $request->query->get('flat') == null ? "true" : $request->query->get('flat');
 
 
         $lastLastWeek = $this->getWeek($operations);
@@ -213,18 +238,23 @@ class OperationController extends ApiController
         $planning = $this->getOperationsPlanning($weekStart, $weekEnd, $week);
         $nextPlanning = $this->getOperationsPlanning($nextWeekStart, $nextWeekEnd, $nextWeek);
 
-        // 1.0.8
+        $flat = $request->query->get('flat') == null ? "true" : $request->query->get('flat');
+
+        $tmp = 0;
 
         if ($flat == "true") {
-            foreach ($operations as $operation) $operation->setDone(false); // all operations are on false when it's flat for compatibility reasons.
+            foreach ($allOperations as $operation) $operation->setDone(false); // all operations are on false when it's flat for compatibility reasons.
             $operations = $this->fromPlanningToFlat($planning);
             return new Response($serializer->serialize($operations, 'json', ['groups' => ['operation']]));
         } else {
-            $this->determineOperationsDone($historiesLastLastWeek, $lastLastWeekPlanning);
-            $this->determineOperationsDone($historiesLastWeek, $lastWeekPlanning);
-            $this->determineOperationsDone($historiesActualWeek, $planning);
-            $this->determineOperationsDone($historiesNextWeek, $nextPlanning);
+            $lastLastWeekPlanning = $this->determineOperationsDone($historiesLastLastWeek, $lastLastWeekPlanning);
+            $lastWeekPlanning = $this->determineOperationsDone($historiesLastWeek, $lastWeekPlanning);
+            $planning = $this->determineOperationsDone($historiesActualWeek, $planning);
+            $nextPlanning = $this->determineOperationsDone($historiesNextWeek, $nextPlanning);
+
+
             $planning = array_merge($lastLastWeekPlanning, $lastWeekPlanning, $planning, $nextPlanning);
+
 
             return new Response($serializer->serialize($planning, 'json', ['groups' => ['operation']]));
         }
