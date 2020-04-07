@@ -108,9 +108,10 @@ class OperationController extends ApiController
         return $planning;
     }
 
-    private function filterOperations($operations, $operationsThisWeek) {
+    private function filterOperations($operations, $operationsThisWeek, &$operationsCounter) {
+
         // Filter all the operations that were already done the number asked when they were created.
-        return array_filter($operations, function (Operation $element) use ($operationsThisWeek) {
+        return array_filter($operations, function (Operation $element) use ($operationsThisWeek, &$operationsCounter) {
             $nbFromCustomer = $element->getCustomer()->getNumberMaxOfOperations();
             $nbFromOperation = $element->getNumberMaxPerMonth();
             $nbMax = $nbFromCustomer ? $nbFromCustomer : null;
@@ -123,6 +124,12 @@ class OperationController extends ApiController
             $index = $element->getPlace()->getName() . $element->getCleaner()->__toString() . $element->getTemplate()->getName();
             if (is_int($nbMax) && (array_key_exists($index, $operationsThisWeek) && count($operationsThisWeek[$index]) >= $nbMax)) {
                 return (false);
+            }
+            $index = $element->getPlace()->getName();
+            if ($operationsCounter != null && array_key_exists($index, $operationsCounter) && !is_null($operationsCounter[$index])) {
+                if ($operationsCounter[$index] <= 0)
+                    return (false);
+                $operationsCounter[$index]--;
             }
             return (true);
         });
@@ -199,6 +206,18 @@ class OperationController extends ApiController
         // get the operations that will need to be filtered
         $allOperations = $em->getRepository('AppBundle:Operation')->findOperationsByCleaner($cleaner);
 
+
+        $operationCounter = [];
+        // this part is counting the number of times an operation should show per month.
+        /** @var Operation $operation */
+        foreach ($allOperations as $operation) {
+            $nbFromCustomer = $operation->getCustomer()->getNumberMaxOfOperations();
+            $nbFromOperation = $operation->getNumberMaxPerMonth();
+            $nbMax = $nbFromCustomer ? $nbFromCustomer : null;
+            $nbMax = $nbMax == null ? ($nbFromOperation ? $nbFromOperation : null) : $nbMax;
+            $operationCounter[$operation->getPlace()->getName()] = $nbMax;
+        }
+
         $operations = [];
         foreach ($allOperations as $operation) {
             $operations[] = clone($operation);
@@ -216,11 +235,15 @@ class OperationController extends ApiController
             $operations3[] = clone($operation);
         }
 
+        $null = null;
+
         // Filter all the operations that were already done the number asked when they were created per week
-        $operations = $this->filterOperations($operations, $operationHistoriesLastLastWeek);
-        $operations1 = $this->filterOperations($operations1, $operationHistoriesLastWeek);
-        $operations2 = $this->filterOperations($operations2, $operationHistoriesWeek);
-        $operations3 = $this->filterOperations($operations3, $operationHistoriesNextWeek);
+        $operations = $this->filterOperations($operations, $operationHistoriesLastLastWeek, $null);
+        $operations1 = $this->filterOperations($operations1, $operationHistoriesLastWeek, $null);
+        $operations2 = $this->filterOperations($operations2, $operationHistoriesWeek, $operationCounter);
+//        var_dump($operationCounter);
+        $operations3 = $this->filterOperations($operations3, $operationHistoriesNextWeek, $operationCounter);
+//        var_dump($operationCounter);
 
         $historiesLastLastWeek = $em->getRepository('AppBundle:OperationHistory')->findOperationHistoriesByCleanerAndBetweenTwoDates($cleaner, $lastLastWeekStart, $lastLastWeekEnd);
         $historiesLastWeek = $em->getRepository('AppBundle:OperationHistory')->findOperationHistoriesByCleanerAndBetweenTwoDates($cleaner, $lastWeekStart, $lastWeekEnd);
@@ -239,8 +262,6 @@ class OperationController extends ApiController
         $nextPlanning = $this->getOperationsPlanning($nextWeekStart, $nextWeekEnd, $nextWeek);
 
         $flat = $request->query->get('flat') == null ? "true" : $request->query->get('flat');
-
-        $tmp = 0;
 
         if ($flat == "true") {
             foreach ($allOperations as $operation) $operation->setDone(false); // all operations are on false when it's flat for compatibility reasons.
