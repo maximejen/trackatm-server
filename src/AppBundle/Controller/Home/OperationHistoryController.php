@@ -4,6 +4,7 @@ namespace AppBundle\Controller\Home;
 
 use AppBundle\Controller\HomeController;
 
+use AppBundle\Entity\Cleaner;
 use AppBundle\Entity\Image;
 use AppBundle\Entity\Operation;
 use AppBundle\Entity\OperationHistory;
@@ -50,6 +51,17 @@ class OperationHistoryController extends HomeController
         return $template;
     }
 
+    private function getCleaner(Request $request)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $cleanerId = $request->get('cleaner');
+        $cleaner = null;
+        if ($cleanerId != null) {
+            $cleaner = $em->getRepository('AppBundle:Cleaner')->find($cleanerId);
+        }
+        return $cleaner;
+    }
+
     private function getDates(Request $request)
     {
         $today = new \DateTime();
@@ -74,31 +86,31 @@ class OperationHistoryController extends HomeController
         return $places;
     }
 
-    private function getOperations($customer, $template)
+    private function getOperations($customer, $template, Cleaner $cleaner = null)
     {
         $em = $this->getDoctrine()->getManager();
         if ($customer == null && $template == null)
-            $operations = $em->getRepository('AppBundle:Operation')->findAll();
+            $operations = $em->getRepository('AppBundle:Operation')->getAllOperations($cleaner);
         else if ($template == null && $customer != null)
-            $operations = $em->getRepository('AppBundle:Operation')->getOperationsByCustomer($customer->getId());
+            $operations = $em->getRepository('AppBundle:Operation')->getOperationsByCustomer($customer->getId(), $cleaner);
         else if ($customer == null && $template != null)
-            $operations = $em->getRepository('AppBundle:Operation')->getOperationsByTemplate($template->getId());
+            $operations = $em->getRepository('AppBundle:Operation')->getOperationsByTemplate($template->getId(), $cleaner);
         else
-            $operations = $em->getRepository('AppBundle:Operation')->getOperationsByCustomerAndTemplate($customer->getId(), $template->getId());
+            $operations = $em->getRepository('AppBundle:Operation')->getOperationsByCustomerAndTemplate($customer->getId(), $template->getId(), $cleaner);
         return $operations;
     }
 
-    private function getOperationHistories($customer, $dates, $template)
+    private function getOperationHistories($customer, $dates, $template, Cleaner $cleaner = null)
     {
         $em = $this->getDoctrine()->getManager();
         if ($customer == null && $template == null)
-            $histories = $em->getRepository('AppBundle:OperationHistory')->findOperationHistoriesBetweenTwoBeginningDates($dates[0], $dates[1]);
+            $histories = $em->getRepository('AppBundle:OperationHistory')->findOperationHistoriesBetweenTwoBeginningDates($dates[0], $dates[1], $cleaner);
         else if ($template == null && $customer != null)
-            $histories = $em->getRepository('AppBundle:OperationHistory')->findOperationHistoriesByCustomerNameAndBetweenTwoBeginningDates($customer->getName(), $dates[0], $dates[1]);
+            $histories = $em->getRepository('AppBundle:OperationHistory')->findOperationHistoriesByCustomerNameAndBetweenTwoBeginningDates($customer->getName(), $dates[0], $dates[1], $cleaner);
         else if ($customer == null && $template != null)
-            $histories = $em->getRepository('AppBundle:OperationHistory')->findOperationHistoriesByTemplateNameAndBetweenTwoBeginningDates($template->getName(), $dates[0], $dates[1]);
+            $histories = $em->getRepository('AppBundle:OperationHistory')->findOperationHistoriesByTemplateNameAndBetweenTwoBeginningDates($template->getName(), $dates[0], $dates[1], $cleaner);
         else
-            $histories = $em->getRepository('AppBundle:OperationHistory')->findOperationHistoriesByCustomerNameAndTemplateNameAndBetweenTwoBeginningDates($customer->getName(), $template->getName(), $dates[0], $dates[1]);
+            $histories = $em->getRepository('AppBundle:OperationHistory')->findOperationHistoriesByCustomerNameAndTemplateNameAndBetweenTwoBeginningDates($customer->getName(), $template->getName(), $dates[0], $dates[1], $cleaner);
         return $histories;
     }
 
@@ -142,10 +154,11 @@ class OperationHistoryController extends HomeController
         $em = $this->getDoctrine()->getManager();
         $customer = $this->getCustomer($request);
         $template = $this->getTemplate($request);
+        $cleaner = $this->getCleaner($request);
         $dates = $this->getDates($request);
         $places = $this->getPlaces($customer);
-        $operations = $this->getOperations($customer, $template);
-        $histories = $this->getOperationHistories($customer, $dates, $template);
+        $operations = $this->getOperations($customer, $template, $cleaner);
+        $histories = $this->getOperationHistories($customer, $dates, $template, $cleaner);
         $week = $this->getWeek($operations);
 
         $numberDone = 0;
@@ -186,6 +199,8 @@ class OperationHistoryController extends HomeController
             "selectedCustomer" => $customer,
             "templates" => $em->getRepository('AppBundle:OperationTemplate')->findAll(),
             "selectedTemplate" => $template,
+            "cleaners" => $em->getRepository('AppBundle:Cleaner')->findAll(),
+            "selectedCleaner" => $cleaner,
             "firstDate" => $dates[0],
             "secondDate" => $dates[1],
             "operationHistories" => $histories,

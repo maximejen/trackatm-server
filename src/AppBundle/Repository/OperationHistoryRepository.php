@@ -22,12 +22,21 @@ class OperationHistoryRepository extends \Doctrine\ORM\EntityRepository
             ->getQuery()
             ->getResult();
     }
-    public function findOperationHistoriesBetweenTwoBeginningDates($date1, $date2)
+
+    public function findOperationHistoriesBetweenTwoBeginningDates($date1, $date2, Cleaner $cleaner = null)
     {
-        return $this->_em->getRepository("AppBundle:OperationHistory")->createQueryBuilder('ohre')
+        $query = $this->_em->getRepository("AppBundle:OperationHistory")
+            ->createQueryBuilder('ohre')
             ->where('ohre.beginningDate BETWEEN :date1 AND :date2')
             ->setParameter('date1', $date1->format("Y-m-d 00:00:00"))
-            ->setParameter('date2', $date2->format("Y-m-d 23:59:59"))
+            ->setParameter('date2', $date2->format("Y-m-d 23:59:59"));
+        if ($cleaner !== null) {
+            $query
+                ->andWhere("cleaner.id = :cleanerId")
+                ->setParameter("cleanerId", $cleaner->getId())
+                ->join("ohre.cleaner", "cleaner");
+        }
+        return $query
             ->getQuery()
             ->getResult();
     }
@@ -53,40 +62,61 @@ class OperationHistoryRepository extends \Doctrine\ORM\EntityRepository
             ->getResult();
     }
 
-    public function findOperationHistoriesByCustomerNameAndTemplateNameAndBetweenTwoBeginningDates($customerName, $templateName, $date1, $date2)
+    public function findOperationHistoriesByCustomerNameAndTemplateNameAndBetweenTwoBeginningDates($customerName, $templateName, $date1, $date2, Cleaner $cleaner = null)
     {
-        return $this->_em->getRepository("AppBundle:OperationHistory")->createQueryBuilder('ohre')
+        $query = $this->_em->getRepository("AppBundle:OperationHistory")->createQueryBuilder('ohre')
             ->where('ohre.customer LIKE :customer')
             ->andWhere('ohre.name LIKE :template')
             ->andWhere('ohre.beginningDate BETWEEN :date1 AND :date2')
             ->setParameter('date1', $date1->format("Y-m-d 00:00:00"))
             ->setParameter('date2', $date2->format("Y-m-d 23:59:59"))
             ->setParameter('customer', $customerName)
-            ->setParameter('template', $templateName)
+            ->setParameter('template', $templateName);
+        if ($cleaner !== null) {
+            $query
+                ->andWhere("cleaner.id = :cleanerId")
+                ->setParameter("cleanerId", $cleaner->getId())
+                ->join("ohre.cleaner", "cleaner");
+        }
+        return $query
             ->getQuery()
             ->getResult();
     }
 
-    public function findOperationHistoriesByCustomerNameAndBetweenTwoBeginningDates($customerName, $date1, $date2)
+    public function findOperationHistoriesByCustomerNameAndBetweenTwoBeginningDates($customerName, $date1, $date2, Cleaner $cleaner = null)
     {
-        return $this->_em->getRepository("AppBundle:OperationHistory")->createQueryBuilder('ohre')
+        $query = $this->_em->getRepository("AppBundle:OperationHistory")->createQueryBuilder('ohre')
             ->where('ohre.customer LIKE :customer')
             ->andWhere('ohre.beginningDate BETWEEN :date1 AND :date2')
             ->setParameter('date1', $date1->format("Y-m-d 00:00:00"))
             ->setParameter('date2', $date2->format("Y-m-d 23:59:59"))
-            ->setParameter('customer', $customerName)
+            ->setParameter('customer', $customerName);
+        if ($cleaner !== null) {
+            $query
+                ->andWhere("cleaner.id = :cleanerId")
+                ->setParameter("cleanerId", $cleaner->getId())
+                ->join("ohre.cleaner", "cleaner");
+        }
+        return $query
             ->getQuery()
             ->getResult();
     }
 
-    public function findOperationHistoriesByTemplateNameAndBetweenTwoBeginningDates($templateName, $date1, $date2)
+    public function findOperationHistoriesByTemplateNameAndBetweenTwoBeginningDates($templateName, $date1, $date2, Cleaner $cleaner = null)
     {
-        return $this->_em->getRepository("AppBundle:OperationHistory")->createQueryBuilder('ohre')
+        $query = $this->_em->getRepository("AppBundle:OperationHistory")->createQueryBuilder('ohre')
             ->where('ohre.name LIKE :template')
             ->andWhere('ohre.beginningDate BETWEEN :date1 AND :date2')
             ->setParameter('date1', $date1->format("Y-m-d 00:00:00"))
             ->setParameter('date2', $date2->format("Y-m-d 23:59:59"))
-            ->setParameter('template', $templateName)
+            ->setParameter('template', $templateName);
+        if ($cleaner !== null) {
+            $query
+                ->andWhere("cleaner.id = :cleanerId")
+                ->setParameter("cleanerId", $cleaner->getId())
+                ->join("ohre.cleaner", "cleaner");
+        }
+        return $query
             ->getQuery()
             ->getResult();
     }
@@ -118,8 +148,7 @@ class OperationHistoryRepository extends \Doctrine\ORM\EntityRepository
             ->setParameter("date2", $date2->format("Y-m-d"))
             ->setParameter('cleanerId', $cleaner->getId())
             ->getQuery()
-            ->getResult()
-        ;
+            ->getResult();
         $result = [];
         /** @var OperationHistory $oh */
         foreach ($ohs as $oh) {
@@ -143,8 +172,7 @@ class OperationHistoryRepository extends \Doctrine\ORM\EntityRepository
             ->setParameter("date2", $secondDay->format("Y-m-d"))
             ->setParameter('cleanerId', $cleaner->getId())
             ->getQuery()
-            ->getResult()
-        ;
+            ->getResult();
         $result = [];
         /** @var OperationHistory $oh */
         foreach ($ohs as $oh) {

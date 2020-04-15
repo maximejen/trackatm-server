@@ -2,6 +2,8 @@
 
 namespace AppBundle\Repository;
 
+use AppBundle\Entity\Cleaner;
+
 /**
  * OperationRepository
  *
@@ -10,7 +12,8 @@ namespace AppBundle\Repository;
  */
 class OperationRepository extends \Doctrine\ORM\EntityRepository
 {
-    public function findByName($name) {
+    public function findByName($name)
+    {
         $name = '%' . $name . '%';
         return $this->_em->getRepository("AppBundle:Operation")->createQueryBuilder('o')
             ->where('place.name LIKE :name')
@@ -20,37 +23,71 @@ class OperationRepository extends \Doctrine\ORM\EntityRepository
             ->getResult();
     }
 
-    public function getOperationsByCustomerAndTemplate($customerId, $templateId)
+    public function getOperationsByCustomerAndTemplate($customerId, $templateId, Cleaner $cleaner = null)
     {
-        return $this->_em->getRepository("AppBundle:Operation")->createQueryBuilder('o')
+        $query = $this->_em->getRepository("AppBundle:Operation")->createQueryBuilder('o')
             ->where('customer.id LIKE :customer')
             ->andWhere('template.id LIKE :template')
             ->join("o.place", "place")
             ->join("place.customer", "customer")
             ->join("o.template", "template")
             ->setParameter('template', $templateId)
-            ->setParameter('customer', $customerId)
+            ->setParameter('customer', $customerId);
+        if ($cleaner !== null) {
+            $query
+                ->andWhere("cleaner.id = :cleanerId")
+                ->join("o.cleaner", "cleaner")
+                ->setParameter("cleanerId", $cleaner->getId());
+        }
+        return $query
             ->getQuery()
             ->getResult();
     }
 
-    public function getOperationsByCustomer($customerId)
+    public function getAllOperations(Cleaner $cleaner = null)
     {
-        return $this->_em->getRepository("AppBundle:Operation")->createQueryBuilder('o')
+        if ($cleaner !== null) {
+            return $this->_em->getRepository("AppBundle:Operation")->createQueryBuilder('o')
+                ->where("cleaner.id = :cleanerId")
+                ->join("o.cleaner", "cleaner")
+                ->setParameter("cleanerId", $cleaner->getId())
+                ->getQuery()
+                ->getResult();
+        }
+        return $this->_em->getRepository("AppBundle:Operation")->findAll();
+    }
+
+    public function getOperationsByCustomer($customerId, Cleaner $cleaner = null)
+    {
+        $query = $this->_em->getRepository("AppBundle:Operation")->createQueryBuilder('o')
             ->where('customer.id LIKE :customer')
             ->join("o.place", "place")
             ->join("place.customer", "customer")
-            ->setParameter('customer', $customerId)
+            ->setParameter('customer', $customerId);
+        if ($cleaner !== null) {
+            $query
+                ->andWhere("cleaner.id = :cleanerId")
+                ->join("o.cleaner", "cleaner")
+                ->setParameter("cleanerId", $cleaner->getId());
+        }
+        return $query
             ->getQuery()
             ->getResult();
     }
 
-    public function getOperationsByTemplate($templateId)
+    public function getOperationsByTemplate($templateId, Cleaner $cleaner = null)
     {
-        return $this->_em->getRepository("AppBundle:Operation")->createQueryBuilder('o')
+        $query = $this->_em->getRepository("AppBundle:Operation")->createQueryBuilder('o')
             ->where('template.id LIKE :template')
             ->join("o.template", "template")
-            ->setParameter('template', $templateId)
+            ->setParameter('template', $templateId);
+        if ($cleaner !== null) {
+            $query
+                ->andWhere("cleaner.id = :cleanerId")
+                ->join("o.cleaner", "cleaner")
+                ->setParameter("cleanerId", $cleaner->getId());
+        }
+        return $query
             ->getQuery()
             ->getResult();
     }

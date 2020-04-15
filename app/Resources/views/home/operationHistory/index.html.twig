@@ -123,6 +123,20 @@
                         </div>
                     {% endif %}
                 </div>
+                <div class="column">
+                    <div class="select is-primary is-medium">
+                        <select id="js-template-choice" name="cleaner">
+                            <option value="">Select a Cleaner</option>
+                            {% for cln in cleaners %}
+                                <option id="{{ 'js-cleaner' ~ cln.id }}"
+                                        value="{{ cln.id }}"
+                                        {% if selectedCleaner is not null and selectedCleaner.id == cln.id %}selected{% endif %}>
+                                    {{ cln }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
             </form>
         </section>
         <section class="container">
