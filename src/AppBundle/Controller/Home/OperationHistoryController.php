@@ -689,6 +689,7 @@ class OperationHistoryController extends HomeController
                 ["Empty waste bin", "", 1, 0, "", 7, 0],
                 ["Take photo for any damage", "", 0, 1, "", 8, 1],
                 ["Take photo after service", "", 1, 1, "", 9, 0],
+                ["ATM closed", "", 1, 0, "", 10, 0],
             ];
             foreach ($args as $arg) {
                 $task = new OperationTaskHistory();
