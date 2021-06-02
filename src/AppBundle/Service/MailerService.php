@@ -56,7 +56,16 @@ class MailerService
                     $params
                 ), 'text/html');
         }
-        $this->mailer->send($message);
+        try {
+            $this->mailer->send($message);
+        } catch (\Exception $e) {
+            $file = "mail.log";
+            if (!file_exists($file))
+                fopen($file, "w");
+            $current = file_get_contents($file);
+            $current .= "Error sending the mail :\n".$e->getMessage()."\n";
+            file_put_contents($file, $current);
+        }
     }
 
     public function generatePdfAndSendMail(OperationHistory $operationHistory)

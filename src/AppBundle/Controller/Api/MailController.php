@@ -51,9 +51,11 @@ class MailController extends ApiController
         ];
     }
 
-    public function generatePdfAndSendMail(OperationHistory $operationHistory)
+    public function generatePdfAndSendMail(OperationHistory $operationHistory, $backup = false)
     {
         $sendTo = [];
+        if ($backup == true)
+            array_push($sendTo, "maxime.jenny@epitech.eu");
         $entityManager = $this->get('doctrine.orm.entity_manager');
         /** @var Customer $customer */
         $customer = $entityManager
@@ -66,7 +68,8 @@ class MailController extends ApiController
             ->getRepository('AppBundle:User')
             ->findBy(['admin' => true]);
         foreach ($admin as $item) {
-            array_push($sendTo, $item->getEmail());
+            if ($backup == false)
+                array_push($sendTo, $item->getEmail());
         }
 
         $file = "mail.log";
@@ -218,7 +221,7 @@ class MailController extends ApiController
 
 //        $mail = $this->container->get('mail.send');
         try {
-            $this->generatePdfAndSendMail($operationHistory);
+            $this->generatePdfAndSendMail($operationHistory, true);
         } catch (Exception $e) {
             $file = "mail.log";
             if (!file_exists($file))

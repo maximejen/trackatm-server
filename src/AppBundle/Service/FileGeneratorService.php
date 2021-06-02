@@ -117,6 +117,9 @@ class FileGeneratorService
 
     private function mapHistoriesToTable($content, $histories, $month)
     {
+//        uasort($histories, function (OperationHistory $a, OperationHistory $b) {
+//            return strcmp($a->getPlace(), $b->getPlace());
+//        });
         /** @var OperationHistory $history */
         foreach ($histories as $history) {
             $date = $history->getBeginningDate();
@@ -246,7 +249,7 @@ class FileGeneratorService
                 if ($key == "TOTAL")
                     $toWrite .= "\n";
                 else
-                    $toWrite .= ";";
+                    $toWrite .= ",";
             }
             unset($month['content']['columns']);
             foreach ($month['content'] as $place => $column) {
@@ -265,7 +268,7 @@ class FileGeneratorService
                     if ($columnKey == "TOTAL")
                         $toWrite .= "\n";
                     else
-                        $toWrite .= ";";
+                        $toWrite .= ",";
                 }
             }
             $toWrite .= "\n";

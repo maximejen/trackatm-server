@@ -80,9 +80,9 @@ class OperationHistoryController extends HomeController
     {
         $em = $this->getDoctrine()->getManager();
         if ($customer != null)
-            $places = $em->getRepository('AppBundle:Place')->findBy(['customer' => $customer]);
+            $places = $em->getRepository('AppBundle:Place')->findBy(['customer' => $customer], ["name" => "ASC"]);
         else
-            $places = $em->getRepository('AppBundle:Place')->findAll();
+            $places = $em->getRepository('AppBundle:Place')->findBy([], ['name' => 'ASC']);
         return $places;
     }
 
