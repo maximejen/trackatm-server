@@ -77,6 +77,11 @@ class OperationController extends ApiController
         return $newArray;
     }
 
+    // TODO : when operation is to be done 2 times a week (should be the same with 3 / 4 / 5 ...)
+    // if it isn't done the first day (of the 2) but done the second day ... the second day stays as "not done" while the first is set to "done"
+    // logically we should set the first to "not done" while setting the second to "done"
+    // easy fix would be to check the date it was done and get the closest operation and if perfect tie => set the oldest one to done.
+
     private function determineOperationsDone($histories, $planning)
     {
         $nbTimesToBeDone = [];
@@ -164,7 +169,7 @@ class OperationController extends ApiController
 
         // get actual week limits
         $weekStart = new \DateTime();
-        $weekEnd = new\DateTime();
+        $weekEnd = new \DateTime();
         if ($weekStart->format("l") != "Sunday")
             $weekStart->modify('last sunday');
         if ($weekEnd->format("l") != "Saturday")
@@ -219,19 +224,13 @@ class OperationController extends ApiController
         }
 
         $operations = [];
-        foreach ($allOperations as $operation) {
-            $operations[] = clone($operation);
-        }
         $operations1 = [];
-        foreach ($allOperations as $operation) {
-            $operations1[] = clone($operation);
-        }
         $operations2 = [];
-        foreach ($allOperations as $operation) {
-            $operations2[] = clone($operation);
-        }
         $operations3 = [];
         foreach ($allOperations as $operation) {
+            $operations[] = clone($operation);
+            $operations1[] = clone($operation);
+            $operations2[] = clone($operation);
             $operations3[] = clone($operation);
         }
 
@@ -241,9 +240,14 @@ class OperationController extends ApiController
         $operations = $this->filterOperations($operations, $operationHistoriesLastLastWeek, $null);
         $operations1 = $this->filterOperations($operations1, $operationHistoriesLastWeek, $null);
         $operations2 = $this->filterOperations($operations2, $operationHistoriesWeek, $operationCounter);
-//        var_dump($operationCounter);
+//        $tmp = array_map(function ($operation) {
+//            /** @var Operation $operation */
+//            return $operation->getPlace()->getName();
+//        }, $operations2);
+//        return new Response($serializer->serialize($tmp, 'json', ['groups' => ['operation']]));
+
         $operations3 = $this->filterOperations($operations3, $operationHistoriesNextWeek, $operationCounter);
-//        var_dump($operationCounter);
+
 
         $historiesLastLastWeek = $em->getRepository('AppBundle:OperationHistory')->findOperationHistoriesByCleanerAndBetweenTwoDates($cleaner, $lastLastWeekStart, $lastLastWeekEnd);
         $historiesLastWeek = $em->getRepository('AppBundle:OperationHistory')->findOperationHistoriesByCleanerAndBetweenTwoDates($cleaner, $lastWeekStart, $lastWeekEnd);
@@ -272,6 +276,8 @@ class OperationController extends ApiController
             $lastWeekPlanning = $this->determineOperationsDone($historiesLastWeek, $lastWeekPlanning);
             $planning = $this->determineOperationsDone($historiesActualWeek, $planning);
             $nextPlanning = $this->determineOperationsDone($historiesNextWeek, $nextPlanning);
+
+//            return new Response($serializer->serialize($planning, 'json', ['groups' => ['operation']]));
 
 
             $planning = array_merge($lastLastWeekPlanning, $lastWeekPlanning, $planning, $nextPlanning);

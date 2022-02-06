@@ -316,4 +316,44 @@ class FileGeneratorService
                 continue;
         }
     }
+
+    public function fromCSVToOperations(EntityManager $em, $csv)
+    {
+        $lines = explode("\r\n", $csv);
+        $columns = explode(";", $lines[0]);
+        unset($lines[0]);
+        foreach ($columns as $key => $column) {
+            $columns[$column] = $key;
+        }
+
+        foreach ($lines as $key => $line) {
+            $line = explode(";", $line);
+
+            $operation = new Operation();
+
+            $day = $line[$columns['day']];
+            $operation->setDay($day);
+
+            $cleaner_id = $line[$columns["cleaner_id"]];
+            $cleaner = $em->getRepository('AppBundle:Cleaner')->findOneBy(['id' => $cleaner_id]);
+            if (!$cleaner)
+                continue;
+            $operation->setCleaner($cleaner);
+
+            $template_id = $line[$columns['template_id']];
+            $template = $em->getRepository('AppBundle:OperationTemplate')->findOneBy(['id' => $template_id]);
+            if (!$template)
+                continue;
+            $operation->setTemplate($template);
+
+            $place_id = $line[$columns['place_id']];
+            $place = $em->getRepository('AppBundle:Place')->findOneBy(['id' => $place_id]);
+            if (!$place)
+                continue;
+            $operation->setPlace($place);
+
+            $em->persist($operation);
+            $em->flush();
+        }
+    }
 }

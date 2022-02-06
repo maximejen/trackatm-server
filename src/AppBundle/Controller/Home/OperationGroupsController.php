@@ -5,6 +5,7 @@ namespace AppBundle\Controller\Home;
 use AppBundle\Controller\HomeController;
 
 use AppBundle\Entity\Operation;
+use AppBundle\Form\OperationBulkCreateType;
 use AppBundle\Form\OperationType;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -217,6 +218,30 @@ class OperationGroupsController extends HomeController {
         return $this->render(":home/operationGroups:edit.html.twig", array_merge($generalParams, [
             'form' => $form->createView(),
             'bulkEdit' => true
+        ]));
+    }
+
+    /**
+     * @Route("/operations/bulk_create", name="bulk_create_operation_page")
+     *
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function bulkCreateAction(Request $request)
+    {
+        $form = $this->createForm(OperationBulkCreateType::class);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $data = $form->get('csv')->getData();
+            $fileGenerator = $this->container->get('file_genertor');
+            $fileGenerator->fromCSVToOperations($this->getDoctrine()->getManager(), $data);
+        }
+
+        $params = ['form' => $form->createView()];
+        return $this->render('home/operationGroups/bulk_create.html.twig', array_merge($params, [
+            'form' => $form->createView(),
         ]));
     }
 
