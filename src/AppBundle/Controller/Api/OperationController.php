@@ -243,10 +243,10 @@ class OperationController extends ApiController
         $operations3 = $this->filterOperations($operations3, $operationHistoriesNextWeek, $operationCounter);
 
 
-//        $historiesLastLastWeek = $em->getRepository('AppBundle:OperationHistory')->findOperationHistoriesByCleanerAndBetweenTwoDates($cleaner, $lastLastWeekStart, $lastLastWeekEnd);
-//        $historiesLastWeek = $em->getRepository('AppBundle:OperationHistory')->findOperationHistoriesByCleanerAndBetweenTwoDates($cleaner, $lastWeekStart, $lastWeekEnd);
-//        $historiesActualWeek = $em->getRepository('AppBundle:OperationHistory')->findOperationHistoriesByCleanerAndBetweenTwoDates($cleaner, $weekStart, $weekEnd);
-//        $historiesNextWeek = $em->getRepository('AppBundle:OperationHistory')->findOperationHistoriesByCleanerAndBetweenTwoDates($cleaner, $nextWeekStart, $nextWeekEnd);
+        $historiesLastLastWeek = $em->getRepository('AppBundle:OperationHistory')->findOperationHistoriesByCleanerAndBetweenTwoDates($cleaner, $lastLastWeekStart, $lastLastWeekEnd);
+        $historiesLastWeek = $em->getRepository('AppBundle:OperationHistory')->findOperationHistoriesByCleanerAndBetweenTwoDates($cleaner, $lastWeekStart, $lastWeekEnd);
+        $historiesActualWeek = $em->getRepository('AppBundle:OperationHistory')->findOperationHistoriesByCleanerAndBetweenTwoDates($cleaner, $weekStart, $weekEnd);
+        $historiesNextWeek = $em->getRepository('AppBundle:OperationHistory')->findOperationHistoriesByCleanerAndBetweenTwoDates($cleaner, $nextWeekStart, $nextWeekEnd);
 
 
         $lastLastWeek = $this->getWeek($operations);
@@ -266,10 +266,10 @@ class OperationController extends ApiController
             $operations = $this->fromPlanningToFlat($planning);
             return new Response($serializer->serialize($operations, 'json', ['groups' => ['operation']]));
         } else {
-            $lastLastWeekPlanning = $this->determineOperationsDone($operationHistoriesLastLastWeek, $lastLastWeekPlanning);
-            $lastWeekPlanning = $this->determineOperationsDone($operationHistoriesLastWeek, $lastWeekPlanning);
-            $planning = $this->determineOperationsDone($operationHistoriesWeek, $planning);
-            $nextPlanning = $this->determineOperationsDone($operationHistoriesNextWeek, $nextPlanning);
+            $lastLastWeekPlanning = $this->determineOperationsDone($historiesLastLastWeek, $lastLastWeekPlanning);
+            $lastWeekPlanning = $this->determineOperationsDone($historiesLastWeek, $lastWeekPlanning);
+            $planning = $this->determineOperationsDone($historiesActualWeek, $planning);
+            $nextPlanning = $this->determineOperationsDone($historiesNextWeek, $nextPlanning);
 
 //            return new Response($serializer->serialize($planning, 'json', ['groups' => ['operation']]));
 
