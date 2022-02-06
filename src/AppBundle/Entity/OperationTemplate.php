@@ -42,6 +42,13 @@ class OperationTemplate
      */
     protected $tasks;
 
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="color", type="text", nullable=true)
+     */
+    protected $color;
+
 
     /**
      * Get id.
@@ -171,5 +178,29 @@ class OperationTemplate
     public function __toString()
     {
         return $this->name;
+    }
+
+    /**
+     * Set color.
+     *
+     * @param string|null $color
+     *
+     * @return OperationTemplate
+     */
+    public function setColor($color = null)
+    {
+        $this->color = $color;
+
+        return $this;
+    }
+
+    /**
+     * Get color.
+     *
+     * @return string|null
+     */
+    public function getColor()
+    {
+        return $this->color;
     }
 }

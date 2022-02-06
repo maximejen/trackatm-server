@@ -7,6 +7,8 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Operation
  *
+ * @ORM\HasLifecycleCallbacks
+ *
  * @ORM\Table(name="operation")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\OperationRepository")
  */
@@ -60,6 +62,13 @@ class Operation
      * @var boolean
      */
     protected $done;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="creation_date", type="datetime", nullable=true)
+     */
+    protected $creationDate;
 
     public function setDone($done)
     {
@@ -276,5 +285,37 @@ class Operation
     public function getNumberMaxPerMonth()
     {
         return $this->numberMaxPerMonth;
+    }
+
+    /**
+     * Set creationDate.
+     *
+     * @param \DateTime|null $creationDate
+     *
+     * @return Operation
+     */
+    public function setCreationDate($creationDate = null)
+    {
+        $this->creationDate = $creationDate;
+
+        return $this;
+    }
+
+    /**
+     * Get creationDate.
+     *
+     * @return \DateTime|null
+     */
+    public function getCreationDate()
+    {
+        return $this->creationDate;
+    }
+
+    /**
+     * @ORM\PrePersist
+     */
+    public function onPrePersistSetCreationDate()
+    {
+        $this->creationDate = new \DateTime();
     }
 }
