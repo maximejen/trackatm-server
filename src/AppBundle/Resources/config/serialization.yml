@@ -30,6 +30,8 @@ AppBundle\Entity\OperationTemplate:
       groups: ['place', 'operation', 'cleaner']
     tasks:
       groups: ['place', 'operation', 'cleaner']
+    color:
+      groups: ['place', 'operation', 'cleaner']
 
 AppBundle\Entity\OperationTaskTemplate:
   attributes:
