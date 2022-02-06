@@ -240,19 +240,13 @@ class OperationController extends ApiController
         $operations = $this->filterOperations($operations, $operationHistoriesLastLastWeek, $null);
         $operations1 = $this->filterOperations($operations1, $operationHistoriesLastWeek, $null);
         $operations2 = $this->filterOperations($operations2, $operationHistoriesWeek, $operationCounter);
-//        $tmp = array_map(function ($operation) {
-//            /** @var Operation $operation */
-//            return $operation->getPlace()->getName();
-//        }, $operations2);
-//        return new Response($serializer->serialize($tmp, 'json', ['groups' => ['operation']]));
-
         $operations3 = $this->filterOperations($operations3, $operationHistoriesNextWeek, $operationCounter);
 
 
-        $historiesLastLastWeek = $em->getRepository('AppBundle:OperationHistory')->findOperationHistoriesByCleanerAndBetweenTwoDates($cleaner, $lastLastWeekStart, $lastLastWeekEnd);
-        $historiesLastWeek = $em->getRepository('AppBundle:OperationHistory')->findOperationHistoriesByCleanerAndBetweenTwoDates($cleaner, $lastWeekStart, $lastWeekEnd);
-        $historiesActualWeek = $em->getRepository('AppBundle:OperationHistory')->findOperationHistoriesByCleanerAndBetweenTwoDates($cleaner, $weekStart, $weekEnd);
-        $historiesNextWeek = $em->getRepository('AppBundle:OperationHistory')->findOperationHistoriesByCleanerAndBetweenTwoDates($cleaner, $nextWeekStart, $nextWeekEnd);
+//        $historiesLastLastWeek = $em->getRepository('AppBundle:OperationHistory')->findOperationHistoriesByCleanerAndBetweenTwoDates($cleaner, $lastLastWeekStart, $lastLastWeekEnd);
+//        $historiesLastWeek = $em->getRepository('AppBundle:OperationHistory')->findOperationHistoriesByCleanerAndBetweenTwoDates($cleaner, $lastWeekStart, $lastWeekEnd);
+//        $historiesActualWeek = $em->getRepository('AppBundle:OperationHistory')->findOperationHistoriesByCleanerAndBetweenTwoDates($cleaner, $weekStart, $weekEnd);
+//        $historiesNextWeek = $em->getRepository('AppBundle:OperationHistory')->findOperationHistoriesByCleanerAndBetweenTwoDates($cleaner, $nextWeekStart, $nextWeekEnd);
 
 
         $lastLastWeek = $this->getWeek($operations);
@@ -272,10 +266,10 @@ class OperationController extends ApiController
             $operations = $this->fromPlanningToFlat($planning);
             return new Response($serializer->serialize($operations, 'json', ['groups' => ['operation']]));
         } else {
-            $lastLastWeekPlanning = $this->determineOperationsDone($historiesLastLastWeek, $lastLastWeekPlanning);
-            $lastWeekPlanning = $this->determineOperationsDone($historiesLastWeek, $lastWeekPlanning);
-            $planning = $this->determineOperationsDone($historiesActualWeek, $planning);
-            $nextPlanning = $this->determineOperationsDone($historiesNextWeek, $nextPlanning);
+            $lastLastWeekPlanning = $this->determineOperationsDone($operationHistoriesLastLastWeek, $lastLastWeekPlanning);
+            $lastWeekPlanning = $this->determineOperationsDone($operationHistoriesLastWeek, $lastWeekPlanning);
+            $planning = $this->determineOperationsDone($operationHistoriesWeek, $planning);
+            $nextPlanning = $this->determineOperationsDone($operationHistoriesNextWeek, $nextPlanning);
 
 //            return new Response($serializer->serialize($planning, 'json', ['groups' => ['operation']]));
 
