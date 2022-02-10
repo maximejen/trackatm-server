@@ -63,6 +63,19 @@
                     </div>
                     <div class="column">
                         <div class="select is-primary is-medium">
+                            <select id="js-template-choice" name="template">
+                                <option value="">Template</option>
+                                {% for template in templates %}
+                                    <option value="{{ template.id }}"
+                                            {% if selectedTemplate is not null and selectedTemplate.id == template.id %}selected{% endif %}>
+                                        {{ template.name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="column">
+                        <div class="select is-primary is-medium">
                             <select id="js-day-choice" name="day">
                                 <option value="">Day of the week</option>
                                 <option value="Monday"

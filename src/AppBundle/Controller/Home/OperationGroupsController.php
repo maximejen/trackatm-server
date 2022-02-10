@@ -44,15 +44,24 @@ class OperationGroupsController extends HomeController {
         else
             $cleaner = null;
 
+        $templateId = $request->query->get("template");
+        if ($templateId != null && $templateId != '')
+            $template = $em->getRepository("AppBundle:OperationTemplate")->find($templateId);
+        else
+            $template = null;
+
         if ($search) {
             $operations = $em->getRepository("AppBundle:Operation")->findByName($search);
         } else {
             $operations = $em->getRepository("AppBundle:Operation")->findAll();
         }
 
-        $operations = array_filter($operations, function(Operation $a) use ($cleaner, $customer, $day) {
+        $operations = array_filter($operations, function(Operation $a) use ($cleaner, $customer, $day, $template) {
             $result = true;
             if ($customer && $a->getPlace()->getCustomer()->getId() != $customer->getId()) {
+                $result = false;
+            }
+            if ($template && $a->getTemplate()->getId() != $template->getId()) {
                 $result = false;
             }
             if ($result && $cleaner && $a->getCleaner()->getId() != $cleaner->getId()) {
@@ -66,6 +75,7 @@ class OperationGroupsController extends HomeController {
 
         $customers = $em->getRepository("AppBundle:Customer")->findAll();
         $cleaners = $em->getRepository("AppBundle:Cleaner")->findAll();
+        $templates = $em->getRepository("AppBundle:OperationTemplate")->findAll();
 
         $nbOperationGroups = count($customers) * count($cleaners) * 7;
 
@@ -104,8 +114,10 @@ class OperationGroupsController extends HomeController {
             'nbOperationGroups' => $nbOperationGroups,
             'customers' => $customers,
             'cleaners' => $cleaners,
+            'templates' => $templates,
             'selectedCustomer' => $customer,
             'selectedCleaner' => $cleaner,
+            'selectedTemplate' => $template,
             'selectedDay' => $day,
             'search' => $search
         ]));

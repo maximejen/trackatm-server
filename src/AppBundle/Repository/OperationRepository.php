@@ -113,6 +113,8 @@ class OperationRepository extends \Doctrine\ORM\EntityRepository
         return $this->_em->getRepository("AppBundle:Operation")->createQueryBuilder('o')
             ->where("cleaner.id = :cleaner")
             ->join("o.cleaner", "cleaner")
+            ->andWhere("template.id != 6") // Made because application is not updated.
+            ->join("o.template", "template") // Made because application is not updated.
             ->setParameter("cleaner", $cleaner->getId())
             ->getQuery()
             ->getResult();

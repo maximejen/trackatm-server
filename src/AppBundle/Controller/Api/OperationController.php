@@ -60,7 +60,13 @@ class OperationController extends ApiController
         );
         $planning = [];
         foreach ($period as $key => $value) {
-            $planning[$value->format('Y-m-d')] = $week[$value->format("l")];
+//            $planning[$value->format('Y-m-d')] = $week[$value->format("l")];
+            $planning[$value->format('Y-m-d')] = array_filter($week[$value->format("l")], function(Operation $o) use ($value) {
+                $result = true;
+                if ($o->getCreationDate() != null && $value < $o->getCreationDate())
+                    $result = false;
+                return $result;
+            });
         }
         return $planning;
     }
