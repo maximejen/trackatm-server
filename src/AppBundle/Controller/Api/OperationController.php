@@ -94,24 +94,30 @@ class OperationController extends ApiController
         $nbTimesDone = [];
         /** @var OperationHistory $history */
         foreach ($histories as $history) {
-            if (!array_key_exists($history->getPlace(), $nbTimesDone))
-                $nbTimesDone[$history->getPlace()] = 0;
-            $nbTimesDone[$history->getPlace()]++;
+            if (!array_key_exists($history->getName(), $nbTimesDone))
+                $nbTimesDone[$history->getName()] = [];
+            if (!array_key_exists($history->getPlace(), $nbTimesDone[$history->getName()]))
+                $nbTimesDone[$history->getName()][$history->getPlace()] = 0;
+            $nbTimesDone[$history->getName()][$history->getPlace()]++;
         }
         foreach ($planning as $date) {
             /** @var Operation $operation */
             foreach ($date as $operation) {
-                if (!array_key_exists($operation->getPlace()->getName(), $nbTimesToBeDone))
-                    $nbTimesToBeDone[$operation->getPlace()->getName()] = 0;
-                $nbTimesToBeDone[$operation->getPlace()->getName()]++;
+                if (!array_key_exists($operation->getTemplate()->getName(), $nbTimesToBeDone))
+                    $nbTimesToBeDone[$operation->getTemplate()->getName()] = [];
+                $withTemp = $nbTimesToBeDone[$operation->getTemplate()->getName()];
+                if (!array_key_exists($operation->getPlace()->getName(), $withTemp))
+                    $withTemp[$operation->getPlace()->getName()] = 0;
+                $withTemp[$operation->getPlace()->getName()]++;
             }
         }
         foreach ($planning as &$date) {
             /** @var Operation $operation */
             foreach ($date as &$operation) {
-                if (array_key_exists($operation->getPlace()->getName(), $nbTimesDone) && $nbTimesDone[$operation->getPlace()->getName()] > 0) {
+                $templateName = $operation->getTemplate()->getName();
+                if (array_key_exists($templateName, $nbTimesDone) && array_key_exists($operation->getPlace()->getName(), $nbTimesDone[$templateName]) && $nbTimesDone[$templateName][$operation->getPlace()->getName()] > 0) {
                     $operation->setDone(true);
-                    $nbTimesDone[$operation->getPlace()->getName()]--;
+                    $nbTimesDone[$templateName][$operation->getPlace()->getName()]--;
                 } else
                     $operation->setDone(false);
             }
