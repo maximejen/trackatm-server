@@ -54,22 +54,24 @@ class MailController extends ApiController
     public function generatePdfAndSendMail(OperationHistory $operationHistory, $backup = false)
     {
         $sendTo = [];
-        if ($backup == true)
-            array_push($sendTo, "maxime.jenny@epitech.eu");
         $entityManager = $this->get('doctrine.orm.entity_manager');
         /** @var Customer $customer */
         $customer = $entityManager
             ->getRepository('AppBundle:Customer')
             ->findOneBy(['name' => $operationHistory->getCustomer()]);
-        array_push($sendTo, $customer->getEmail());
+        if ($backup == true) {
+            array_push($sendTo, "maxime.jenny@epitech.eu");
+        } else {
+            array_push($sendTo, $customer->getEmail());
 
 
-        $admin = $entityManager
-            ->getRepository('AppBundle:User')
-            ->findBy(['admin' => true]);
-        foreach ($admin as $item) {
-            if ($backup == false)
-                array_push($sendTo, $item->getEmail());
+            $admin = $entityManager
+                ->getRepository('AppBundle:User')
+                ->findBy(['admin' => true]);
+            foreach ($admin as $item) {
+                if ($backup == false)
+                    array_push($sendTo, $item->getEmail());
+            }
         }
 
         $file = "mail.log";
@@ -79,6 +81,8 @@ class MailController extends ApiController
         $current = file_get_contents($file);
         $current .= "\n=== SEND MAIL REQUEST BEGIN AT : " . $now->format("Y-m-d H:i:s") . "===\n";
 
+        if ($backup == true)
+            $current .= "Send backup email...\n";
         foreach ($sendTo as $email) {
             $current .= "sending mail to : '" . $email . "'\n";
         }
@@ -126,7 +130,7 @@ class MailController extends ApiController
         $in15min = $operationHistory->getLastTimeSent();
         if ($in15min)
             $in15min->modify("+15 min");
-        if ($operationHistory->getLastTimeSent() == null || $now->getTimestamp() > $in15min->getTimestamp()) {
+        if (($operationHistory->getLastTimeSent() == null || $now->getTimestamp() > $in15min->getTimestamp()) || $backup == true) {
             $operationHistory->setLastTimeSent($now);
             $this->getDoctrine()->getManager()->flush();
             $current = file_get_contents($file);
