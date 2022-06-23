@@ -146,7 +146,7 @@ class MailerService
             $this->sendMail($sendTo, $subject, $params, "mail/job.html.twig", null);
         } else {
             $current = file_get_contents($file);
-            $current .= "mail has not been sent, it was less than 15min from last mail sent\n";
+            $current .= "mail has not been sent, it was less than 1 day from last mail sent\n";
             file_put_contents($file, $current);
         }
     }
