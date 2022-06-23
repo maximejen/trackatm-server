@@ -10,13 +10,17 @@ use AppBundle\Entity\Operation;
 use AppBundle\Entity\OperationHistory;
 use AppBundle\Entity\OperationTaskHistory;
 use AppBundle\Form\OperationHistoryType;
+use AppBundle\Form\OperationTaskTemplateType;
 use daandesmedt\PHPHeadlessChrome\HeadlessChrome;
 use \DateInterval;
 use DatePeriod;
 use dawood\phpChrome\Chrome;
 use Doctrine\ORM\EntityManager;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\DomCrawler\Field\TextareaFormField;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -635,7 +639,12 @@ class OperationHistoryController extends HomeController
             ])
             ->add('mail', CheckboxType::class, [
                 "required" => false
-            ]);
+            ])
+//            ->add('tasks', TextareaType::class, [
+//                "required" => false,
+//                "data" => "[\n['Take picture before service', '', 1, 1, '', 0, 0],\n['Clean ATM Glass shade', '', 1, 0, '', 1, 0],\n['Spot removing from ATM Area', '', 1, 0, '', 2, 0],\n['Use air blower', '', 1, 0, '', 3, 0],\n['Remove any Gums from ATM Area', '', 1, 0, '', 4, 0],\n['Clean ATM Keyboard with Polisher', '', 1, 0, '', 5, 0],\n['Wipe all ATM with microfiber cloth', '', 1, 0, '', 6, 0],\n['Empty waste bin', '', 1, 0, '', 7, 0],\n['Take photo for any damage', '', 0, 1, '', 8, 1],\n['Take photo after service', '', 1, 1, '', 9, 0],\n['ATM closed', '', 1, 0, '', 10, 0]\n]"
+//            ])
+        ;
         $form = $form->getForm();
         $form->handleRequest($request);
 
@@ -691,6 +700,7 @@ class OperationHistoryController extends HomeController
                 ["Take photo after service", "", 1, 1, "", 9, 0],
                 ["ATM closed", "", 1, 0, "", 10, 0],
             ];
+
             foreach ($args as $arg) {
                 $task = new OperationTaskHistory();
                 $task->setName($arg[0]);

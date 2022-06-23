@@ -136,7 +136,7 @@ class MailerService
 
         $in15min = $operationHistory->getLastTimeSent();
         if ($in15min)
-            $in15min->modify("+15 min");
+            $in15min->modify("+1 day");
         if ($operationHistory->getLastTimeSent() == null || $now->getTimestamp() > $in15min->getTimestamp()) {
             $operationHistory->setLastTimeSent($now);
             $entityManager->flush();

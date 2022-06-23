@@ -461,6 +461,8 @@ class OperationHistoryController extends ApiController
             ->setPosition(Watermark::POSITION_TOP_RIGHT)
             ->setOpacity(1);
 
+        $date = new \DateTime();
+
         $imageMark = new Watermark($request->server->get('DOCUMENT_ROOT') . $request->getBasePath() . '/images/oh/' . $imageName);
         $imageMark1 = new Watermark($request->server->get('DOCUMENT_ROOT') . $request->getBasePath() . '/images/oh/' . $imageName);
 
