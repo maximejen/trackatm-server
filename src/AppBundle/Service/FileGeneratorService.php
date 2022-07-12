@@ -257,8 +257,9 @@ class FileGeneratorService
                     if ($item == null)
                         $toWrite .= "";
                     else if ($item != null && gettype($item) == "array") {
+                        /** @var OperationHistory $value */
                         foreach ($item as $ohkeys => $value) {
-                            $toWrite .= $value->getBeginningDate()->format('H:i');
+                            $toWrite .= $value->getEndingDate()->format('H:i');
                             if ($ohkeys != count($item) - 1)
                                 $toWrite .= " / ";
                         }
