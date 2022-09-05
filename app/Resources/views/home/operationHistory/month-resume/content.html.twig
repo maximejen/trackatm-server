@@ -55,7 +55,11 @@
                                 {% set link = cell is iterable %}
                                 {% if link %}
                                     {% for key, elem in cell %}
-                                        {% if pdf is defined and pdf == true %}
+                                        {% if pdf is defined and pdf == true and links == true %}
+                                            <a href="{{ 'https://track-atm.com/operation-history/pdf/' ~ elem.id }}" target="_blank">
+                                                {{ elem.endingDate.format('H:i') }}
+                                            </a>
+                                        {% elseif pdf is defined and pdf == true and links == false %}
                                             {{ elem.endingDate.format('H:i') }}
                                         {% else %}
                                             <a href="{{ path('operationhistory_view', {'id': elem.id}) }}">

@@ -309,13 +309,15 @@ class OperationHistoryController extends HomeController
         });
 
         $fileGeneratorService = $this->container->get('file_genertor');
+        var_dump($request->get("links"));
 
         $htmlCode = $this->renderView('home/operationHistory/month-resume/month-resume.html.twig', [
             "firstDate" => $dates[0],
             "secondDate" => $dates[1],
             "planning" => $fileGeneratorService->getPlanningPerMonths($dates[0], $dates[1], $histories, $operations),
             "color" => $customer != null ? $customer->getColor() : null,
-            "pdf" => true
+            "pdf" => true,
+            "links" => $request->get("links")
         ]);
 
         $search = array(
