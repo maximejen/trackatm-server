@@ -70,10 +70,10 @@
                                 <span class="todo__text column is-11">{{ task.name }}</span>
                             </label>
 
-                            {% if task.comment is defined and task.comment is not null and task.comment != "" %}
+                            {% if task.textInput is defined and task.textInput is not null and task.textInput != "" %}
                                 <div class="column is-full sub-elements">
                                     <div class="cleaner-comment">
-                                        {{ task.comment }}
+                                        {{ task.textInput }}
                                     </div>
                                 </div>
                             {% endif %}
