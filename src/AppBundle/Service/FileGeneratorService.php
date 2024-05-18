@@ -59,21 +59,23 @@ class FileGeneratorService
 
     private function generateEmptyTable(\DateTime $date1, \DateTime $date2, $operations, $histories)
     {
-        $cols = ["customer" => 0, "place" => 1, "lat" => 2, "lon" => 3];
+        $cols = ["id" => 0, "customer" => 1, "place" => 2, "lat" => 3, "lon" => 4];
         $places = $this->getAllPlacesConcerned($operations);
         $content = [];
 
         foreach ($places as $place) {
             $placeName = $place->getName();
+            $content[$placeName]["id"] = $place->getIdentifier();
             $content[$placeName]["customer"] = $place->getCustomer()->getName();
-            $content[$placeName]["place"] = $place->getName();
+            $content[$placeName]["place"] = $place->getNameWithoutIdentifier();
             $content[$placeName]["lat"] = $place->getGeoCoords()->getLat();
             $content[$placeName]["lon"] = $place->getGeoCoords()->getLon();
         }
         foreach ($histories as $history) {
             $placeName = $history->getPlace();
+            $content[$placeName]["id"] = $history->getIdentifier();
             $content[$placeName]["customer"] = $history->getCustomer();
-            $content[$placeName]["place"] = $history->getPlace();
+            $content[$placeName]["place"] = $history->getNameWithoutIdentifier();
             $content[$placeName]["lat"] = !array_key_exists("lat", $content[$placeName]) ? "/" : $content[$placeName]["lat"];
             $content[$placeName]["lon"] = !array_key_exists("lon", $content[$placeName]) ? "/" : $content[$placeName]["lon"];
         }

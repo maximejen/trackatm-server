@@ -145,6 +145,30 @@ class OperationHistory
     }
 
     /**
+     * Get identifier in name.
+     *
+     * @return string
+     */
+    public function getIdentifier()
+    {
+        $name = $this->place;
+        $matches = [];
+        preg_match("/(?<=\[).+?(?=\])/", $name, $matches);
+        return $matches[0] ? "[" . $matches[0] . ']' : '';
+    }
+
+    /**
+     * Get name.
+     *
+     * @return string
+     */
+    public function getNameWithoutIdentifier()
+    {
+        $name = $this->place;
+        return preg_replace("/^.(?<=\[).+?(?=\])./", "", $name);
+    }
+
+    /**
      * Set beginningDate.
      *
      * @param \DateTime $beginningDate

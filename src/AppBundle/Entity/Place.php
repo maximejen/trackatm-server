@@ -85,6 +85,30 @@ class Place
     }
 
     /**
+     * Get identifier in name.
+     *
+     * @return string
+     */
+    public function getIdentifier()
+    {
+        $name = $this->name;
+        $matches = [];
+        preg_match("/(?<=\[).+?(?=\])/", $name, $matches);
+        return "[" . $matches[0] . ']';
+    }
+
+    /**
+     * Get name.
+     *
+     * @return string
+     */
+    public function getNameWithoutIdentifier()
+    {
+        $name = $this->name;
+        return preg_replace("/(?<=\[).+?(?=\])\[\]/", "", $name);
+    }
+
+    /**
      * Set geoCoords.
      *
      * @param GeoCoords|null $geoCoords
