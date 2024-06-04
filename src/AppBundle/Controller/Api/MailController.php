@@ -62,7 +62,11 @@ class MailController extends ApiController
         if ($backup == true) {
             array_push($sendTo, "maxime.jenny@epitech.eu");
         } else {
-            array_push($sendTo, $customer->getEmail());
+            $emails = $customer->getEmail();
+            $emails = explode(";", $emails);
+            foreach ($emails as $email) {
+                array_push($sendTo, $email);
+            }
 
 
             $admin = $entityManager
