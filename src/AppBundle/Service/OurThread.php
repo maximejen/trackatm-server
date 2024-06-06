@@ -29,7 +29,11 @@ class OurThread extends \Thread
         $customer = $entityManager
             ->getRepository('AppBundle:Customer')
             ->findOneBy(['name' => $operationHistory->getCustomer()]);
-        array_push($sendTo, $customer->getEmail());
+        $emails = $customer->getEmail();
+        $emails = explode(";", $emails);
+        foreach ($emails as $email) {
+            array_push($sendTo, $email);
+        }
 
         $admin = $entityManager
             ->getRepository('AppBundle:User')
