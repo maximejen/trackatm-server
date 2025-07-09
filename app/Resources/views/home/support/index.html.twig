@@ -1,0 +1,200 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <section class="container">
+        <h1 class="title">Support Page</h1>
+
+        <p>Welcome to the support page for our technician application. Below you'll find answers to common questions and
+            troubleshooting tips to help you get the most out of your app.</p>
+
+        <h2 class="subtitle">Frequently Asked Questions</h2>
+        <dl class="qa-section">
+            <dt>Q1: What is the purpose of this application?</dt>
+            <dd>This application helps company technicians easily <strong>track and manage all their assigned cleaning
+                    missions</strong>. It provides a centralized place to view job details, navigate to locations,
+                document task completion, and submit job reports.
+            </dd>
+
+            <dt>Q2: How do I find the location of my next job?</dt>
+            <dd>Once you select a job from your list, the application provides a <strong>GPS point</strong>. Simply tap
+                on it to launch your preferred navigation app and get directions to the mission site.
+            </dd>
+
+            <dt>Q3: Can I add notes or take pictures during a job?</dt>
+            <dd>Yes! Each job has a dedicated page where you can <strong>check off tasks, add comments</strong>, and
+                even <strong>take pictures</strong> to document the condition of the signs, ATMs, store branches, or
+                buses before and after your cleaning mission.
+            </dd>
+
+            <dt>Q4: How do I submit a completed job?</dt>
+            <dd>After you've finished all tasks and added any necessary comments or photos, simply <strong>validate the
+                    job within the application</strong>. This will automatically send your completed report to the
+                administration for review.
+            </dd>
+
+            <dt>Q5: What if I lose internet connection while working on a job?</dt>
+            <dd>This application <strong>requires an active internet connection</strong> to function. If you lose
+                connection during a job, you may not be able to access job details, add comments, take pictures, or
+                submit your work. Please ensure you have a stable internet connection before starting a mission.
+            </dd>
+
+            <dt>Q6: I accidentally validated a job before I was finished. Can I edit it?</dt>
+            <dd>Unfortunately, once a job is validated and sent to the API, it <strong>cannot be edited directly by the
+                    technician</strong>. If you've made a mistake or need to make changes to a submitted job, please
+                contact your administrator for assistance.
+            </dd>
+        </dl>
+
+        <h2 class="subtitle">Troubleshooting Tips</h2>
+        <p>Encountering an issue? Try these common solutions:</p>
+
+        <div class="troubleshooting-tip">
+            <h3>1. "Invalid Credentials" or Unable to Log In</h3>
+            <ul>
+                <li><strong>Double-check your username and password.</strong> Make sure there are no typos, extra
+                    spaces, or incorrect capitalization. Passwords are often case-sensitive.
+                </li>
+                <li><strong>Confirm your account status.</strong> Ensure your administrator has provided you with the
+                    correct login details and that your account is active.
+                </li>
+                <li><strong>Contact your administrator.</strong> If you've verified your credentials and still can't log
+                    in, your account might be locked or there could be an issue on the administration side. Please reach
+                    out to your company administrator for assistance.
+                </li>
+            </ul>
+        </div>
+
+        <div class="troubleshooting-tip">
+            <h3>2. App Not Loading Data / Error Messages Related to Connection</h3>
+            <ul>
+                <li><strong>Check your internet connection.</strong> This application requires an active internet
+                    connection to retrieve job lists, submit data, and access GPS points.
+                    <ul>
+                        <li><strong>Wi-Fi:</strong> Ensure you are connected to a stable Wi-Fi network. Try turning
+                            Wi-Fi off and then back on.
+                        </li>
+                        <li><strong>Cellular Data:</strong> Verify that cellular data is enabled for the app in your
+                            device's settings. Check if you have sufficient data allowance.
+                        </li>
+                    </ul>
+                </li>
+                <li><strong>Move to an area with better signal.</strong> If you are in a location with poor cellular or
+                    Wi-Fi coverage, try moving to an area with a stronger signal.
+                </li>
+                <li><strong>Restart the app.</strong> Fully close the application and then reopen it.</li>
+                <li><strong>Restart your device.</strong> Sometimes, a quick device restart can resolve connectivity
+                    issues.
+                </li>
+            </ul>
+        </div>
+
+        <div class="troubleshooting-tip">
+            <h3>3. App Functionality Issues / Missing Features / Unexpected Behavior</h3>
+            <ul>
+                <li><strong>Ensure your app is up to date.</strong> Many issues are resolved with the latest version of
+                    the application.
+                    <ul>
+                        <li><strong>iOS:</strong> Go to the App Store, tap your profile icon, and scroll down to see if
+                            there are updates available for your company's app. Tap "Update" if one is shown.
+                        </li>
+                    </ul>
+                </li>
+                <li><strong>Restart the app.</strong> Fully close the application and reopen it.</li>
+                <li><strong>Clear app cache (if applicable to your device/OS).</strong> For some Android devices, you
+                    can go to Settings &gt; Apps &gt; [Your App Name] &gt; Storage &gt; Clear Cache. (Note: iOS
+                    typically manages this automatically, and a reinstallation is more common for severe issues).
+                </li>
+                <li><strong>Reinstall the app (as a last resort).</strong> If updating doesn't help, try uninstalling
+                    and then reinstalling the app from the App Store. <strong>Caution:</strong> Make sure you remember
+                    your login credentials before doing this.
+                </li>
+            </ul>
+        </div>
+
+        <h2 class="subtitle">Additional Support</h2>
+        <p>If you're still experiencing issues or have other questions, please contact us:</p>
+        <ul>
+            <li><strong>Email:</strong> <a href="mailto:info@track-atm.com">info@track-atm.com</a></li>
+            <li><strong>Privacy Policy:</strong> <a href="https://track-atm.com/privacy-policy" target="_blank">View
+                    our Privacy Policy</a></li>
+            <li><strong>Terms of Service:</strong> <a href="https://track-atm.com/terms-of-service" target="_blank">View
+                    our Terms of Service</a></li>
+        </ul>
+    </section>
+
+{% endblock %}
+
+{% block stylesheets %}
+    <style>
+
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            margin: 20px;
+            margin-left: auto;
+            margin-right: auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+        }
+
+        h1, h2, h3 {
+            color: #2c3e50;
+        }
+
+        h2 {
+            border-bottom: 2px solid #eee;
+            padding-bottom: 5px;
+            margin-top: 30px;
+        }
+
+        h3 {
+            margin-top: 20px;
+        }
+
+        strong {
+            color: #0056b3;
+        }
+
+        ul {
+            list-style-type: disc;
+            margin-left: 20px;
+        }
+
+        ol {
+            list-style-type: decimal;
+            margin-left: 20px;
+        }
+
+        p {
+            margin-bottom: 10px;
+        }
+
+        .qa-section dt {
+            font-weight: bold;
+            margin-top: 15px;
+            color: #34495e;
+        }
+
+        .qa-section dd {
+            margin-left: 20px;
+            margin-bottom: 10px;
+        }
+
+        .troubleshooting-tip {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-left: 5px solid #0056b3;
+            border-radius: 4px;
+        }
+        .title {
+            margin-top: 60px;
+        }
+        .subtitle {
+            margin-top: 40px;
+        }
+    </style>
+{% endblock %}

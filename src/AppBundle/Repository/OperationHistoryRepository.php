@@ -184,4 +184,17 @@ class OperationHistoryRepository extends \Doctrine\ORM\EntityRepository
         }
         return $result;
     }
+
+    public function findOperationHistoriesByPlaceNameBetweenTwoDates($placeRealName, $firstDay, $secondDay)
+    {
+        return $this->_em->getRepository("AppBundle:OperationHistory")->createQueryBuilder("oh")
+            ->where('oh.place LIKE :placeName')
+            ->andWhere("DATE_DIFF(oh.beginningDate, :date1) >= 0")
+            ->andWhere("DATE_DIFF(oh.beginningDate, :date2) <= 0")
+            ->setParameter("date1", $firstDay)
+            ->setParameter("date2", $secondDay)
+            ->setParameter('placeName', $placeRealName)
+            ->getQuery()
+            ->getResult();
+    }
 }

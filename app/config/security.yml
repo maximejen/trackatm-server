@@ -33,6 +33,9 @@ security:
             logout_on_user_change: true
 
     access_control:
+        - { path: ^/support$, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/privacy-policy$, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/terms-of-service$, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/login$, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/privacy, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/operation-history/pdf/, role: IS_AUTHENTICATED_ANONYMOUSLY }

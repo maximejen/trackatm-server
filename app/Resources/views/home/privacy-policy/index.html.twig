@@ -1,0 +1,92 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <section class="container">
+        <h1 class="title">Privacy Policy for TrackATM</h1>
+
+        <p>This Privacy Policy describes how [Your Company Name] ("we," "us," or "our") handles information in connection with your use of the TrackATM mobile application (the "App").</p>
+
+        <h2 class="subtitle">1. Information We Do Not Collect</h2>
+        <p>Our App is designed for internal use by company technicians and prioritizes your privacy. We want to be clear about what we <strong>do not</strong> collect:</p>
+        <ul>
+            <li>We do not collect any personal data for marketing, profiling, or sale to third parties.</li>
+            <li>We do not collect any user activity data beyond what is strictly necessary for the core functionality of the App (i.e., managing job missions).</li>
+        </ul>
+
+        <h2 class="subtitle">2. Limited Information We Do Collect</h2>
+        <p>To ensure the App functions correctly and for internal diagnostic purposes, we collect very limited, non-identifiable technical information:</p>
+        <ul>
+            <li><strong>Device Type:</strong> We record whether the App is running on an iOS or Android device.</li>
+            <li><strong>App Version:</strong> We collect the version number of the App you are currently using.</li>
+        </ul>
+        <p>This information helps us understand the technical environment in which the App operates and assists with debugging and updates, but it is not linked to your personal identity.</p>
+
+        <h2 class="subtitle">3. How Location Data is Used</h2>
+        <p>The App utilizes GPS functionality solely to help you locate job sites and calculate the distance between your current position and the job. <strong>Your GPS location data is not stored, tracked, or transmitted to our servers.</strong> It is used in real-time on your device for navigation assistance only.</p>
+
+        <h2 class="subtitle">4. Data Transfer and Security</h2>
+        <p>All data that is transferred between your App and our servers (e.g., job lists, job validation reports, photos) is transmitted securely using **HTTPS (Hypertext Transfer Protocol Secure)**. This encryption helps protect your data during transit.</p>
+
+        <h2 class="subtitle">5. Account Creation</h2>
+        <p>Users cannot create accounts directly within the App. All technician accounts are created and managed by your company administrator. We do not process personal registration information through the App itself.</p>
+
+        <h2 class="subtitle">6. Changes to This Privacy Policy</h2>
+        <p>We may update our Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page. You are advised to review this Privacy Policy periodically for any changes.</p>
+
+        <h2 class="subtitle">7. Contact Us</h2>
+        <p>If you have any questions about this Privacy Policy, please contact us:</p>
+        <ul>
+            <li><strong>Email:</strong> <a href="mailto:info@track-atm.com">info@track-atm.com</a></li>
+        </ul>
+    </section>
+
+{% endblock %}
+
+{% block stylesheets %}
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            margin: 20px;
+            margin-left: auto;
+            margin-right: auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.05);
+        }
+        h1, h2 {
+            color: #2c3e50;
+        }
+        h2 {
+            border-bottom: 2px solid #eee;
+            padding-bottom: 5px;
+            margin-top: 30px;
+        }
+        strong {
+            color: #0056b3;
+        }
+        ul {
+            list-style-type: disc;
+            margin-left: 20px;
+        }
+        p {
+            margin-bottom: 10px;
+        }
+        a {
+            color: #0056b3;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .title {
+            margin-top: 60px;
+        }
+        .subtitle {
+            margin-top: 40px;
+        }
+    </style>
+{% endblock %}

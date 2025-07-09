@@ -105,7 +105,7 @@ class Place
     public function getNameWithoutIdentifier()
     {
         $name = $this->name;
-        return preg_replace("/(?<=\[).+?(?=\])\[\]/", "", $name);
+        return preg_replace("/\[.+?\]/", "", $name);
     }
 
     /**

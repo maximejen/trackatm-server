@@ -130,126 +130,129 @@ class OperationHistoryController extends ApiController
     {
         if (!$this->checkUserIsConnected($request))
             return new JsonResponse(['message' => "you need to be connected"], 403);
-        $params = array();
-        $content = $request->getContent(); //  $this->get("request")->getContent();
-        if (!empty($content)) {
-            $params = json_decode($content, true); // 2nd param to get as array
-        }
-
-
-        if (!array_key_exists('beginningDate', $params) || !array_key_exists('endingDate', $params)
-            || !array_key_exists('operationId', $params)
-            || !array_key_exists('operationTemplateId', $params)) {
-            $response = new Response();
-            $response->setStatusCode('400');
-            $response->setContent(json_encode(array(
-                'success' => false,
-                'message' => 'Invalid request')));
-            return $response;
-        }
-
-        $entityManager = $this->get('doctrine.orm.entity_manager');
-        $operation = $entityManager
-            ->getRepository('AppBundle:Operation')
-            ->findOneBy(['id' => $params['operationId']]);
-
-        $operationTemplate = $entityManager
-            ->getRepository('AppBundle:OperationTemplate')
-            ->findOneBy(['id' => $params['operationTemplateId']]);
-
-        $place = $operation->getPlace();
-        $customer = $place->getCustomer();
-        if (!$operation || !$operationTemplate)
-            return new JsonResponse(['message' => "Operation not found"], 404);
-
-        $history = new OperationHistory();
-        $history->setName($operationTemplate->getName());
-        $history->setPlace($place->getName());
-        $history->setCustomer($customer->getName());
-        $history->setGeoCoords($place->getGeoCoords());
-        $history->setCleaner($cleaner);
-        $history->setDone(true);
-        $date = new \DateTime();
-        $date->setTimestamp($params['beginningDate']);
-        $history->setBeginningDate($date);
-        $date1 = new \DateTime();
-        $date1->setTimestamp($params['endingDate']);
-        $history->setEndingDate($date1);
-
-        $typicalWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
-        $isADay = false;
-        foreach ($typicalWeek as $day) !$isADay && $isADay = $params['initialDate'] == $day;
-        if (!$isADay)
-            $date = new \DateTime($params['initialDate']);
-        else {
-            $date = clone $history->getBeginningDate();
-            $date->setTime(0, 0, 0);
-            if ($history->getBeginningDate()->format('l') == "Sunday" && $params['initialDate'] != "Sunday") {
-                $date->modify("+7 days");
-                $date->modify($params['initialDate'] . " this week");
-            } else if ($history->getBeginningDate()->format('l') != "Sunday" && $params['initialDate'] == "Sunday")
-                $date->modify("last sunday");
-            else if ($history->getBeginningDate()->format('l') == "Sunday" && $params['initialDate'] == "Sunday") {
-                $date = clone $history->getBeginningDate();
-                $date->setTime(0, 0);
-            } else
-                $date->modify($params['initialDate'] . " this week");
-        }
-        $history->setInitialDate($date);
-
-        /** @var ArrayCollection | OperationTaskTemplate[] $taskTemplates */
-        $taskTemplates = $entityManager->getRepository("AppBundle:OperationTaskTemplate")->findAll();
-
-        foreach ($params['tasks'] as $key => $param) {
-            $task = new OperationTaskHistory();
-            $task->setName($param["key"]);
-            $task->setComment($param["comment"] ? $param["comment"] : "");
-            $task->setStatus($param["checked"]);
-            $task->setImagesForced($param["imageForced"]);
-            $task->setTextInput($param["text"]);
-            $task->setPosition($key);
-            $history->addTask($task);
-            $taskTemplate = array_filter(
-                $taskTemplates,
-                function ($opTaskTemp) use ($param) {
-                    /** @var OperationTaskTemplate $opTaskTemp */
-                    return $opTaskTemp->getName() == $param["key"];
-                }
-            );
-
-            if (is_array($taskTemplate) && count($taskTemplate) > 0) {
-                $task->setWarningIfTrue($taskTemplate[array_key_first($taskTemplate)]->getWarningIfTrue());
+//        try {
+            $params = array();
+            $content = $request->getContent(); //  $this->get("request")->getContent();
+            if (!empty($content)) {
+                $params = json_decode($content, true); // 2nd param to get as array
             }
-        }
 
 
-        $entityManager->persist($history);
-        $entityManager->flush();
-        $id = $history->getId();
+            if (!array_key_exists('beginningDate', $params) || !array_key_exists('endingDate', $params)
+                || !array_key_exists('operationId', $params)
+                || !array_key_exists('operationTemplateId', $params)) {
+                $response = new Response();
+                $response->setStatusCode('400');
+                $response->setContent(json_encode(array(
+                    'success' => false,
+                    'message' => 'Invalid request')));
+                return $response;
+            }
+
+            $entityManager = $this->get('doctrine.orm.entity_manager');
+            $operation = $entityManager
+                ->getRepository('AppBundle:Operation')
+                ->findOneBy(['id' => $params['operationId']]);
+
+            $operationTemplate = $entityManager
+                ->getRepository('AppBundle:OperationTemplate')
+                ->findOneBy(['id' => $params['operationTemplateId']]);
+
+            $place = $operation->getPlace();
+            $customer = $place->getCustomer();
+            if (!$operation || !$operationTemplate)
+                return new JsonResponse(['message' => "Operation not found"], 404);
+
+            $history = new OperationHistory();
+            $history->setName($operationTemplate->getName());
+            $history->setPlace($place->getName());
+            $history->setCustomer($customer->getName());
+            $history->setGeoCoords($place->getGeoCoords());
+            $history->setCleaner($cleaner);
+            $history->setDone(true);
+            $date = new \DateTime();
+            $date->setTimestamp($params['beginningDate']);
+            $history->setBeginningDate($date);
+            $date1 = new \DateTime();
+            $date1->setTimestamp($params['endingDate']);
+            $history->setEndingDate($date1);
+
+            $typicalWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+            $isADay = false;
+            foreach ($typicalWeek as $day) !$isADay && $isADay = $params['initialDate'] == $day;
+            if (!$isADay) {
+                $date = new \DateTime($params['initialDate']);
+            }
+            else {
+                $date = clone $history->getBeginningDate();
+                $date->setTime(0, 0, 0);
+                if ($history->getBeginningDate()->format('l') == "Sunday" && $params['initialDate'] != "Sunday") {
+                    $date->modify("+7 days");
+                    $date->modify($params['initialDate'] . " this week");
+                } else if ($history->getBeginningDate()->format('l') != "Sunday" && $params['initialDate'] == "Sunday")
+                    $date->modify("last sunday");
+                else if ($history->getBeginningDate()->format('l') == "Sunday" && $params['initialDate'] == "Sunday") {
+                    $date = clone $history->getBeginningDate();
+                    $date->setTime(0, 0);
+                } else
+                    $date->modify($params['initialDate'] . " this week");
+            }
+            $history->setInitialDate($date);
+
+            /** @var ArrayCollection | OperationTaskTemplate[] $taskTemplates */
+            $taskTemplates = $entityManager->getRepository("AppBundle:OperationTaskTemplate")->findAll();
+
+            foreach ($params['tasks'] as $key => $param) {
+                $task = new OperationTaskHistory();
+                $task->setName($param["key"]);
+                $task->setComment($param["comment"] ? $param["comment"] : "");
+                $task->setStatus($param["checked"]);
+                $task->setImagesForced($param["imageForced"]);
+                $task->setTextInput($param["text"]);
+                $task->setPosition($key);
+                $history->addTask($task);
+                $taskTemplate = array_filter(
+                    $taskTemplates,
+                    function ($opTaskTemp) use ($param) {
+                        /** @var OperationTaskTemplate $opTaskTemp */
+                        return $opTaskTemp->getName() == $param["key"];
+                    }
+                );
+
+                if (is_array($taskTemplate) && count($taskTemplate) > 0) {
+                    $task->setWarningIfTrue($taskTemplate[array_key_first($taskTemplate)]->getWarningIfTrue());
+                }
+            }
 
 
-        $file = "oh.log";
-        if (!file_exists($file))
-            fopen($file, "w");
-        $current = file_get_contents($file);
-        $current .= "\n=== Creating OH ===\n";
-        file_put_contents($file, $current);
-        $now = new \DateTime();
-        $current = file_get_contents($file);
-        $current .= "OH ID : " . $history->getId() . "\n" . "Place : " . $history->getPlace() . "\n";
-        $current .= "CL : " . $cleaner->getId() . "\n" . "DATE : " . $now->format("Y-m-d H:i:s\n");
-        file_put_contents($file, $current);
+            $entityManager->persist($history);
+            $entityManager->flush();
+            $id = $history->getId();
 
-        $tasksIds = [];
-        $current = file_get_contents($file);
-        $current .= "=== Add tasks to OH " . $history->getId() . " ===\n";
-        file_put_contents($file, $current);
-        foreach ($history->getTasks() as $task) {
-            $tasksIds[] = $task->getId();
+
+            $file = "oh.log";
+            if (!file_exists($file))
+                fopen($file, "w");
             $current = file_get_contents($file);
-            $current .= "Task : " . $task->getName() . "\nTask ID :" . $task->getId() . "\n";
+            $current .= "\n=== Creating OH ===\n";
             file_put_contents($file, $current);
-        }
+            $now = new \DateTime();
+            $current = file_get_contents($file);
+            $current .= "OH ID : " . $history->getId() . "\n" . "Place : " . $history->getPlace() . "\n";
+            $current .= "CL : " . $cleaner->getId() . "\n" . "DATE : " . $now->format("Y-m-d H:i:s\n");
+            file_put_contents($file, $current);
+
+            $tasksIds = [];
+            $current = file_get_contents($file);
+            $current .= "=== Add tasks to OH " . $history->getId() . " ===\n";
+            file_put_contents($file, $current);
+            foreach ($history->getTasks() as $task) {
+                $tasksIds[] = $task->getId();
+                $current = file_get_contents($file);
+                $current .= "Task : " . $task->getName() . "\nTask ID :" . $task->getId() . "\n";
+                file_put_contents($file, $current);
+            }
+
 
 
         try {

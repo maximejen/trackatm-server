@@ -6,6 +6,7 @@ use AppBundle\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\SerializerInterface;
 
 class HomeController extends Controller
 {
@@ -22,6 +23,30 @@ class HomeController extends Controller
         }
 
         return $this->redirect($this->generateUrl('planningpage'));
+    }
+
+    /**
+     * @Route("/support", name="supportpage", methods={"GET"})
+     */
+    public function supportAction()
+    {
+        return $this->render('home/support/index.html.twig');
+    }
+
+    /**
+     * @Route("/privacy-policy", name="privacy-policy", methods={"GET"})
+     */
+    public function privacyPolicyAction()
+    {
+        return $this->render('home/privacy-policy/index.html.twig');
+    }
+
+    /**
+     * @Route("/terms-of-service", name="terms-of-service", methods={"GET"})
+     */
+    public function termsAction()
+    {
+        return $this->render('home/terms-of-service/index.html.twig');
     }
 
     /**

@@ -22,6 +22,42 @@ class PlaceRepository extends \Doctrine\ORM\EntityRepository
             ->getResult();
     }
 
+    public function findPlaceByNames($names)
+    {
+//        $name = '%' . $name . '%';
+//        return $this->_em->getRepository("AppBundle:Place")->createQueryBuilder('p')
+//            ->where('p.name LIKE :name')
+//            ->setParameter('name', $name)
+//            ->getQuery()
+//            ->getResult();
+
+        $qb = $this->_em->getRepository("AppBundle:Place")->createQueryBuilder('p');
+
+        // Initialize an array to hold the conditions and parameters
+        $conditions = [];
+        $parameters = [];
+
+        // Loop through each name in the array
+        foreach ($names as $index => $name) {
+            // Add a condition with a unique parameter placeholder
+            $conditions[] = "p.name LIKE :name$index";
+            // Add the parameter with '%' appended before and after
+            $parameters["name$index"] = '%' . $name . '%';
+        }
+
+        // Combine the conditions with "OR"
+        $qb->where(implode(' OR ', $conditions));
+
+        // Set all the parameters
+        foreach ($parameters as $key => $value) {
+            $qb->setParameter($key, $value);
+        }
+
+        // Execute the query
+        return $qb->getQuery()->getResult();
+
+    }
+
     public function findPlaceByCustomerAndName($customerId, $name)
     {
         $name = '%' . $name . '%';
